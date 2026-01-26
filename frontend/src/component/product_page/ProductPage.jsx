@@ -25,6 +25,7 @@ import img_17_3 from "../../assets/mock_product/17.3.png";
 import img_17_2 from "../../assets/mock_product/17.2.png";
 import img_5_2 from "../../assets/mock_product/5.2.png";
 import img_17_1 from "../../assets/mock_product/17.1.png";
+import blush_court_set from "../../assets/mock_product/Blush Court Set.png";
 
 const mockProductImages = [
     img_3_1,
@@ -70,6 +71,7 @@ const mockProducts = [
     { imageSrc: img_17_2, productName: "Cardigan", price: 585000 },
     { imageSrc: img_5_2, productName: "Denim Jacket", price: 595000 },
     { imageSrc: img_17_1, productName: "Polo Shirt", price: 605000 },
+    { imageSrc: blush_court_set, productName: "Polo Blush", price: 123849 },
 ];
 
 export default function ProductPage() {
