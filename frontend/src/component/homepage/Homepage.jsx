@@ -1,17 +1,17 @@
-import logo from './../../assets/cns_logo.png'
+import logo from './../../assets/cleannie_studio_logo_-removebg-preview.png'
 import bgImage from './../../assets/snapedit_1769088011261.jpeg'
 
 export default function Homepage() {
     return (<div id='homepage' className='w-screen h-screen'>
         <div id="navbar" className='flex flex-row justify-between'>
-            <img src={logo} alt="Logo"/>
+            <img src={logo} alt="Logo" className='overflow-hidden height-64 width-48 object-fit'/>
             <div className='flex flex-row jusitfy-between gap-10 items-center relative right-10'>
-                <p className='text-lg'>Shopping</p>
-                <p className='text-lg'>Our collections</p>
-                <p className='text-lg'>What's new</p>
-                <p className='text-lg'>About us</p>
-                <p className='text-lg'>Account</p>
-                <p className='text-lg'>Support</p>
+                <p className='text-lg'>Sản phẩm</p>
+                <p className='text-lg'>Bộ sưu tập</p>
+                <p className='text-lg'>Tính năng mới</p>
+                <p className='text-lg'>Về chúng tôi</p>
+                <p className='text-lg'>Tài khoản</p>
+                <p className='text-lg'>Hỗ trợ</p>
             </div>
         </div>
     </div>)
