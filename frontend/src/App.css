@@ -1,3 +1,13 @@
+@import "tailwindcss";
+
+#homepage {
+  background-image: url('./assets/snapedit_1769088011261.jpeg');
+  background-size: cover;
+  background-position: cover;
+}
+
+/* 
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -39,4 +49,4 @@
 
 .read-the-docs {
   color: #888;
-}
+} */
