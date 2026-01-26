@@ -1,7 +1,8 @@
 import Navbar from "../Navbar";
 import { IoSearch } from "react-icons/io5";
-import { CiCircleChevDown } from "react-icons/ci";
+import { CiCircleChevDown, CiCircleChevUp } from "react-icons/ci";
 import ProductItem from "./ProductItem";
+import { useState } from "react";
 // Import all images from mock_products folder
 
 
@@ -75,20 +76,69 @@ const mockProducts = [
 ];
 
 export default function ProductPage() {
+    const [isOpenTypeSel, setisOpenTypeSel] = useState(false);
+    const [isOpenFilter, setIsOpenFilter] = useState(false);
+    console.log(isOpenFilter);
+    const options = [
+        "Nữ",
+        "Nam",
+        "Trang phục màu sáng",
+        "Trang phục màu tối"
+    ];
+    const optionFilter = [
+        "Giá từ thấp tới cao",
+        "Giá từ cao tới thấp",
+        "Độ bán chạy"
+    ]
     return (<div id="product-page">
         <Navbar />
         <div id="product-page-body" className="bg-[#f3eae5] px-30 py-10 text-2xl">
-            <div className="flex flex-row justify-between">
+            <div className="relative w-full p-4"> 
+            <div className="flex flex-row justify-between items-center">
                 <div className="flex flex-row gap-2 items-center">
-                    <p className="font-semibold">PHÂN LOẠI</p>
-                    <IoSearch />
-                    <input type="search" className="border-b-2"></input>
+                    <p className="font-semibold text-black">PHÂN LOẠI</p>
+                    
+                    {/* Dùng text thay cho Icon để test */}
+                    <button 
+                        onClick={() => setisOpenTypeSel(!isOpenTypeSel)}
+                        className=""
+                    >
+                        {isOpenTypeSel ? <CiCircleChevUp /> : <CiCircleChevDown />}
+                    </button>
+
+                    <span className="text-gray-500"><IoSearch /></span>
+                    <input type="search" className="border-b border-black" placeholder="Test input..." />
                 </div>
                 <div className="flex flex-row gap-2 items-center">
-                    <p>Filter</p>
-                    <CiCircleChevDown />
+                    <div>Bộ lọc</div>
+                    <button onClick={() => {
+                        setIsOpenFilter(!isOpenFilter);
+                    }}>{isOpenFilter ? <CiCircleChevUp /> : <CiCircleChevDown />}</button>
                 </div>
+                
             </div>
+
+            {/* Modal dropdown */}
+            {isOpenTypeSel && (
+                <div className="absolute top-12 left-0 w-64 bg-white shadow-xl border border-gray-300 z-50">
+                    {options.map((opt, i) => (
+                        <div key={i} className="p-2 hover:bg-gray-200 border-b cursor-pointer text-black">
+                            {opt}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {isOpenFilter && (
+                <div className="absolute top-12 left-250 w-64 bg-white shadow-xl border border-gray-300 z-50">
+                    {optionFilter.map((opt, i) => (
+                        <div key={i} className="p-2 hover:bg-gray-200 border-b cursor-pointer text-black">
+                            {opt}
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
             <div className="grid grid-cols-3 gap-6 mt-8">
                 {mockProducts.map((product, idx) => (
                     <ProductItem
