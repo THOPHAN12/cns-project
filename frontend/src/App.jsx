@@ -6,6 +6,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Homepage from './component/homepage/Homepage'
 import ProductPage from './component/product_page/ProductPage'
 import ProductDetail from './component/product_page/ProductDetail'
+import CollectionPage from './component/collectionpage/CollectionPage'
+import WhatsNewPage from './component/whatsnew/WhatsNewPage'
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         <Route path='/' element={<Homepage />}/>
         <Route path='/product' element={<ProductPage />} />
         <Route path='/product-detail' element={<ProductDetail />} />
+        <Route path='/collection' element={<CollectionPage />} />
+        <Route path='/whats-new' element={<WhatsNewPage />} />
       </Routes>
     </BrowserRouter>
   )

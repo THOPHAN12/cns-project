@@ -13,8 +13,8 @@ export default function Navbar() {
             </div>
             <div className='flex flex-row jusitfy-between gap-5 items-center relative right-10'>
                 <Link to={"/product"}><p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Sản phẩm</p></Link>
-                <p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Bộ sưu tập</p>
-                <p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Tính năng mới</p>
+                <Link to={"/collection"}><p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Bộ sưu tập</p></Link>
+                <Link to={"/whats-new"}><p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Tính năng mới</p></Link>
                 <p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Về chúng tôi</p>
                 <p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Tài khoản</p>
                 <p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Hỗ trợ</p>
