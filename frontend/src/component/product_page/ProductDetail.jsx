@@ -29,7 +29,7 @@ export default function ProductDetail() {
             </div>
 
             {/* Breadcrumb */}
-            <div className="px-10 py-6 text-base text-[#7c6f63] flex items-center gap-2 px-30 py-10">
+            <div className="text-base text-[#7c6f63] flex items-center gap-2 px-30 py-10">
                 <Link to={"/product"} className="hover:underline">Sản Phẩm</Link>
                 <span className="mx-1">/</span>
                 <span className="font-bold text-2xl text-black">Chi Tiết Sản Phẩm</span>
@@ -38,8 +38,8 @@ export default function ProductDetail() {
             {/* Main content */}
             <div className="flex flex-row gap-12 px-30 py-10">
                 {/* Product image */}
-                <div className="flex-shrink-0 w-[340px] flex flex-col items-center">
-                    <img src={img_5_1} alt="Product image" className="rounded-lg w-full object-cover border border-[#e5d8ce] w-200 h-full" />
+                <div className="shrink-0 w-120 flex flex-col items-center">
+                    <img src={img_5_1} alt="Product image" className="rounded-lg object-cover border border-[#e5d8ce] w-200 h-full" />
                     <button className="mt-4 text-2xl text-[#bdbdbd] hover:text-[#e5d8ce] bg-white rounded-full p-2 border border-[#e5d8ce] w-10 h-10 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 7.5l-6 6-3-3" />

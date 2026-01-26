@@ -10,7 +10,7 @@ import sweatshirt2 from "../../assets/sweatshirt2.png"
 
 const ListItem = ({ text }) => (
   <li className="flex items-center space-x-2 text-gray-700 font-medium">
-    <span className="w-1.5 h-1.5 bg-[#5e4b43] rounded-full flex-shrink-0"></span>
+    <span className="w-1.5 h-1.5 bg-[#5e4b43] rounded-full shrink-0"></span>
     <span>{text}</span>
   </li>
 );
@@ -76,7 +76,7 @@ export default function WhatsNewPage() {
                     {/* Hình ảnh bên phải */}
                     <div className="w-full md:w-7/12 bg-gray-100 relative">
                     {/* Placeholder cho hình Laptop/Phone */}
-                    <div className="w-full h-full min-h-[300px] flex items-center justify-center bg-gray-50">
+                    <div className="w-full h-full min-h-75 flex items-center justify-center bg-gray-50">
                         <img 
                         src={computerImage}
                         alt="AR Try on Mockup" 
@@ -113,7 +113,7 @@ export default function WhatsNewPage() {
                     <div className="w-full md:w-7/12 p-2 md:p-6 bg-white">
                     <div className="grid grid-cols-2 gap-2 h-full">
                         {/* Ảnh 1: Áo Sweatshirt toàn cảnh */}
-                        <div className="aspect-[4/3] md:aspect-auto overflow-hidden rounded-sm">
+                        <div className="aspect-4/3 md:aspect-auto overflow-hidden rounded-sm">
                         <img 
                             src={sweatshirt1}
                             alt="Sweatshirt full" 
@@ -121,7 +121,7 @@ export default function WhatsNewPage() {
                         />
                         </div>
                         {/* Ảnh 2: Cận cảnh thêu */}
-                        <div className="aspect-[4/3] md:aspect-auto overflow-hidden rounded-sm">
+                        <div className="aspect-4/3 md:aspect-auto overflow-hidden rounded-sm">
                         <img 
                             src={sweatshirt2} 
                             alt="Embroidery detail" 
