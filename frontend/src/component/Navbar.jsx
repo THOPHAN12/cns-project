@@ -5,8 +5,8 @@ import Button from './Button'
 export default function Navbar() {
     return (
         <div className=' sticky top-0 z-50'>
-            <div className='bg-black text-white text-center py-2'>
-                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et</p>
+            <div className='bg-black font-stretch-expanded text-white text-lg text-center py-2'>
+                <p className="animate-marquee">Tại CNS, mọi thứ đều xuất phát từ sự tối giản và thấu hiểu – từ cách chúng tôi thiết kế, đến cách bạn mặc mỗi ngày.</p>
             </div>
         
             <div id="navbar" className='bg-white flex flex-row justify-between'>

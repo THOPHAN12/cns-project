@@ -1,5 +1,7 @@
 import Navbar from "../Navbar";
 import image1 from "../../assets/about-us-img/image1.jpg";
+import image2 from "../../assets/about-us-img/2.png";
+import image4 from "../../assets/about-us-img/4.png";
 
 export default function AboutUsPage() {
     return (
@@ -48,7 +50,7 @@ export default function AboutUsPage() {
         {/* Cột hình ảnh (Phải) */}
         <div className="w-full md:w-1/2 min-h-[400px]">
           <img 
-            src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop" 
+            src={image2}
             alt="Woman with cap" 
             className="w-full h-full object-cover"
           />
@@ -60,7 +62,7 @@ export default function AboutUsPage() {
         {/* Cột hình ảnh (Trái) */}
         <div className="w-full md:w-1/2 min-h-[400px]">
           <img 
-            src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000&auto=format&fit=crop" 
+            src={image4}
             alt="Man in beige shirt" 
             className="w-full h-full object-cover"
           />
