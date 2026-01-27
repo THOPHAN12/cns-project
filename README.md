@@ -56,4 +56,5 @@ npm i
 ```
 npm run dev
 ```
-
+Then Ctrl+Click on the link _localhost:<port>_ appear on the terminal.
+From now on, whenever you want to run the project, just access to frontend, open the terminal and run `npm run dev`
