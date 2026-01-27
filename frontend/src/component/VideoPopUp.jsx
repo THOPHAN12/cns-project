@@ -2,9 +2,8 @@ import { useState } from "react";
 import localVideo from "../assets/AR try on.mp4";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
-export default function VideoPopUp() {
-    const [isOpenPopUp, setIsOpenPopUp] = useState(true);
-    return (<div className={"fixed bottom-0 right-0 w-100 h-140 bg-white rounded-2xl " + (!isOpenPopUp && "hidden") }>
+export default function VideoPopUp({isOpenPopUp, setIsOpenPopUp}) {
+    return (<div className={"fixed bottom-0 right-0 w-100 h-140 z-50 bg-white rounded-2xl " + (!isOpenPopUp && "hidden") }>
         <button onClick={() => setIsOpenPopUp(!isOpenPopUp)}><IoIosCloseCircleOutline className="size-8"/></button>
         <div className="w-full max-w-3xl">
         <video 

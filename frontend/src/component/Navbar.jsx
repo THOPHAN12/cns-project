@@ -21,7 +21,7 @@ export default function Navbar() {
             </div>
         
             <div id="navbar" className='bg-white flex flex-row justify-between'>
-                <div className='flex flex-row gap-4 items-center'>
+                <div className='flex flex-row gap-4 items-center relative bottom-2'>
                     <Link to={"/"}><img src={logo} alt="Logo" className='overflow-hidden height-64 width-48 object-fit hover:scale-130 transition'/></Link>
                 </div>
                 <div className='flex flex-row jusitfy-between gap-5 items-center relative right-10'>

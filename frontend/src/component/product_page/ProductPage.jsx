@@ -29,6 +29,7 @@ import img_17_1 from "../../assets/mock_product/17.1.png";
 import blush_court_set from "../../assets/mock_product/Blush Court Set.png";
 import Button from "../Button";
 import Footer from "../Footer";
+import VideoPopUp from "../VideoPopUp";
 
 const mockProductImages = [
     img_3_1,
@@ -80,7 +81,8 @@ const mockProducts = [
 export default function ProductPage() {
     const [isOpenTypeSel, setisOpenTypeSel] = useState(false);
     const [isOpenFilter, setIsOpenFilter] = useState(false);
-    console.log(isOpenFilter);
+    const [isOpenPopUp, setIsOpenPopUp] = useState(false);
+    console.log(isOpenPopUp);
     const options = [
         "Nữ",
         "Nam",
@@ -111,7 +113,12 @@ export default function ProductPage() {
                     <span className="text-gray-500"><IoSearch /></span>
                     <input type="search" className="border-b border-black" placeholder="Tìm kiếm theo tên..." />
                 </div>
-                <Button content={"Thử AR Try-on"} />
+                <button className="bg-gray-700 text-white px-5 py-2 rounded-lg text-2xl"
+                         onClick={() => {
+                    setIsOpenPopUp(true);
+                }}>
+                    Thử AR Try-on
+                </button>
                 <div className="flex flex-row gap-2 items-center">
                     <div>Bộ lọc</div>
                     <button onClick={() => {
@@ -154,6 +161,7 @@ export default function ProductPage() {
                 ))}
             </div>
         </div>
+        <VideoPopUp isOpenPopUp={isOpenPopUp} setIsOpenPopUp={setIsOpenPopUp}/>
         <Footer />
     </div>)
 }

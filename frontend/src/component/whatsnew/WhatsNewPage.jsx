@@ -5,6 +5,7 @@ import image3 from "../../assets/image3.png"
 import image4 from "../../assets/image4.png"
 import React from 'react';
 import computerImage from "../../assets/anaresult.png"
+import anaResult from "../../assets/computer-whats-new.png"
 import sweatshirt1 from "../../assets/sweatshirt-full.png"
 import sweatshirt2 from "../../assets/sweatshirt2.png"
 import Footer from "../Footer";

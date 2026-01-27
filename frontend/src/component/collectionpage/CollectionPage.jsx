@@ -1,9 +1,9 @@
 import Navbar from "../Navbar";
 import collectionImage from "../../assets/8.png"
 import title from "../../assets/collection/chũ.png";
-import img1 from "../../assets/collection/3.png"
+import img1 from "../../assets/collection/1.png"
 import img2 from "../../assets/collection/2.png"
-import img3 from "../../assets/collection/baby top.png"
+import img3 from "../../assets/collection/3.png"
 import { useState } from "react";
 import Footer from "../Footer";
 
@@ -44,7 +44,7 @@ export default function CollectionPage() {
                         
                         {/* Nội dung text */}
                         <div className="absolute inset-0 flex items-center justify-start p-8 md:p-12">
-                        <h2 className="text-white text-2xl md:text-3xl font-medium drop-shadow-md">
+                        <h2 className="text-amber-950 text-2xl md:text-3xl font-medium drop-shadow-md">
                             The Clean Era Collection
                         </h2>
                         </div>
@@ -60,7 +60,7 @@ export default function CollectionPage() {
                         <div className="absolute inset-0 bg-black/10"></div>
                         
                         <div className="absolute bottom-0 left-0 p-8 md:p-12">
-                        <h2 className="text-white text-2xl md:text-3xl font-medium drop-shadow-md">
+                        <h2 className="text-amber-950 relative bottom-25 text-2xl md:text-3xl font-medium drop-shadow-md">
                             Các sản phẩm mới
                         </h2>
                         </div>
@@ -79,8 +79,8 @@ export default function CollectionPage() {
 
                     {/* Nội dung căn giữa phía dưới */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center md:justify-end md:pb-32">
-                        <h2 className="text-white text-3xl md:text-4xl font-medium mb-6 drop-shadow-md text-center">
-                        Các sản phẩm bán chạy
+                        <h2 className="text-amber-950 text-3xl md:text-4xl font-medium mb-6 drop-shadow-md text-center">
+                        Các sản phẩm <br></br> bán chạy
                         </h2>
                         <button className="bg-gray-800/90 hover:bg-black text-white px-8 py-2.5 rounded-full backdrop-blur-sm transition-colors duration-300 text-sm md:text-base font-medium">
                         Mua ngay
