@@ -58,3 +58,78 @@ npm run dev
 ```
 Then Ctrl+Click on the link _localhost:<port>_ appear on the terminal.
 From now on, whenever you want to run the project, just access to frontend, open the terminal and run `npm run dev`
+
+------------
+
+# Phiên bản tiếng Việt:
+# Website Thương mại điện tử CNS
+
+## Mô tả
+Dự án được tài trợ bởi Phương Mai thuộc Đại học Kinh tế TP.HCM (UEH). Được phát triển bởi Mr. Toàn Nguyễn thuộc Đại học Bách Khoa TP.HCM (HCMUT).
+
+## Hướng dẫn chạy dự án
+
+### Yêu cầu cài đặt (Prerequisite)
+Dưới đây là các công cụ bạn cần cài đặt trước khi chạy dự án này trên máy cá nhân:
+- **Git:** Cài đặt git [tại đây](https://git-scm.com/install/). Chọn hệ điều hành bạn đang sử dụng, sau đó tải xuống trình cài đặt.
+- **Nodejs:** Cài đặt Nodejs [tại đây](https://nodejs.org/en/download/current). Chọn hệ điều hành bạn đang sử dụng, sau đó tải xuống trình cài đặt.
+
+Đừng ngần ngại liên hệ Mr. Toàn nếu bạn gặp bất kỳ vấn đề nào trong quá trình cài đặt (Zalo: 0764161116).
+
+### Thiết lập môi trường
+
+1. **Clone dự án về máy**
+
+**Đối với Windows 11:**
+- Tạo một thư mục mới ở bất kỳ đâu trong File Explorer.
+- Mở thư mục này, nhấp chuột phải vào khoảng trống, sau đó chọn "Open in Terminal" (hoặc "Run as terminal").
+- Sao chép lệnh sau vào terminal vừa mở:
+```
+git clone [https://github.com/minhtoan-nmt/cns-project.git](https://github.com/minhtoan-nmt/cns-project.git)
+```
+Đối với các hệ điều hành khác:
+
+Tạo một thư mục mới ở bất kỳ đâu trên máy tính của bạn.
+
+Sử dụng terminal và truy cập vào thư mục đó.
+
+```Bash
+cd <đường-dẫn-thư-mục-của-bạn>
+```
+Ví dụ: nếu địa chỉ thư mục mới tạo của bạn là D:\cns\project_src, hãy dán lần lượt các lệnh sau:
+
+```Bash
+D:
+cd D:\cns\project_src
+```
+Sao chép lệnh sau vào terminal vừa mở:
+
+```Bash
+git clone [https://github.com/minhtoan-nmt/cns-project.git](https://github.com/minhtoan-nmt/cns-project.git)
+```
+Bạn sẽ thấy các tập tin xuất hiện. Vui lòng giữ cửa sổ terminal mở cho các bước tiếp theo.
+
+Cài đặt thư viện (Dependency)
+
+Dán lệnh sau vào terminal để truy cập vào thư mục /frontend.
+
+```Bash
+cd .\frontend\
+```
+(Bạn có thể gõ cd fr sau đó nhấn phím Tab để tự động hoàn thành).
+
+Dán lệnh sau để cài đặt các thư viện cần thiết (QUAN TRỌNG):
+
+```Bash
+npm i
+```
+Chạy dự án Frontend
+
+Chạy lệnh này trên terminal của bạn:
+
+```Bash
+npm run dev
+```
+Sau đó giữ phím Ctrl + Nhấp chuột trái vào liên kết localhost:<port> xuất hiện trên terminal.
+
+Từ giờ trở đi, bất cứ khi nào bạn muốn chạy dự án, chỉ cần truy cập vào thư mục frontend, mở terminal và chạy lệnh npm run dev.
