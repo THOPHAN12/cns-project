@@ -54,19 +54,21 @@ export default function WhatsNewPage() {
                     {/* --- ELEMENT 1: Thử đồ bằng AR --- */}
                 <div className="bg-white w-full max-w-6xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col md:flex-row overflow-hidden">
                     {/* Nội dung bên trái */}
-                    <div className="p-6 rounded-lg flex flex-col justify-center">
+                    <div className="p-6 w-3/4 rounded-lg flex flex-col justify-center">
                     <h2 className="text-2xl md:text-4xl font-semibold text-gray-900 mb-2">
-                        Thử đồ bằng AR
+                        AI Body Scan
                     </h2>
-                    <p className="text-gray-500 mb-6 text-lg">
+                    {/* <p className="text-gray-500 mb-6 text-lg">
                         Xem trước trang phục của chúng tôi trên người bạn
-                    </p>
+                    </p> */}
 
-                    <ul className="space-y-3 mb-4">
+                    {/* <ul className="space-y-3 mb-4">
                         <ListItem text="Xem bản thân trong nhiều trang phục khác nhau" />
                         <ListItem text="Thử trước khi mua" />
                         <ListItem text="Nâng cao trải nghiệm mua sắm" />
-                    </ul>
+                    </ul> */}
+                    <p className="text-gray-500 mb-6 text-lg">Cùng CNS cá nhân hóa trải nghiệm mặc
+Bằng những thao tác cơ bản để quét dáng người, hệ thống AI của CNS phân tích tỷ lệ cơ thể và đề xuất thiết kế phù hợp. Mỗi lựa chọn đều dựa trên bạn, chỉ dành cho bạn, không phải tiêu chuẩn chung.</p>
 
                     <div>
                         <ActionButton text="Khám phá ngay" />

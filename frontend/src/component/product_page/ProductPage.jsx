@@ -27,6 +27,7 @@ import img_17_2 from "../../assets/mock_product/17.2.png";
 import img_5_2 from "../../assets/mock_product/5.2.png";
 import img_17_1 from "../../assets/mock_product/17.1.png";
 import blush_court_set from "../../assets/mock_product/Blush Court Set.png";
+import Button from "../Button";
 
 const mockProductImages = [
     img_3_1,
@@ -96,7 +97,7 @@ export default function ProductPage() {
             <div className="relative w-full p-4"> 
             <div className="flex flex-row justify-between items-center">
                 <div className="flex flex-row gap-2 items-center">
-                    <p className="font-semibold text-black">PHÂN LOẠI</p>
+                    <p className="font-semibold text-black">Phân loại</p>
                     
                     {/* Dùng text thay cho Icon để test */}
                     <button 
@@ -107,8 +108,9 @@ export default function ProductPage() {
                     </button>
 
                     <span className="text-gray-500"><IoSearch /></span>
-                    <input type="search" className="border-b border-black" placeholder="Test input..." />
+                    <input type="search" className="border-b border-black" placeholder="Tìm kiếm theo tên..." />
                 </div>
+                <Button content={"Thử AR Try-on"} />
                 <div className="flex flex-row gap-2 items-center">
                     <div>Bộ lọc</div>
                     <button onClick={() => {
