@@ -87,11 +87,10 @@ Dưới đây là các công cụ bạn cần cài đặt trước khi chạy d�
 ```
 git clone [https://github.com/minhtoan-nmt/cns-project.git](https://github.com/minhtoan-nmt/cns-project.git)
 ```
-Đối với các hệ điều hành khác:
+**Đối với các hệ điều hành khác:**
 
-Tạo một thư mục mới ở bất kỳ đâu trên máy tính của bạn.
-
-Sử dụng terminal và truy cập vào thư mục đó.
+- Tạo một thư mục mới ở bất kỳ đâu trên máy tính của bạn.
+- Sử dụng terminal và truy cập vào thư mục đó.
 
 ```Bash
 cd <đường-dẫn-thư-mục-của-bạn>
@@ -102,28 +101,28 @@ Ví dụ: nếu địa chỉ thư mục mới tạo của bạn là D:\cns\proje
 D:
 cd D:\cns\project_src
 ```
-Sao chép lệnh sau vào terminal vừa mở:
+- Sao chép lệnh sau vào terminal vừa mở:
 
 ```Bash
 git clone [https://github.com/minhtoan-nmt/cns-project.git](https://github.com/minhtoan-nmt/cns-project.git)
 ```
 Bạn sẽ thấy các tập tin xuất hiện. Vui lòng giữ cửa sổ terminal mở cho các bước tiếp theo.
 
-Cài đặt thư viện (Dependency)
+**2. Cài đặt thư viện (Dependency)**
 
-Dán lệnh sau vào terminal để truy cập vào thư mục /frontend.
+- Dán lệnh sau vào terminal để truy cập vào thư mục /frontend.
 
 ```Bash
 cd .\frontend\
 ```
 (Bạn có thể gõ cd fr sau đó nhấn phím Tab để tự động hoàn thành).
 
-Dán lệnh sau để cài đặt các thư viện cần thiết (QUAN TRỌNG):
+- Dán lệnh sau để cài đặt các thư viện cần thiết (QUAN TRỌNG):
 
 ```Bash
 npm i
 ```
-Chạy dự án Frontend
+**3. Chạy dự án Frontend**
 
 Chạy lệnh này trên terminal của bạn:
 
@@ -132,4 +131,4 @@ npm run dev
 ```
 Sau đó giữ phím Ctrl + Nhấp chuột trái vào liên kết localhost:<port> xuất hiện trên terminal.
 
-Từ giờ trở đi, bất cứ khi nào bạn muốn chạy dự án, chỉ cần truy cập vào thư mục frontend, mở terminal và chạy lệnh npm run dev.
+Từ giờ trở đi, bất cứ khi nào bạn muốn chạy dự án, chỉ cần truy cập vào thư mục frontend, mở terminal và chạy lệnh `npm run dev`.
