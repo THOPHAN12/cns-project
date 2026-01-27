@@ -5,6 +5,7 @@ import img1 from "../../assets/collection/3.png"
 import img2 from "../../assets/collection/2.png"
 import img3 from "../../assets/collection/baby top.png"
 import { useState } from "react";
+import Footer from "../Footer";
 
 export default function CollectionPage() {
     const [display, setDisplay] = useState(false);
@@ -89,6 +90,7 @@ export default function CollectionPage() {
 
                 </div>
                 </div>) }
+                <Footer />
         </div>
     )
 }

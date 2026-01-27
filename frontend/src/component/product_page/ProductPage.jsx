@@ -28,6 +28,7 @@ import img_5_2 from "../../assets/mock_product/5.2.png";
 import img_17_1 from "../../assets/mock_product/17.1.png";
 import blush_court_set from "../../assets/mock_product/Blush Court Set.png";
 import Button from "../Button";
+import Footer from "../Footer";
 
 const mockProductImages = [
     img_3_1,
@@ -153,5 +154,6 @@ export default function ProductPage() {
                 ))}
             </div>
         </div>
+        <Footer />
     </div>)
 }

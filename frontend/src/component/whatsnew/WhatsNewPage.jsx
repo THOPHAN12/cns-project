@@ -7,6 +7,7 @@ import React from 'react';
 import computerImage from "../../assets/anaresult.png"
 import sweatshirt1 from "../../assets/sweatshirt-full.png"
 import sweatshirt2 from "../../assets/sweatshirt2.png"
+import Footer from "../Footer";
 
 const ListItem = ({ text }) => (
   <li className="flex items-center space-x-2 text-gray-700 font-medium">
@@ -137,7 +138,7 @@ Bằng những thao tác cơ bản để quét dáng người, hệ thống AI c
 
                 </div>
             </div>
-            
+            <Footer />
         </div>
     )
 }
