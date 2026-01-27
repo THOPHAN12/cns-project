@@ -2,6 +2,7 @@ import Navbar from "../Navbar";
 import image1 from "../../assets/about-us-img/image1.jpg";
 import image2 from "../../assets/about-us-img/2.png";
 import image4 from "../../assets/about-us-img/4.png";
+import Footer from "../Footer";
 
 export default function AboutUsPage() {
     return (
@@ -91,6 +92,7 @@ export default function AboutUsPage() {
         </div>
       </section>
     </div>
+    <Footer />
     </div>
     );
 }
