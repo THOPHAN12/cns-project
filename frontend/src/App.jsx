@@ -9,6 +9,7 @@ import ProductDetail from './component/product_page/ProductDetail'
 import CollectionPage from './component/collectionpage/CollectionPage'
 import WhatsNewPage from './component/whatsnew/WhatsNewPage'
 import AboutUsPage from './component/about_us/AboutUsPage'
+import SupportPage from './component/support_page/SupportPage'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path='/collection' element={<CollectionPage />} />
         <Route path='/whats-new' element={<WhatsNewPage />} />
         <Route path='/about-us' element={<AboutUsPage />} />
+        <Route path='/support' element={<SupportPage />} />
       </Routes>
     </BrowserRouter>
   )

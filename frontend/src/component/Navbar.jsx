@@ -19,7 +19,7 @@ export default function Navbar() {
                     <Link to={"/whats-new"}><p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Tính năng mới</p></Link>
                     <Link to={"/about-us"}><p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Về chúng tôi</p></Link>
                     <p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Tài khoản</p>
-                    <p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Hỗ trợ</p>
+                    <Link to={"/support"}><p className='text-lg rounded-lg hover:bg-gray-200 py-5 px-2'>Hỗ trợ</p></Link>
                 </div>
             </div>
         </div>
