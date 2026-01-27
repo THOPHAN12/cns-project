@@ -10,6 +10,8 @@ import CollectionPage from './component/collectionpage/CollectionPage'
 import WhatsNewPage from './component/whatsnew/WhatsNewPage'
 import AboutUsPage from './component/about_us/AboutUsPage'
 import SupportPage from './component/support_page/SupportPage'
+import LoginPage from './component/login/LoginPage'
+import SuccessPage from './component/login/successpage/SuccessPage'
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path='/whats-new' element={<WhatsNewPage />} />
         <Route path='/about-us' element={<AboutUsPage />} />
         <Route path='/support' element={<SupportPage />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/success' element={<SuccessPage />} />
       </Routes>
     </BrowserRouter>
   )
