@@ -46,7 +46,7 @@ export default function ProductDetail() {
                 </div>
             )}
             {/* Top filter/search bar */}
-            <div className="flex flex-row justify-between bg-[#f3eae5] px-30 py-10 text-2xl">
+            {/* <div className="flex flex-row justify-between bg-[#f3eae5] px-30 py-10 text-2xl">
                 <div className="flex flex-row gap-2 items-center">
                     <p className="font-semibold">PHÂN LOẠI</p>
                     <IoSearch />
@@ -56,7 +56,7 @@ export default function ProductDetail() {
                     <p>Filter</p>
                     <CiCircleChevDown />
                 </div>
-            </div>
+            </div> */}
 
             {/* Breadcrumb */}
             <div className="text-base text-[#7c6f63] flex items-center gap-2 px-30 py-10">
@@ -80,14 +80,14 @@ export default function ProductDetail() {
                 {/* Product details */}
                 <div className="flex-1 max-w-xl">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-4xl font-semibold mb-2">Blush Court Set</h1>
+                        <h1 className="text-4xl font-semibold mb-2">Soft Wrap Long Sleeve</h1>
                         <button className="text-2xl text-[#bdbdbd] hover:text-[#e5d8ce] bg-white rounded-full p-2 border border-[#e5d8ce] w-10 h-10 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 7.5l-6 6-3-3" />
                             </svg>
                         </button>
                     </div>
-                    <p className="text-2xl font-light mb-2">1,000,000<span className="text-base font-normal ml-1">vnd</span></p>
+                    <p className="text-2xl font-light mb-2">515,000<span className="text-base font-normal ml-1">VNĐ</span></p>
                     <div className="border-b border-[#e5d8ce] my-4"></div>
 
                     {/* Size selection */}
