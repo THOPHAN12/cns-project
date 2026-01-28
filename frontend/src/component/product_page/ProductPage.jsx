@@ -55,15 +55,15 @@ const mockProductImages = [
 ];
 
 const mockProducts = [
-    { imageSrc: img_3_1, productName: "T-shirt", price: 500000 },
+    { imageSrc: img_3_1, productName: "Sweater", price: 500000 },
     { imageSrc: img_4_2, productName: "Sweatshirt", price: 520000 },
-    { imageSrc: img_3_3, productName: "Hoodie", price: 540000 },
-    { imageSrc: img_22_3, productName: "Jacket", price: 560000 },
-    { imageSrc: img_21_2, productName: "Shorts", price: 480000 },
-    { imageSrc: img_20_3, productName: "Pants", price: 530000 },
+    { imageSrc: img_3_3, productName: "Quần Biker", price: 540000 },
+    { imageSrc: img_22_3, productName: "Quần Shorts trắng", price: 560000 },
+    { imageSrc: img_21_2, productName: "Áo khoác vải", price: 480000 },
+    { imageSrc: img_20_3, productName: "Quần dài", price: 530000 },
     { imageSrc: img_20_2, productName: "Leggings", price: 510000 },
     { imageSrc: img_20_1, productName: "Tank Top", price: 470000 },
-    { imageSrc: img_4_3, productName: "Crop Top", price: 495000 },
+    { imageSrc: img_4_3, productName: "Quần Short đen", price: 495000 },
     { imageSrc: img_2_3, productName: "Sports Bra", price: 505000 },
     { imageSrc: img_5_1, productName: "Long Sleeve", price: 515000 },
     { imageSrc: img_2_2, productName: "Pullover", price: 525000 },

@@ -3,6 +3,7 @@ import Navbar from "../Navbar";
 import { IoSearch } from "react-icons/io5";
 import { CiCircleChevDown } from "react-icons/ci";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 import img_5_1 from "../../assets/mock_product/5.1.png";
 
@@ -12,9 +13,38 @@ export default function ProductDetail() {
     const [quantity, setQuantity] = React.useState(2);
     const [selectedSize, setSelectedSize] = React.useState("M");
 
+    const [showNotification, setShowNotification] = useState(false);
+    console.log(showNotification);
+
+    // Hàm xử lý sự kiện
+    const handleAddToCart = () => {
+        // Hiện thông báo
+        setShowNotification(true);
+
+        // Tự động ẩn sau 3 giây (3000ms)
+        setTimeout(() => {
+            setShowNotification(false);
+        }, 3000);
+    };
+
     return (
         <div>
             <Navbar />
+            {/* --- PHẦN THÊM MỚI 2: Giao diện Popup thông báo --- */}
+            {/* Chúng ta dùng fixed để nó nổi lên trên cùng màn hình bất kể cuộn trang đi đâu */}
+            {showNotification && (
+                <div className="fixed top-24 right-5 z-50 transition animate-bounce">
+                    <div className="bg-[#3a2415] text-white px-6 py-4 rounded shadow-lg flex items-center gap-3 border border-[#e5d8ce]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-green-400">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div>
+                            <h4 className="font-bold">Thành công!</h4>
+                            <p className="text-sm text-gray-200">Đã thêm sản phẩm vào giỏ hàng.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
             {/* Top filter/search bar */}
             <div className="flex flex-row justify-between bg-[#f3eae5] px-30 py-10 text-2xl">
                 <div className="flex flex-row gap-2 items-center">
@@ -98,7 +128,10 @@ export default function ProductDetail() {
 
                     {/* Action buttons */}
                     <div className="flex flex-row gap-4 mb-4">
-                        <button className="flex-1 py-3 bg-[#f3eae5] border border-[#e5d8ce] text-[#7c6f63] font-medium rounded hover:bg-[#e5d8ce] transition">Thêm Vào Giỏ Hàng</button>
+                        <button className="flex-1 py-3 hover:scale-120 transition hover:cursor-pointer bg-[#f3eae5] border border-[#e5d8ce] text-[#7c6f63] font-medium rounded hover:bg-[#e5d8ce] transition"
+                            onClick={() => {
+                                handleAddToCart();
+                            }}>Thêm Vào Giỏ Hàng</button>
                         <button className="flex-1 py-3 bg-[#f3eae5] border border-[#e5d8ce] text-[#7c6f63] font-medium rounded hover:bg-[#e5d8ce] transition">Thêm Vào Danh Sách Yêu Thích</button>
                     </div>
                     <button className="w-full py-3 bg-[#3a2415] text-white font-semibold rounded text-lg hover:bg-[#5a3a1a] transition">Mua Ngay</button>
