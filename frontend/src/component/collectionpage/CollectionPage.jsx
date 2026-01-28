@@ -44,7 +44,7 @@ export default function CollectionPage() {
                         
                         {/* Nội dung text */}
                         <div className="absolute inset-0 flex items-center justify-start p-8 md:p-12">
-                        <h2 className="text-amber-950 text-2xl md:text-3xl font-medium drop-shadow-md">
+                        <h2 className="text-amber-950 text-2xl md:text-3xl font-medium drop-shadow-md relative bottom-35">
                             The Clean Era Collection
                         </h2>
                         </div>
@@ -60,7 +60,7 @@ export default function CollectionPage() {
                         <div className="absolute inset-0 bg-black/10"></div>
                         
                         <div className="absolute bottom-0 left-0 p-8 md:p-12">
-                        <h2 className="text-amber-950 relative bottom-25 text-2xl md:text-3xl font-medium drop-shadow-md">
+                        <h2 className="text-amber-950 relative bottom-50 text-2xl md:text-3xl font-medium drop-shadow-md">
                             Các sản phẩm mới
                         </h2>
                         </div>
