@@ -85,7 +85,7 @@ Dưới đây là các công cụ bạn cần cài đặt trước khi chạy d�
 - Mở thư mục này, nhấp chuột phải vào khoảng trống, sau đó chọn "Open in Terminal" (hoặc "Run as terminal").
 - Sao chép lệnh sau vào terminal vừa mở:
 ```
-git clone [https://github.com/minhtoan-nmt/cns-project.git](https://github.com/minhtoan-nmt/cns-project.git)
+git clone https://github.com/minhtoan-nmt/cns-project.git
 ```
 **Đối với các hệ điều hành khác:**
 
