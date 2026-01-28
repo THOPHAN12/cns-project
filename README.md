@@ -104,7 +104,7 @@ cd D:\cns\project_src
 - Sao chép lệnh sau vào terminal vừa mở:
 
 ```Bash
-git clone [https://github.com/minhtoan-nmt/cns-project.git](https://github.com/minhtoan-nmt/cns-project.git)
+git clone https://github.com/minhtoan-nmt/cns-project.git
 ```
 Bạn sẽ thấy các tập tin xuất hiện. Vui lòng giữ cửa sổ terminal mở cho các bước tiếp theo.
 
