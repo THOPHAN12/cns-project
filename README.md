@@ -44,7 +44,7 @@ You will see the files there. **Please keep the terminal open for the next steps
 2. Install the dependency
 - Paste the following to the terminal to access the /frontend folder.
 ```
-cd .\frontend\
+cd .\cns-project\frontend\
 ```
 (You can type `cd fr` then press Tab for auto-completion.
 - Paste the following to install dependency **(IMPORTANT)**
@@ -113,7 +113,7 @@ Bạn sẽ thấy các tập tin xuất hiện. Vui lòng giữ cửa sổ termi
 - Dán lệnh sau vào terminal để truy cập vào thư mục /frontend.
 
 ```Bash
-cd .\frontend\
+cd .\cns-project\frontend\
 ```
 (Bạn có thể gõ cd fr sau đó nhấn phím Tab để tự động hoàn thành).
 
