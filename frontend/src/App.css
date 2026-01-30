@@ -7,14 +7,14 @@
 }
 
 @keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% { transform: translateX(135%); }
+  100% { transform: translateX(-135%); }
 }
 
 .animate-marquee {
   display: inline-block;
   white-space: nowrap;
-  animation: marquee 7s linear infinite;
+  animation: marquee 10s linear infinite;
 }
 
 /* #support-page {
