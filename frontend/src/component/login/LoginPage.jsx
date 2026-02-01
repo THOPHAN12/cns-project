@@ -4,7 +4,7 @@ import Navbar from "../Navbar";
 export default function LoginPage() {
     return (<>
         <Navbar />
-        <div className=" flex items-center justify-center bg-white">
+        <div className=" flex items-center justify-center bg-white mt-30">
             {/* Container Card */}
             <div className="w-full max-w-[550px] bg-[#f9f3f0] px-12 py-16 shadow-sm">
                 

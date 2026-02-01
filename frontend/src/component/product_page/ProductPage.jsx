@@ -6,6 +6,8 @@ import { useState } from "react";
 // Import all images from mock_products folder
 
 
+import img_1_1 from "../../assets/mock_product/1.1.png";
+import img_1_3 from "../../assets/mock_product/1.3.png";
 import img_3_1 from "../../assets/mock_product/3.1.png";
 import img_4_2 from "../../assets/mock_product/4.2.png";
 import img_3_3 from "../../assets/mock_product/3.3.png";
@@ -55,8 +57,10 @@ const mockProductImages = [
 ];
 
 const mockProducts = [
-    { imageSrc: img_3_1, productName: "Soft Gray Hoodie", price: 500000 },
-    { imageSrc: img_4_2, productName: "Cleannie Hoodie", price: 520000 },
+    { imageSrc: img_1_1, productName: "Soft Gray Hoodie", price: 500000 },
+    { imageSrc: img_1_3, productName: "Cleannie Hoodie", price: 520000 },
+    { imageSrc: img_2_2, productName: "CNS Ribbed V-neck Bra", price: 525000 },
+    { imageSrc: img_2_3, productName: "CNS Contour Active Pants", price: 505000 },
     { imageSrc: img_3_3, productName: "Soft Gray Shorts", price: 540000 },
     { imageSrc: img_22_3, productName: "Soft Brown Shorts", price: 560000 },
     { imageSrc: img_21_2, productName: "CNS Essential Hoodie Zip", price: 480000 },
@@ -64,9 +68,7 @@ const mockProducts = [
     { imageSrc: img_20_2, productName: "Clean Shirt Half Zip", price: 510000 },
     { imageSrc: img_20_1, productName: "Clean Fit Half Zip", price: 470000 },
     { imageSrc: img_4_3, productName: "Soft Black Shorts", price: 495000 },
-    { imageSrc: img_2_3, productName: "CNS Contour Active Pants", price: 505000 },
     { imageSrc: img_5_1, productName: "Soft Wrap Long Sleeve", price: 515000 },
-    { imageSrc: img_2_2, productName: "CNS Ribbed V-neck Bra", price: 525000 },
     { imageSrc: img_19_3, productName: "CNS Ribbed V-neck Bra", price: 535000 },
     { imageSrc: img_19_1, productName: "Windbreaker", price: 545000 },
     { imageSrc: img_18_3, productName: "Joggers", price: 555000 },
@@ -96,69 +98,42 @@ export default function ProductPage() {
     ]
     return (<div id="product-page">
         <Navbar />
-        <div id="product-page-body" className="bg-[#f3eae5] px-30 py-10 text-2xl">
-            <div className="relative w-full p-4"> 
-            <div className="flex flex-row justify-between items-center">
-                <div className="flex flex-row gap-2 items-center">
-                    <p className="font-semibold text-black">Phân loại</p>
-                    
-                    {/* Dùng text thay cho Icon để test */}
-                    <button 
-                        onClick={() => setisOpenTypeSel(!isOpenTypeSel)}
-                        className=""
-                    >
-                        {isOpenTypeSel ? <CiCircleChevUp /> : <CiCircleChevDown />}
-                    </button>
-
-                    <span className="text-gray-500"><IoSearch /></span>
-                    <input type="search" className="border-b border-black" placeholder="Tìm kiếm theo tên..." />
+        <div id="product-page-body" className=" px-10 py-30 text-2xl">
+            {/* <h1 className="text-5xl font-bold text-amber-900 text-center">Sản phẩm</h1> */}
+            {/* <p className="text-center mt-2">Chất liệu và kiểu dáng độc quyền</p> */}
+            <div className="flex flex-row justify-between">
+                <div className="flex flex-row gap-15 items-center justify-center px-10">
+                    <p className="text-lg text-center">PHÂN LOẠI</p>
+                    <div className="flex flex-row gap-3 items-center">
+                        <IoSearch />
+                        <input className="border-b-2" />
+                    </div>
                 </div>
-                <button className="bg-gray-700 text-white px-5 py-2 rounded-lg text-2xl"
-                         onClick={() => {
-                    setIsOpenPopUp(true);
-                }}>
-                    Thử AR Try-on
-                </button>
-                <div className="flex flex-row gap-2 items-center">
-                    <div>Bộ lọc</div>
-                    <button onClick={() => {
-                        setIsOpenFilter(!isOpenFilter);
-                    }}>{isOpenFilter ? <CiCircleChevUp /> : <CiCircleChevDown />}</button>
+                <div className="flex flex-row gap-3 items-center">
+                    <p className="text-lg">FILTER</p>
+                    <CiCircleChevDown />
                 </div>
-                
             </div>
-
-            {/* Modal dropdown */}
-            {isOpenTypeSel && (
-                <div className="absolute top-12 left-0 w-64 bg-white shadow-xl border border-gray-300 z-50">
-                    {options.map((opt, i) => (
-                        <div key={i} className="p-2 hover:bg-gray-200 border-b cursor-pointer text-black">
-                            {opt}
-                        </div>
+            <div className="relative w-full p-4"> 
+            </div>
+            <div className="flex flex-row text-lg">
+                <div className="w-120">
+                    {options.map((option) => (<div className="flex flex-row border-b-2 border-gray-400 py-5 justify-between items-center">
+                        {option}
+                        <CiCircleChevDown />
+                    </div>))}
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                    {mockProducts.map((product, idx) => (
+                        <ProductItem
+                            key={idx}
+                            source={product.imageSrc}
+                            alterText={product.productName}
+                            productName={product.productName}
+                            price={product.price.toLocaleString("vi-VN") + " VNĐ"}
+                        />
                     ))}
                 </div>
-            )}
-
-            {isOpenFilter && (
-                <div className="absolute top-12 left-250 w-64 bg-white shadow-xl border border-gray-300 z-50">
-                    {optionFilter.map((opt, i) => (
-                        <div key={i} className="p-2 hover:bg-gray-200 border-b cursor-pointer text-black">
-                            {opt}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-            <div className="grid grid-cols-3 gap-4 mt-8">
-                {mockProducts.map((product, idx) => (
-                    <ProductItem
-                        key={idx}
-                        source={product.imageSrc}
-                        alterText={product.productName}
-                        productName={product.productName}
-                        price={product.price.toLocaleString("vi-VN") + " VNĐ"}
-                    />
-                ))}
             </div>
         </div>
         <VideoPopUp isOpenPopUp={isOpenPopUp} setIsOpenPopUp={setIsOpenPopUp}/>

@@ -175,7 +175,7 @@ export default function SuccessPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white flex justify-center items-start p-10 font-sans text-[#4a3b32]">
+      <div className="min-h-screen relative top-30 bg-white flex justify-center items-start p-10 font-sans text-[#4a3b32]">
         
         {/* Main Container */}
         <div className="flex w-full max-w-6xl gap-16">

@@ -10,7 +10,7 @@ export default function AboutUsPage() {
         <Navbar />
     <div className="w-full font-sans text-white bg-[#A59588]">
       {/* 1. HERO SECTION */}
-      <section className="w-full h-[40vh] md:h-[500px]">
+      <section className="w-full h-screen">
         {/* Placeholder cho ảnh bìa (Business Cards) */}
         <div className="w-full h-full bg-gray-800 relative overflow-hidden">
           <img 
@@ -51,7 +51,7 @@ export default function AboutUsPage() {
         {/* Cột hình ảnh (Phải) */}
         <div className="w-full md:w-1/2 min-h-[400px]">
           <img 
-            src={image2}
+            src={image4}
             alt="Woman with cap" 
             className="w-full h-full object-cover"
           />
