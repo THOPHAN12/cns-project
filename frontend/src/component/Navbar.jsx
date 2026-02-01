@@ -55,7 +55,7 @@ export default function Navbar() {
                     </button>
                     <Link to={'/login'}><CgProfile size={30} className='opacity-50'/></Link>
                     {/* <CiHeart size={30} className='opacity-50' /> */}
-                    <BsBasket3 size={30} className='opacity-50' />
+                    <Link to={'/cart'}><BsBasket3 size={30} className='opacity-50' /></Link>
                 </div>
             </div>
         </div>

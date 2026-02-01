@@ -12,6 +12,7 @@ import AboutUsPage from './component/about_us/AboutUsPage'
 import SupportPage from './component/support_page/SupportPage'
 import LoginPage from './component/login/LoginPage'
 import SuccessPage from './component/login/successpage/SuccessPage'
+import CartPage from './component/cart/CartPage'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path='/support' element={<SupportPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/success' element={<SuccessPage />} />
+        <Route path='/cart' element={<CartPage />} />
       </Routes>
     </BrowserRouter>
   )

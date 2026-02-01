@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+body {
+  color: #3e3226;
+}
+
 #homepage-body {
   background-image: url('./assets/snapedit_1769088011261.jpeg');
   background-size: cover;
