@@ -175,7 +175,7 @@ export default function SuccessPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white flex justify-center items-start p-10 font-sans text-[#4a3b32]">
+      <div className="min-h-screen relative top-30 bg-white flex justify-center items-start p-10 font-sans text-[#4a3b32]">
         
         {/* Main Container */}
         <div className="flex w-full max-w-6xl gap-16">
@@ -190,11 +190,6 @@ export default function SuccessPage() {
           {/* RIGHT COLUMN: Sidebar Menu */}
           <div className="w-64 pt-2 flex-shrink-0">
             <ul className="text-[#4a3b32] space-y-2">
-              <li className="pb-2 border-b border-gray-200">
-                <a href="#" className="hover:text-black block">
-                  Đăng nhập
-                </a>
-              </li>
 
               {/* Profile Tab */}
               <li 
