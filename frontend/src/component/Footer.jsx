@@ -16,21 +16,21 @@ const Footer = () => {
           
           {/* --- CỘT TRÁI (Chiếm 5 phần) --- */}
           <div className="lg:col-span-5 flex flex-col space-y-8">
-            <div>
-              <h2 className="text-4xl uppercase tracking-wide font-normal mb-6">CNS</h2>
-              <p className="text-sm leading-7 opacity-90">
+            <div className='w-full'>
+              <h2 className="text-4xl uppercase tracking-wide w-full font-normal mb-6">CNS</h2>
+              <p className="text-lg leading-7 opacity-90">
                 Thời trang tối giản cho lối sống hiện đại.<br />
                 Thiết kế sạch, vừa vặn với cơ thể thật và được tạo nên từ sự chỉn chu của đội ngũ CNS.
               </p>
             </div>
 
-            <div className="space-y-4">
-              <p className="text-xs opacity-70 max-w-sm">
+            <div className="space-y-4 w-150">
+              <p className="text-lg opacity-70 w-full">
                 Hãy tham gia cộng đồng của chúng tôi để trở thành người đầu tiên cập nhật các bộ sưu tập mới nhất, chương trình ưu đãi đặc biệt và những điều sắp ra mắt
               </p>
               
               {/* Input Email Custom */}
-              <div className="relative max-w-sm group">
+              <div className="relative w-full group">
                 <input 
                   type="email" 
                   placeholder="E-mail" 
@@ -57,8 +57,8 @@ const Footer = () => {
           {/* --- CỘT PHẢI (Chiếm 5 phần) --- */}
           <div className="lg:col-span-5 flex flex-col justify-between space-y-8 text-left lg:text-right">
             <div>
-              <h2 className="text-3xl font-normal mb-6">Kết Nối Với CNS</h2>
-              <p className="text-sm leading-7 opacity-90 ml-auto">
+              <h2 className="text-4xl font-normal mb-6">Kết Nối Với CNS</h2>
+              <p className="text-lg leading-7 opacity-90 ml-auto">
                 Theo dõi chúng tôi để cập nhật bộ sưu tập mới, câu chuyện phía sau từng sản phẩm mà chúng mình tâm huyết tạo ra, và hành trình theo đuổi thời trang bền vững.
               </p>
             </div>

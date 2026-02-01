@@ -56,7 +56,7 @@ export default function SupportPage() {
         {/* <div id="support-page" className="bg-amber-950 text-white">
             
         </div> */}
-        <div className="min-h-screen bg-[#3E2b22] text-white font-sans relative overflow-hidden">
+        <div className="min-h-screen mt-15 bg-[#3E2b22] text-white font-sans relative overflow-hidden">
       
       {/* Background Watermark Text "CNS" */}
             <div className="absolute top-0 left-0 w-full h-[600px] flex justify-center items-start pointer-events-none z-0 opacity-[0.03]">
