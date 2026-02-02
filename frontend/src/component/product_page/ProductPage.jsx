@@ -5,79 +5,40 @@ import ProductItem from "./ProductItem";
 import { useState } from "react";
 // Import all images from mock_products folder
 
+import imgCampaign from "../../assets/mock_product/Campaign.jpg";
+import imgClassicZipHoodie from "../../assets/mock_product/Classic Zip Hoodie.jpg";
+import imgEssentialRibbed from "../../assets/mock_product/Essential Ribbed Tank Top – 3 Pack.jpg";
+import img4965 from "../../assets/mock_product/IMG_4965.JPG";
+import img4966 from "../../assets/mock_product/IMG_4966.JPG";
+import img4967 from "../../assets/mock_product/IMG_4967.JPG";
+import img4970 from "../../assets/mock_product/IMG_4970.JPG";
+import img4974 from "../../assets/mock_product/IMG_4974.JPG";
+import img4975 from "../../assets/mock_product/IMG_4975.JPG";
+import imgTep003 from "../../assets/mock_product/Tệp_003.png";
+import imgTep004 from "../../assets/mock_product/Tệp_004.png";
+import imgTep006 from "../../assets/mock_product/Tệp_006.png";
+import imgTep007 from "../../assets/mock_product/Tệp_007.png";
+import imgTep008 from "../../assets/mock_product/Tệp_008.png";
 
-import img_1_1 from "../../assets/mock_product/1.1.png";
-import img_1_3 from "../../assets/mock_product/1.3.png";
-import img_3_1 from "../../assets/mock_product/3.1.png";
-import img_4_2 from "../../assets/mock_product/4.2.png";
-import img_3_3 from "../../assets/mock_product/3.3.png";
-import img_22_3 from "../../assets/mock_product/22.3.png";
-import img_21_2 from "../../assets/mock_product/21.2.png";
-import img_20_3 from "../../assets/mock_product/20.3.png";
-import img_20_2 from "../../assets/mock_product/20.2.png";
-import img_20_1 from "../../assets/mock_product/20.1.png";
-import img_4_3 from "../../assets/mock_product/4.3.png";
-import img_2_3 from "../../assets/mock_product/2.3.png";
-import img_5_1 from "../../assets/mock_product/5.1.png";
-import img_2_2 from "../../assets/mock_product/2.2.png";
-import img_19_3 from "../../assets/mock_product/19.3.png";
-import img_19_1 from "../../assets/mock_product/19.1.png";
-import img_18_3 from "../../assets/mock_product/18.3.png";
-import img_18_1 from "../../assets/mock_product/18.1.png";
-import img_17_3 from "../../assets/mock_product/17.3.png";
-import img_17_2 from "../../assets/mock_product/17.2.png";
-import img_5_2 from "../../assets/mock_product/5.2.png";
-import img_17_1 from "../../assets/mock_product/17.1.png";
-import blush_court_set from "../../assets/mock_product/Blush Court Set.png";
 import Button from "../Button";
 import Footer from "../Footer";
 import VideoPopUp from "../VideoPopUp";
 
-const mockProductImages = [
-    img_3_1,
-    img_4_2,
-    img_3_3,
-    img_22_3,
-    img_21_2,
-    img_20_3,
-    img_20_2,
-    img_20_1,
-    img_4_3,
-    img_2_3,
-    img_5_1,
-    img_2_2,
-    img_19_3,
-    img_19_1,
-    img_18_3,
-    img_18_1,
-    img_17_3,
-    img_17_2,
-    img_5_2,
-    img_17_1,
-];
-
-const mockProducts = [
-    { imageSrc: img_1_1, productName: "Soft Gray Hoodie", price: 500000 },
-    { imageSrc: img_1_3, productName: "Cleannie Hoodie", price: 520000 },
-    { imageSrc: img_2_2, productName: "CNS Ribbed V-neck Bra", price: 525000 },
-    { imageSrc: img_2_3, productName: "CNS Contour Active Pants", price: 505000 },
-    { imageSrc: img_3_3, productName: "Soft Gray Shorts", price: 540000 },
-    { imageSrc: img_22_3, productName: "Soft Brown Shorts", price: 560000 },
-    { imageSrc: img_21_2, productName: "CNS Essential Hoodie Zip", price: 480000 },
-    { imageSrc: img_20_3, productName: "CNS Daily Pants", price: 530000 },
-    { imageSrc: img_20_2, productName: "Clean Shirt Half Zip", price: 510000 },
-    { imageSrc: img_20_1, productName: "Clean Fit Half Zip", price: 470000 },
-    { imageSrc: img_4_3, productName: "Soft Black Shorts", price: 495000 },
-    { imageSrc: img_5_1, productName: "Soft Wrap Long Sleeve", price: 515000 },
-    { imageSrc: img_19_3, productName: "CNS Ribbed V-neck Bra", price: 535000 },
-    { imageSrc: img_19_1, productName: "Windbreaker", price: 545000 },
-    { imageSrc: img_18_3, productName: "Joggers", price: 555000 },
-    { imageSrc: img_18_1, productName: "Sweatpants", price: 565000 },
-    { imageSrc: img_17_3, productName: "Vest", price: 575000 },
-    { imageSrc: img_17_2, productName: "Cardigan", price: 585000 },
-    { imageSrc: img_5_2, productName: "Denim Jacket", price: 595000 },
-    { imageSrc: img_17_1, productName: "Polo Shirt", price: 605000 },
-    { imageSrc: blush_court_set, productName: "Polo Blush", price: 123849 },
+export const mockProducts = [
+    { id: 1, imageSrc: imgCampaign, productName: "Summer Campaign Collection", price: "0" }, // Dùng làm banner?
+    { id: 2, imageSrc: imgClassicZipHoodie, productName: "Classic Zip Hoodie Grey", price: "850000" },
+    { id: 3, imageSrc: imgEssentialRibbed, productName: "Essential Ribbed Tank Top (3 Pack)", price: "560000" },
+    { id: 4, imageSrc: img4965, productName: "Sport Set - Butter Cream", price: "620000" },
+    { id: 5, imageSrc: img4966, productName: "Sport Set - Pastel Pink", price: "620000" },
+    { id: 6, imageSrc: img4967, productName: "Active Shorts - White", price: "350000" },
+    { id: 7, imageSrc: img4970, productName: "Yoga Set - Midnight Black", price: "750000" },
+    { id: 8, imageSrc: img4974, productName: "Gym Set - Espresso Brown", price: "750000" },
+    { id: 9, imageSrc: img4975, productName: "Croptop - Chocolate", price: "320000" },
+    { id: 10, imageSrc: imgTep003, productName: "Casual Shorts - Soft Pink", price: "290000" },
+    { id: 11, imageSrc: imgTep004, productName: "Basic Leggings - Black", price: "450000" },
+    { id: 12, imageSrc: imgTep006, productName: "Lounge Set - White", price: "550000" },
+    { id: 13, imageSrc: imgTep007, productName: "Collection Group Shot", price: "0" }, 
+    { id: 14, imageSrc: imgTep008, productName: "Camisole Top - Black", price: "250000" },
 ];
 
 export default function ProductPage() {
@@ -116,8 +77,8 @@ export default function ProductPage() {
             </div>
             <div className="relative w-full p-4"> 
             </div>
-            <div className="flex flex-row text-lg">
-                <div className="w-120">
+            <div className="flex flex-row gap-5 text-lg">
+                <div className="w-100">
                     {options.map((option) => (<div className="flex flex-row border-b-2 border-gray-400 py-5 justify-between items-center">
                         {option}
                         <CiCircleChevDown />

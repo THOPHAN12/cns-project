@@ -5,7 +5,7 @@ body {
 }
 
 #homepage-body {
-  background-image: url('./assets/snapedit_1769088011261.jpeg');
+  background-image: url('./assets/homepage/homepage_bg.png');
   background-size: cover;
   background-position: cover;
 }
@@ -19,6 +19,10 @@ body {
   display: inline-block;
   white-space: nowrap;
   animation: marquee 10s linear infinite;
+}
+
+.cta-button {
+  background-color: rgba(0, 0, 0, 0.25);
 }
 
 /* #support-page {
