@@ -32,12 +32,7 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
           <img src={item.image} alt={item.name} className="w-full h-full object-cover" /> 
         </div>
         <div className="flex flex-col gap-1">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">{item.brand}</span>
             <h3 className="font-bold text-lg leading-tight text-gray-900">{item.name}</h3>
-            
-            <p className="text-sm font-semibold text-orange-600">
-                (Estimated Ship Date: {item.estimatedShip})
-            </p>
         </div>
       </div>
 
@@ -126,10 +121,7 @@ export default function CartPage() {
         <div className="min-h-screen flex flex-col bg-white">
             <Navbar />
 
-            <main className="flex-grow container mx-auto px-4 lg:px-8 max-w-6xl">
-                <h1 className="text-3xl font-bold text-center mb-12 mt-4 text-gray-900">
-                    Your Cart ({cartItems.length} items)
-                </h1>
+            <div className="flex-grow py-30 container mx-auto px-4 lg:px-8 max-w-6xl">
 
                 {/* Nếu giỏ hàng trống thì hiện thông báo */}
                 {cartItems.length === 0 ? (
@@ -140,10 +132,10 @@ export default function CartPage() {
                 ) : (
                     <>
                         <div className="hidden md:grid grid-cols-12 gap-4 pb-3 border-b border-gray-200 font-bold text-sm text-gray-900">
-                            <div className="col-span-6">Item</div>
-                            <div className="col-span-2 text-center">Price</div>
-                            <div className="col-span-2 text-center">Quantity</div>
-                            <div className="col-span-2 text-right">Total</div>
+                            <div className="col-span-6">Sản phẩm</div>
+                            <div className="col-span-2 text-center">Giá</div>
+                            <div className="col-span-2 text-center">Số lượng</div>
+                            <div className="col-span-2 text-right">Tổng</div>
                         </div>
 
                         <div className="mb-8">
@@ -161,16 +153,16 @@ export default function CartPage() {
                         <div className="flex flex-col items-end w-full pb-10">
                             <div className="w-full md:w-1/2 lg:w-1/3 space-y-4">
                                 <div className="flex justify-between items-center text-gray-700">
-                                    <span className="font-semibold">Subtotal:</span>
+                                    <span className="font-semibold">Thành tiền:</span>
                                     <span>{subtotal.toLocaleString('vi-VN')} đ</span>
                                 </div>
                                 
                                 <div className="flex justify-between items-center text-2xl pt-2 text-gray-900 border-t border-gray-100 mt-2">
-                                    <span className="font-normal">Grand total:</span>
+                                    <span className="font-normal">Tổng tiền:</span>
                                     <span className="font-normal">{grandTotal.toLocaleString('vi-VN')} đ</span>
                                 </div>
 
-                                <div className="pt-6">
+                                {/* <div className="pt-6">
                                     <div className="flex items-center gap-2 mb-2 text-sm text-gray-900">
                                         <span className="font-bold">Congrats, you're eligible for Free Shipping</span>
                                         <FaTruck size={16} className="text-gray-800" />
@@ -178,16 +170,16 @@ export default function CartPage() {
                                     <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
                                         <div className="h-full bg-green-500 w-full"></div>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <button className="w-full bg-black text-white font-bold py-4 px-6 mt-6 hover:bg-gray-800 transition-colors uppercase text-sm tracking-widest rounded-sm">
-                                    Check out
+                                    THANH TOÁN
                                 </button>
                             </div>
                         </div>
                     </>
                 )}
-            </main>
+            </div>
 
             <Footer />
         </div>
