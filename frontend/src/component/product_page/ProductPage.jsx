@@ -11,7 +11,7 @@ import imgEssentialRibbed from "../../assets/mock_product/Essential Ribbed Tank 
 import img4965 from "../../assets/mock_product/IMG_4965.JPG";
 import img4966 from "../../assets/mock_product/IMG_4966.JPG";
 import img4967 from "../../assets/mock_product/IMG_4967.JPG";
-import img4970 from "../../assets/mock_product/IMG_4970.JPG";
+import img4970 from "../../assets/mock_product/IMG_4970.jpg";
 import img4974 from "../../assets/mock_product/IMG_4974.JPG";
 import img4975 from "../../assets/mock_product/IMG_4975.JPG";
 import imgTep003 from "../../assets/mock_product/Tệp_003.png";
