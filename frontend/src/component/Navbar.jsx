@@ -29,7 +29,7 @@ export default function Navbar() {
             </div>
         
             <div id="navbar" className='bg-white fixed w-full flex flex-row justify-between'>
-                <div className='flex flex-row gap-4 items-center'>
+                <div className='flex flex-row gap-2 items-center'>
                     <Link to={"/"}><img src={logo} alt="Logo" className='overflow-hidden w-[110px] object-fit hover:scale-130 transition'/></Link>
                     {menu.map((item) => 
                         (<Link 
