@@ -19,6 +19,7 @@ import imgTep004 from "../../assets/mock_product/Tệp_004.png";
 import imgTep006 from "../../assets/mock_product/Tệp_006.png";
 import imgTep007 from "../../assets/mock_product/Tệp_007.png";
 import imgTep008 from "../../assets/mock_product/Tệp_008.png";
+import imgTep009 from "../../assets/mock_product/Tệp_009.jpg";
 
 import Button from "../Button";
 import Footer from "../Footer";
@@ -34,8 +35,9 @@ export const mockProducts = [
     { id: 10, imageSrc: imgTep003, productName: "Casual Shorts - Soft Pink", price: "290000" },
     { id: 11, imageSrc: imgTep004, productName: "Basic Leggings - Black", price: "450000" },
     { id: 12, imageSrc: imgTep006, productName: "Lounge Set - White", price: "550000" },
-    { id: 13, imageSrc: imgTep007, productName: "Collection Group Shot", price: "0" }, 
+    { id: 13, imageSrc: imgTep007, productName: "Collection Group Shot", price: "1200000" }, 
     { id: 14, imageSrc: imgTep008, productName: "Camisole Top - Black", price: "250000" },
+    { id: 15, imageSrc: imgTep009, productName: "Brown Active Set", price: "1000000" },
 ];
 
 export default function ProductPage() {
