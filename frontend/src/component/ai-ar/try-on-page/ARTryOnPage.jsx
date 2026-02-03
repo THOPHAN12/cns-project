@@ -12,6 +12,8 @@ import c6 from "../../../assets/ai-ar/clothes_models/c6.png"
 import c7 from "../../../assets/ai-ar/clothes_models/c7.png"
 import c8 from "../../../assets/ai-ar/clothes_models/c8.png"
 
+import fr8 from "../../../assets/ai-ar/result/female/r5.png"
+
 const set = [
   { id: 1, clothesImg: c1, resultImg: c1 },
   { id: 2, clothesImg: c2, resultImg: c2 },
@@ -20,7 +22,7 @@ const set = [
   { id: 5, clothesImg: c5, resultImg: c5 },
   { id: 6, clothesImg: c6, resultImg: c6 },
   { id: 7, clothesImg: c7, resultImg: c7 },
-  { id: 8, clothesImg: c8, resultImg: c8 },
+  { id: 8, clothesImg: c8, resultImg: fr8 },
 ];
 
 export default function ARTryOnPage() {
@@ -55,7 +57,7 @@ export default function ARTryOnPage() {
               </span>
             </div>
             
-            <div className="bg-gray-50 aspect-[3/4] relative w-full overflow-hidden">
+            <div className="bg-gray-50 relative w-full overflow-hidden">
               <img 
                 src={activeImage} 
                 alt="AR Model Result" 

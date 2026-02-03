@@ -7,7 +7,7 @@ import { mockProducts } from '../product_page/ProductPage';
 
 // --- 1. Chọn lọc dữ liệu ban đầu ---
 // Chỉ lấy 3 sản phẩm có ID cụ thể (ví dụ: 2, 4, 7) để hiển thị trong giỏ
-const selectedIds = [2, 4, 7]; 
+const selectedIds = [4, 5]; 
 
 const initialData = mockProducts
     .filter(product => selectedIds.includes(product.id)) // Lọc lấy 3 sản phẩm này
