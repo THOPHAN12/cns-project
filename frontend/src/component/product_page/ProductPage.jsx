@@ -36,6 +36,7 @@ export const mockProducts = [
     { id: 12, imageSrc: imgTep006, productName: "Lounge Set - White", price: "550000" },
     { id: 13, imageSrc: imgTep007, productName: "Collection Group Shot", price: "0" }, 
     { id: 14, imageSrc: imgTep008, productName: "Camisole Top - Black", price: "250000" },
+    { id: 15, imageSrc: imgTep008, productName: "Camisole Top - Black", price: "250000" },
 ];
 
 export default function ProductPage() {
