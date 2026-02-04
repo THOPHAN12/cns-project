@@ -63,7 +63,7 @@ export default function AboutUsPage() {
         {/* Cột hình ảnh (Trái) */}
         <div className="w-full md:w-1/2 min-h-[400px]">
           <img 
-            src={image4}
+            src={image2}
             alt="Man in beige shirt" 
             className="w-full h-full object-cover"
           />

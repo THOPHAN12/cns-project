@@ -12,16 +12,23 @@ import c6 from "../../../assets/ai-ar/clothes_models/c6.png"
 import c7 from "../../../assets/ai-ar/clothes_models/c7.png"
 import c8 from "../../../assets/ai-ar/clothes_models/c8.png"
 
+import fr1 from "../../../assets/ai-ar/result/female/2.6.png"
+import fr2 from "../../../assets/ai-ar/result/female/2.1.png"
+import fr3 from "../../../assets/ai-ar/result/female/mẫu nữ áo 1mới.png"
+
+import fr5 from "../../../assets/ai-ar/result/female/1.5.png"
+import fr6 from "../../../assets/ai-ar/result/female/1.3.png"
+import fr7 from "../../../assets/ai-ar/result/female/1.4.png"
 import fr8 from "../../../assets/ai-ar/result/female/r5.png"
 
 const set = [
-  { id: 1, clothesImg: c1, resultImg: c1 },
-  { id: 2, clothesImg: c2, resultImg: c2 },
-  { id: 3, clothesImg: c3, resultImg: c3 },
+  { id: 1, clothesImg: c1, resultImg: fr1 },
+  { id: 2, clothesImg: c2, resultImg: fr2 },
+  { id: 3, clothesImg: c3, resultImg: fr3 },
   { id: 4, clothesImg: c4, resultImg: c4 },
-  { id: 5, clothesImg: c5, resultImg: c5 },
-  { id: 6, clothesImg: c6, resultImg: c6 },
-  { id: 7, clothesImg: c7, resultImg: c7 },
+  { id: 5, clothesImg: c5, resultImg: fr5 },
+  { id: 6, clothesImg: c6, resultImg: fr6 },
+  { id: 7, clothesImg: c7, resultImg: fr7 },
   { id: 8, clothesImg: c8, resultImg: fr8 },
 ];
 

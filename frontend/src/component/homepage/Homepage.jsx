@@ -2,7 +2,7 @@ import Navbar from '../Navbar'
 import Button from '../Button'
 import Footer from '../Footer'
 import { Link } from 'react-router-dom'
-import ctaVideo from '../../assets/homepage/cta_vid.mp4'
+import ctaVideo from '../../assets/homepage/cta-vid.MOV'
 
 export default function Homepage() {
     return (<div id='homepage' className=''>
