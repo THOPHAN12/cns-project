@@ -14,8 +14,8 @@ import c8 from "../../../assets/ai-ar/clothes_models/c8.png"
 
 import fr1 from "../../../assets/ai-ar/result/female/2.6.png"
 import fr2 from "../../../assets/ai-ar/result/female/2.1.png"
-import fr3 from "../../../assets/ai-ar/result/female/mẫu nữ áo 1mới.png"
-import fr4 from "../../../assets/ai-ar/result/female/2.3.png"
+import fr3 from "../../../assets/ai-ar/result/female/2.3.png"
+import fr4 from "../../../assets/ai-ar/result/female/2.4.png"
 
 import fr5 from "../../../assets/ai-ar/result/female/1.5.png"
 import fr6 from "../../../assets/ai-ar/result/female/1.3.png"
