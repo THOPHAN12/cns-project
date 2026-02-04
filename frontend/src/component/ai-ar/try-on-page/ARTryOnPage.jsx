@@ -15,6 +15,7 @@ import c8 from "../../../assets/ai-ar/clothes_models/c8.png"
 import fr1 from "../../../assets/ai-ar/result/female/2.6.png"
 import fr2 from "../../../assets/ai-ar/result/female/2.1.png"
 import fr3 from "../../../assets/ai-ar/result/female/mẫu nữ áo 1mới.png"
+import fr4 from "../../../assets/ai-ar/result/female/2.3.png"
 
 import fr5 from "../../../assets/ai-ar/result/female/1.5.png"
 import fr6 from "../../../assets/ai-ar/result/female/1.3.png"
@@ -25,7 +26,7 @@ const set = [
   { id: 1, clothesImg: c1, resultImg: fr1 },
   { id: 2, clothesImg: c2, resultImg: fr2 },
   { id: 3, clothesImg: c3, resultImg: fr3 },
-  { id: 4, clothesImg: c4, resultImg: c4 },
+  { id: 4, clothesImg: c4, resultImg: fr4 },
   { id: 5, clothesImg: c5, resultImg: fr5 },
   { id: 6, clothesImg: c6, resultImg: fr6 },
   { id: 7, clothesImg: c7, resultImg: fr7 },
