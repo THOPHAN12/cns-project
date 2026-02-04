@@ -12,15 +12,17 @@ import c6 from "../../../assets/ai-ar/clothes_models/c6.png"
 import c7 from "../../../assets/ai-ar/clothes_models/c7.png"
 import c8 from "../../../assets/ai-ar/clothes_models/c8.png"
 
+import general from "../../../assets/ai-ar/result/female/general.png"
+
 import fr1 from "../../../assets/ai-ar/result/female/2.6.png"
 import fr2 from "../../../assets/ai-ar/result/female/2.1.png"
-import fr3 from "../../../assets/ai-ar/result/female/mẫu nữ áo 1mới.png"
-import fr4 from "../../../assets/ai-ar/result/female/2.3.png"
+import fr3 from "../../../assets/ai-ar/result/female/2.3.png"
+import fr4 from "../../../assets/ai-ar/result/female/2.4.png"
 
 import fr5 from "../../../assets/ai-ar/result/female/1.5.png"
 import fr6 from "../../../assets/ai-ar/result/female/1.3.png"
 import fr7 from "../../../assets/ai-ar/result/female/1.4.png"
-import fr8 from "../../../assets/ai-ar/result/female/r5.png"
+import fr8 from "../../../assets/ai-ar/result/female/1.1.png"
 
 const set = [
   { id: 1, clothesImg: c1, resultImg: fr1 },
@@ -36,7 +38,7 @@ const set = [
 export default function ARTryOnPage() {
   // State to track which result image is displayed on the left
   // Defaults to the first item in the set
-  const [activeImage, setActiveImage] = useState(set[0].resultImg);
+  const [activeImage, setActiveImage] = useState(general);
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
