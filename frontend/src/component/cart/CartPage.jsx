@@ -3,23 +3,28 @@ import { FiMinus, FiPlus, FiX } from "react-icons/fi";
 import { FaTruck } from "react-icons/fa";
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-import { mockProducts } from '../product_page/ProductPage';
+// import { mockProducts } from '../product_page/ProductPage';
+import img_4965 from "../../assets/mock_product/IMG_4965.JPG"
 
 // --- 1. Chọn lọc dữ liệu ban đầu ---
 // Chỉ lấy 3 sản phẩm có ID cụ thể (ví dụ: 2, 4, 7) để hiển thị trong giỏ
 const selectedIds = [4, 5]; 
 
-const initialData = mockProducts
-    .filter(product => selectedIds.includes(product.id)) // Lọc lấy 3 sản phẩm này
-    .map(product => ({
-        id: product.id,
-        name: product.productName,
-        image: product.imageSrc,
-        price: Number(product.price),
-        quantity: 1, // Mặc định số lượng ban đầu là 1
-        brand: 'CNS Studio',
-        estimatedShip: 'June 6th',
-    }));
+// const initialData = mockProducts
+//     .filter(product => selectedIds.includes(product.id)) // Lọc lấy 3 sản phẩm này
+//     .map(product => ({
+//         id: product.id,
+//         name: product.productName,
+//         image: product.imageSrc,
+//         price: Number(product.price),
+//         quantity: 1, // Mặc định số lượng ban đầu là 1
+//         brand: 'CNS Studio',
+//         estimatedShip: 'June 6th',
+//     }));
+
+const initialData = [
+    {id: 1, name: "Some Product", image: img_4965, price: 923847, quantity: 1}
+]
 
 // --- 2. Component CartItem (Nhận thêm các hàm xử lý sự kiện từ cha) ---
 const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
