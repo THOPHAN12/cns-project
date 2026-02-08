@@ -93,6 +93,18 @@ export default function ProductPage() {
         "Độ bán chạy"
     ]
 
+    if (isLoading) {
+        return (
+            <div>
+                <Navbar />
+                <div className="p-50 text-center">
+                    <p className="text-4xl font-bold">Loading ...</p>
+                </div>
+                <Footer />
+            </div>
+        )
+    }
+
     return (
         <div id="product-page">
             <Navbar />
@@ -138,6 +150,7 @@ export default function ProductPage() {
                             {productData.map((product, idx) => (
                                 <ProductItem
                                     key={idx}
+                                    id={product.id}
                                     source={product.imageSrc}
                                     alterText={product.productName}
                                     productName={product.productName}

@@ -1,20 +1,58 @@
-import React from "react";
+import { useEffect } from "react";
 import Navbar from "../Navbar";
+import Footer from "../Footer";
 import { IoSearch } from "react-icons/io5";
 import { CiCircleChevDown } from "react-icons/ci";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useState } from "react";
 
 import img_4965 from "../../assets/mock_product/IMG_4965.JPG"
 
 export default function ProductDetail() {
-    const sizes = ["S", "M", "L", "XL"];
-    const stock = 6;
-    const [quantity, setQuantity] = React.useState(2);
-    const [selectedSize, setSelectedSize] = React.useState("M");
+    const { id } = useParams();
+    const [productData, setProductData] = useState();
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedSize, setSelectedSize] = useState("");
+    const [quantity, setQuantity] = useState(1);
+    // const [selectedSize, setSelectedSize] = useState(null);
 
     const [showNotification, setShowNotification] = useState(false);
-    console.log(showNotification);
+    
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/products/${id}`);
+                if (!response.ok) {
+                    console.log("Error fetching data with status ", response.status);
+                }
+
+                const data = await response.json();
+                console.log(data);
+                setProductData(data)
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        fetchProduct();
+    }, [])
+
+    if (isLoading) {
+        return (
+            <div>
+                <Navbar />
+                <div className="p-50 text-center">
+                    <p className="text-4xl font-bold">Loading ...</p>
+                </div>
+                <Footer />
+            </div>
+        )
+    }
+
+    const sizes = productData.sizes;
+    const stock = productData.stockQuantity;
 
     // Hàm xử lý sự kiện
     const handleAddToCart = () => {
@@ -69,7 +107,7 @@ export default function ProductDetail() {
             <div className="flex flex-row gap-12 px-30 py-10">
                 {/* Product image */}
                 <div className="shrink-0 w-120 flex flex-col items-center">
-                    <img src={img_4965} alt="Product image" className="rounded-lg object-cover border border-[#e5d8ce] w-200 h-full" />
+                    <img src={`data:image/jpeg;base64,${productData.imageData}`} alt="Product image" className="rounded-lg object-cover border border-[#e5d8ce] w-200 h-full" />
                     <button className="mt-4 text-2xl text-[#bdbdbd] hover:text-[#e5d8ce] bg-white rounded-full p-2 border border-[#e5d8ce] w-10 h-10 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 7.5l-6 6-3-3" />
@@ -80,14 +118,14 @@ export default function ProductDetail() {
                 {/* Product details */}
                 <div className="flex-1 max-w-xl">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-4xl font-semibold mb-2">Soft Wrap Long Sleeve</h1>
+                        <h1 className="text-4xl font-semibold mb-2">{productData.productName}</h1>
                         <button className="text-2xl text-[#bdbdbd] hover:text-[#e5d8ce] bg-white rounded-full p-2 border border-[#e5d8ce] w-10 h-10 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 7.5l-6 6-3-3" />
                             </svg>
                         </button>
                     </div>
-                    <p className="text-2xl font-light mb-2">515,000<span className="text-base font-normal ml-1">VNĐ</span></p>
+                    <p className="text-2xl font-light mb-2">{productData.price}<span className="text-base font-normal ml-1">VNĐ</span></p>
                     <div className="border-b border-[#e5d8ce] my-4"></div>
 
                     {/* Size selection */}
