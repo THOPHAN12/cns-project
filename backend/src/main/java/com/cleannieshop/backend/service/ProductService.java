@@ -54,6 +54,8 @@ public class ProductService {
             cartHasProduct.setQuantity(cartHasProduct.getQuantity() + 1);
         }
         cartHasProductRepository.save(cartHasProduct);
+        product.setStockQuantity(product.getStockQuantity() - 1);
+        productRepository.save(product);
         return true;
     }
 
@@ -77,9 +79,12 @@ public class ProductService {
             if (cartHasProduct.getQuantity() > 1){
                 cartHasProduct.setQuantity(cartHasProduct.getQuantity() - 1);
                 cartHasProductRepository.save(cartHasProduct);
-                return true;
+                
             }
-            cartHasProductRepository.deleteById(key);
+            else 
+                cartHasProductRepository.deleteById(key);
+            product.setStockQuantity(product.getStockQuantity() + 1);
+            productRepository.save(product);
             return true;
         }
     }
