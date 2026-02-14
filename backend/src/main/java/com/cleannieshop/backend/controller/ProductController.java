@@ -14,8 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -42,5 +46,21 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
+    @PutMapping("{id}")
+    public ResponseEntity<String> addToCart(@PathVariable String id, @RequestBody String cartId) {
+        //TODO: process PUT request
+        if (productService.addToCart(id, cartId)) {
+            return new ResponseEntity<>("Added successfully", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("The process is not done successfully", HttpStatus.NOT_ACCEPTABLE);
+    }
     
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> removeFromCart(@PathVariable String id, @RequestBody String cartId) {
+        //TODO: process PUT request
+        if (productService.deleteFromCart(id, cartId)) {
+            return new ResponseEntity<>("Deleted successfully", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("The process is not done successfully", HttpStatus.NOT_ACCEPTABLE);
+    }
 }

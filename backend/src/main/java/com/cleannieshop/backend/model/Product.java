@@ -2,9 +2,12 @@ package com.cleannieshop.backend.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -20,4 +23,7 @@ public class Product {
     private long stockQuantity;
     @Lob
     private byte[] imageData;
+    @ManyToMany(mappedBy = "products")
+    @JsonBackReference
+    private List<Cart> carts;
 }
