@@ -77,6 +77,7 @@ public class ProductService {
             if (cartHasProduct.getQuantity() > 1){
                 cartHasProduct.setQuantity(cartHasProduct.getQuantity() - 1);
                 cartHasProductRepository.save(cartHasProduct);
+                return true;
             }
             cartHasProductRepository.deleteById(key);
             return true;
