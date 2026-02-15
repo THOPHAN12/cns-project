@@ -49,6 +49,7 @@ public class ProductController {
     }
     
     @PutMapping("{id}")
+    @Tag(name = "Add Product To Cart", description = "Thêm sản phẩm vào giỏ hàng")
     public ResponseEntity<String> addToCart(@PathVariable String id, @RequestBody AddToCartDTO addToCartDTO) {
         //TODO: process PUT request
         if (addToCartDTO.getQuantity() <= 0) {
@@ -61,6 +62,7 @@ public class ProductController {
     }
     
     @DeleteMapping("{id}")
+    @Tag(name = "Delete Product From Cart", description = "Xóa sản phẩm từ giỏ hàng")
     public ResponseEntity<String> removeFromCart(@PathVariable String id, @RequestBody DeleteFromCartDTO deleteFromCartDTO) {
         //TODO: process PUT request
         if (productService.deleteFromCart(id, deleteFromCartDTO)) {
