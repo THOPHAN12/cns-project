@@ -25,7 +25,7 @@ public class Cart {
     private String cartId;
     private Date dateCreated;
     @OneToMany(mappedBy = "cart")
-    @JsonManagedReference
+    @JsonBackReference
     private List<CartHasProduct> cartHasProducts;
 
     // public void addProductToCart(Product product) {

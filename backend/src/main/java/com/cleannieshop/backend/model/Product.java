@@ -27,6 +27,6 @@ public class Product {
     private byte[] imageData;
     
     @OneToMany(mappedBy = "product")
-    @JsonManagedReference
+    @JsonBackReference
     private List<CartHasProduct> cartHasProducts;
 }

@@ -52,7 +52,7 @@ public class ProductController {
     @Tag(name = "Add Product To Cart", description = "Thêm sản phẩm vào giỏ hàng")
     public ResponseEntity<String> addToCart(@PathVariable String id, @RequestBody AddToCartDTO addToCartDTO) {
         //TODO: process PUT request
-        if (addToCartDTO.getQuantity() <= 0) {
+        if (addToCartDTO.getQuantity() <= 0 || addToCartDTO.getSize() == "") {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         if (productService.addToCart(id, addToCartDTO)) {

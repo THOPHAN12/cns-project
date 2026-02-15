@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cleannieshop.backend.model.composite_keys.CartHasProductKey;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -26,13 +27,13 @@ public class CartHasProduct {
 
     @ManyToOne
     @MapsId("productId")
-    @JsonBackReference
+    @JsonManagedReference
     @JoinColumn(name = "product_id")
     private Product product;
     
     @ManyToOne
     @MapsId("cartId")
-    @JsonBackReference
+    @JsonManagedReference
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
