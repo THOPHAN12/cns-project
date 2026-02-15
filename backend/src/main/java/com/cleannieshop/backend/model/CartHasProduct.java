@@ -1,5 +1,7 @@
 package com.cleannieshop.backend.model;
 
+import java.util.List;
+
 import com.cleannieshop.backend.model.composite_keys.CartHasProductKey;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -35,4 +37,5 @@ public class CartHasProduct {
     private Cart cart;
 
     private int quantity;
+    private List<String> sizes;
 }

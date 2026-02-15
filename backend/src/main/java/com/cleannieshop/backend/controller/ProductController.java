@@ -3,6 +3,8 @@ package com.cleannieshop.backend.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cleannieshop.backend.dto.AddToCartDTO;
+import com.cleannieshop.backend.dto.DeleteFromCartDTO;
 import com.cleannieshop.backend.model.Product;
 import com.cleannieshop.backend.service.ProductService;
 
@@ -47,18 +49,21 @@ public class ProductController {
     }
     
     @PutMapping("{id}")
-    public ResponseEntity<String> addToCart(@PathVariable String id, @RequestBody String cartId) {
+    public ResponseEntity<String> addToCart(@PathVariable String id, @RequestBody AddToCartDTO addToCartDTO) {
         //TODO: process PUT request
-        if (productService.addToCart(id, cartId)) {
+        if (addToCartDTO.getQuantity() <= 0) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (productService.addToCart(id, addToCartDTO)) {
             return new ResponseEntity<>("Added successfully", HttpStatus.OK);
         }
         return new ResponseEntity<>("The process is not done successfully", HttpStatus.NOT_ACCEPTABLE);
     }
     
     @DeleteMapping("{id}")
-    public ResponseEntity<String> removeFromCart(@PathVariable String id, @RequestBody String cartId) {
+    public ResponseEntity<String> removeFromCart(@PathVariable String id, @RequestBody DeleteFromCartDTO deleteFromCartDTO) {
         //TODO: process PUT request
-        if (productService.deleteFromCart(id, cartId)) {
+        if (productService.deleteFromCart(id, deleteFromCartDTO)) {
             return new ResponseEntity<>("Deleted successfully", HttpStatus.OK);
         }
         return new ResponseEntity<>("The process is not done successfully", HttpStatus.NOT_ACCEPTABLE);
