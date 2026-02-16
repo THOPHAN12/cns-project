@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { IoSearch } from "react-icons/io5";
@@ -17,6 +17,9 @@ export default function ProductDetail() {
     // const [selectedSize, setSelectedSize] = useState(null);
 
     const [showNotification, setShowNotification] = useState(false);
+    const [showFailureNotification, setShowFailureNotification] = useState(false);
+    const notificationTimeoutRef = useRef(null);
+    const failureNotificationTimeoutRef = useRef(null);
     
     useEffect(() => {
         const fetchProduct = async () => {
@@ -55,21 +58,47 @@ export default function ProductDetail() {
     const stock = productData.stockQuantity;
 
     // Hàm xử lý sự kiện
-    const handleAddToCart = () => {
-        // Hiện thông báo
-        setShowNotification(true);
+    const handleAddToCart = async () => {
+        // Clear any previous timeouts
+        if (notificationTimeoutRef.current) {
+            clearTimeout(notificationTimeoutRef.current);
+        }
+        if (failureNotificationTimeoutRef.current) {
+            clearTimeout(failureNotificationTimeoutRef.current);
+        }
 
-        // Tự động ẩn sau 3 giây (3000ms)
-        setTimeout(() => {
-            setShowNotification(false);
-        }, 3000);
+        const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type" : "application/json"  
+            },
+            body: JSON.stringify({
+                "cartId": "sb",
+                "quantity": quantity,
+                "size": selectedSize,
+            })
+        });
+        if (!response.ok) {
+            // Show failure notification
+            setShowFailureNotification(true);
+            failureNotificationTimeoutRef.current = setTimeout(() => {
+                setShowFailureNotification(false);
+            }, 3000);
+            console.log("The add to cart is failed", response.status)
+        } else {
+            // Show success notification
+            setShowNotification(true);
+            notificationTimeoutRef.current = setTimeout(() => {
+                setShowNotification(false);
+            }, 3000);
+        }
     };
 
     return (
         <div>
             <Navbar />
             {/* --- PHẦN THÊM MỚI 2: Giao diện Popup thông báo --- */}
-            {/* Chúng ta dùng fixed để nó nổi lên trên cùng màn hình bất kể cuộn trang đi đâu */}
+            {/* Success notification */}
             {showNotification && (
                 <div className="fixed top-24 right-5 z-50 transition animate-bounce">
                     <div className="bg-[#3a2415] text-white px-6 py-4 rounded shadow-lg flex items-center gap-3 border border-[#e5d8ce]">
@@ -79,6 +108,20 @@ export default function ProductDetail() {
                         <div>
                             <h4 className="font-bold">Thành công!</h4>
                             <p className="text-sm text-gray-200">Đã thêm sản phẩm vào giỏ hàng.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Failure notification */}
+            {showFailureNotification && (
+                <div className="fixed top-24 right-5 z-50 transition animate-bounce">
+                    <div className="bg-[#d7263d] text-white px-6 py-4 rounded shadow-lg flex items-center gap-3 border border-[#e5d8ce]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <div>
+                            <h4 className="font-bold">Thất bại!</h4>
+                            <p className="text-sm text-gray-200">Thêm sản phẩm vào giỏ hàng thất bại.</p>
                         </div>
                     </div>
                 </div>

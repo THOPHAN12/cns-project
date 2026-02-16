@@ -9,7 +9,7 @@ export default function Homepage() {
         <Navbar />
         <div id='homepage-body' className='flex flex-col items-center w-full h-screen gap-5 p-4'>
             <Link to={"/product"} className='relative top-70 left-12'><Button content={"Mua sắm ngay"} /></Link>
-            <Link to={"/"} className='relative top-70 left-12'><Button content={"AR try-on"} /></Link>
+            <Link to={"/ar-ai"} className='relative top-70 left-12'><Button content={"CNS AI"} /></Link>
         </div>
         <div className='px-40 py-15'>
             <div className="overflow-hidden shadow-lg">

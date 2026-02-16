@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [isInvited, setIsInvited] = useState(false);
+  const [showEmailWarning, setShowEmailWarning] = useState(false);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return (
     <div className="w-full bg-[#3e2b20] text-[#ebe2d7] py-16 font-sans overflow-hidden">
       
@@ -30,20 +34,38 @@ const Footer = () => {
               </p>
               
               {/* Input Email Custom */}
-              <div className="relative w-full group">
+              <div className="relative w-full group m-0.5">
                 <input 
                   type="email" 
-                  placeholder="E-mail" 
+                  placeholder="Nhập email vào đây ..."
                   className="w-full bg-transparent border border-[#ebe2d7]/30 rounded-full py-3 px-6 pr-12 text-sm outline-none focus:border-[#ebe2d7]/80 transition-colors placeholder-[#ebe2d7]/50"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (showEmailWarning && e.target.value !== "") {
+                      setShowEmailWarning(false);
+                    }
+                  }}
                 />
-                <button className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-[#ebe2d7]/20 rounded-full hover:bg-[#ebe2d7]/30 transition-colors">
-                  {/* Icon Mũi tên phải (SVG) */}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </button>
+                <input 
+                  type='checkbox'
+                  checked={isInvited && email !== "" && emailRegex.test(email)} 
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center bg-[#ebe2d7]/20 rounded-full hover:bg-[#ebe2d7]/30 transition-colors"
+                  onClick={() => {
+                    if (!emailRegex.test(email)) {
+                      setShowEmailWarning(true);
+                      return;
+                    }
+                    setIsInvited(true);
+                  }}
+                >                  
+                </input>
               </div>
+              {showEmailWarning && <p className='text-sm text-red-700'>
+              Vui lòng kiểm tra lại định dạng email trước khi gửi
+              </p>}
+              {isInvited && <p className='text-sm text-gray-500'>
+              CNS đã gửi lời mời tham gia cộng đồng qua email của bạn, chúng mình rất mong chờ bạn trở thành một thành viên của <b>CNS Besties!</b>  
+              </p>}
             </div>
 
             <div className="mt-auto pt-4">
@@ -71,21 +93,15 @@ const Footer = () => {
               </div>
 
               <div className="flex gap-4">
-                <SocialIcon href="#">
-                  {/* Phone Icon */}
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                  </svg>
-                </SocialIcon>
 
-                <SocialIcon href="#">
+                <SocialIcon href="https://www.facebook.com/share/1GtEVZWN82/">
                    {/* Facebook Icon */}
                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
                   </svg>
                 </SocialIcon>
 
-                <SocialIcon href="#">
+                <SocialIcon href="https://www.instagram.com/cleannie.studio/">
                   {/* Instagram Icon */}
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -94,7 +110,7 @@ const Footer = () => {
                   </svg>
                 </SocialIcon>
 
-                <SocialIcon href="#">
+                <SocialIcon href="https://www.tiktok.com/@cnsstudio?lang=en">
                    {/* TikTok Icon */}
                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>

@@ -17,7 +17,7 @@ export default function Navbar() {
             content: "Sản phẩm",
         },
         {route: "/collection", content: "Bộ sưu tập"},
-        {route: "/ar-ai", content: "Thử đồ ảo"},
+        {route: "/ar-ai", content: "CNS AI"},
         {route: "/whats-new", content: "Tính năng mới"},
         {route: "/login", content: "Tài khoản"},
         {route: "/support", content: "Hỗ trợ"},

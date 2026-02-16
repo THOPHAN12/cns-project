@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { FiMinus, FiPlus, FiX } from "react-icons/fi";
 import { FaTruck } from "react-icons/fa";
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 // import { mockProducts } from '../product_page/ProductPage';
 import img_4965 from "../../assets/mock_product/IMG_4965.JPG"
+import { Link } from 'react-router-dom';
 
 // --- 1. Chọn lọc dữ liệu ban đầu ---
 // Chỉ lấy 3 sản phẩm có ID cụ thể (ví dụ: 2, 4, 7) để hiển thị trong giỏ
@@ -34,7 +35,7 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
       {/* Cột 1: Ảnh & Thông tin */}
       <div className="col-span-12 md:col-span-6 flex gap-6">
         <div className="w-24 h-24 flex-shrink-0 bg-gray-50 rounded-md overflow-hidden border border-gray-100">
-          <img src={item.image} alt={item.name} className="w-full h-full object-cover" /> 
+          <img src={`data:image/jpeg;base64,${item.image}`} alt={item.name} className="w-full h-full object-cover" /> 
         </div>
         <div className="flex flex-col gap-1">
             <h3 className="font-bold text-lg leading-tight text-gray-900">{item.name}</h3>
@@ -88,19 +89,48 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
 // --- 3. Component Chính ---
 export default function CartPage() {
     // Sử dụng State để quản lý danh sách sản phẩm
-    const [cartItems, setCartItems] = useState(initialData);
+    const [cartItems, setCartItems] = useState([]);
+    useEffect(() => {
+        const fetchCart = async () => {
+            const res = await fetch("http://localhost:8080/api/cart/sb");
+            if (!res.ok) {
+                console.log("Error fetching data ", res.status)
+            }
+            const data = await res.json();
+            console.log(data);
+            setCartItems(data);
+        }
+        fetchCart();
+    }, [])
 
     // Logic Tăng số lượng
-    const handleIncrease = (id) => {
+    const handleIncrease = async (id) => {
         setCartItems(prevItems => 
             prevItems.map(item => 
-                item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+                item.id === id && item.quantity > 1 
+                    ? { ...item, quantity: item.quantity + 1 } 
+                    : item
             )
         );
+        const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type" : "application/json"  
+            },
+            body: JSON.stringify({
+                "cartId": "sb",
+                "quantity": 1,
+                // "size": selectedSize,
+            })
+        });
+        if (!response.ok) {
+            console.log("Response error, status: ", res.status);
+        }
+        
     };
 
     // Logic Giảm số lượng (Không giảm dưới 1)
-    const handleDecrease = (id) => {
+    const handleDecrease = async (id) => {
         setCartItems(prevItems => 
             prevItems.map(item => 
                 item.id === id && item.quantity > 1 
@@ -108,12 +138,44 @@ export default function CartPage() {
                     : item
             )
         );
+
+        const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type" : "application/json"  
+            },
+            body: JSON.stringify({
+                "cartId": "sb",
+                "quantity": 1,
+                // "size": selectedSize,
+            })
+        });
+        if (!response.ok) {
+            console.log("Response error, status: ", res.status);
+        }
     };
 
     // Logic Xóa sản phẩm
-    const handleRemove = (id) => {
-        setCartItems(prevItems => prevItems.filter(item => item.id !== id));
-    };
+        const handleRemove = async (id) => {
+            // Find the current quantity of the item being removed
+            const itemToRemove = cartItems.find(item => item.id === id);
+            const currentQuantity = itemToRemove ? itemToRemove.quantity : 1;
+            setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+            const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type" : "application/json"  
+                },
+                body: JSON.stringify({
+                    "cartId": "sb",
+                    "quantity": currentQuantity,
+                    // "size": selectedSize,
+                })
+            });
+            if (!response.ok) {
+                console.log("Response error, status: ", response.status);
+            }
+        };
 
     // Tự động tính lại tổng tiền khi cartItems thay đổi
     const subtotal = useMemo(() => {
@@ -132,7 +194,7 @@ export default function CartPage() {
                 {cartItems.length === 0 ? (
                     <div className="text-center py-20 text-gray-500">
                         <p className="text-xl">Your cart is currently empty.</p>
-                        <button className="mt-4 text-black underline hover:text-gray-600">Continue Shopping</button>
+                        <Link to={"/product"} className="mt-10 text-black underline hover:text-gray-600">Continue Shopping</Link>
                     </div>
                 ) : (
                     <>
