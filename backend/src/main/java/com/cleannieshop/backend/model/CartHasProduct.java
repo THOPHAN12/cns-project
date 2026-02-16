@@ -3,7 +3,6 @@ package com.cleannieshop.backend.model;
 import java.util.List;
 
 import com.cleannieshop.backend.model.composite_keys.CartHasProductKey;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.EmbeddedId;
