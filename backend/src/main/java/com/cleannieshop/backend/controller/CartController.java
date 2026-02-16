@@ -4,8 +4,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cleannieshop.backend.dto.CartProductDTO;
-import com.cleannieshop.backend.model.Cart;
-import com.cleannieshop.backend.model.Product;
 import com.cleannieshop.backend.service.CartService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
