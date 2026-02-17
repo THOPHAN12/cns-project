@@ -53,6 +53,7 @@ const Footer = () => {
                   type="email" 
                   placeholder="Nhập email vào đây ..."
                   className="w-full bg-transparent border border-[#ebe2d7]/30 rounded-full py-3 px-6 pr-12 text-sm outline-none focus:border-[#ebe2d7]/80 transition-colors placeholder-[#ebe2d7]/50"
+                  disabled={isInvited && email !== "" && emailRegex.test(email)}
                   onChange={(e) => {
                     setEmail(e.target.value);
                     if (showEmailWarning && e.target.value !== "") {
@@ -63,6 +64,7 @@ const Footer = () => {
                 <input 
                   type='checkbox'
                   checked={isInvited && email !== "" && emailRegex.test(email)} 
+                  readOnly
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center bg-[#ebe2d7]/20 rounded-full hover:bg-[#ebe2d7]/30 transition-colors"
                   onClick={() => {
                     if (!emailRegex.test(email)) {
@@ -70,11 +72,9 @@ const Footer = () => {
                       return;
                     }
                     setIsInvited(true);
-
                     sendEmailTo(email);
                   }}
-                >                  
-                </input>
+                />
               </div>
               {showEmailWarning && <p className='text-sm text-red-700'>
               Vui lòng kiểm tra lại định dạng email trước khi gửi
