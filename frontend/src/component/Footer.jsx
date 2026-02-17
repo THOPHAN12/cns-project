@@ -5,6 +5,20 @@ const Footer = () => {
   const [isInvited, setIsInvited] = useState(false);
   const [showEmailWarning, setShowEmailWarning] = useState(false);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const sendEmailTo = async (email) => {
+    const res = await fetch("http://localhost:8080/api/support-email", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(email)
+    })
+    if (!res.ok) {
+      console.log(res.status);
+    }
+  }
+
   return (
     <div className="w-full bg-[#3e2b20] text-[#ebe2d7] py-16 font-sans overflow-hidden">
       
@@ -56,6 +70,8 @@ const Footer = () => {
                       return;
                     }
                     setIsInvited(true);
+
+                    sendEmailTo(email);
                   }}
                 >                  
                 </input>
