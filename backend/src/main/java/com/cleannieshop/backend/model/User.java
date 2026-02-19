@@ -14,6 +14,10 @@ public class User {
     private String username;
     private String role;
     private String password;
+    private String fullName;
+    private String email;
+    
+
     @OneToOne
     private Cart cartId;
 }
