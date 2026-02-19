@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import VideoPopUp from "../VideoPopUp";
@@ -21,6 +21,9 @@ export default function ProductPage() {
     // State lưu các categories
     const [selectedCategories, setSelectedCategories] = useState([]);
 
+    // State lưu sort filter
+    const [selectedSortOption, setSelectedSortOption] = useState(null);
+
     // Dữ liệu tĩnh cho sidebar
     const categoryOptions = ["Nữ", "Nam", "Trang phục màu sáng", "Trang phục màu tối"];
     const filterOptions = ["Giá từ thấp tới cao", "Giá từ cao tới thấp", "Độ bán chạy"];
@@ -34,6 +37,14 @@ export default function ProductPage() {
             }
         });
     }
+
+    const handleSortToggle = (option) => {
+        if (selectedSortOption === option) {
+            setSelectedSortOption(null); // Click lại thì bỏ chọn
+        } else {
+            setSelectedSortOption(option); // Chọn cái mới
+        }
+    };
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -74,6 +85,24 @@ export default function ProductPage() {
         };
         fetchProduct();
     }, [selectedCategories]);
+
+    const displayProducts = useMemo(() => {
+        if (!selectedSortOption || selectedSortOption === "Độ bán chạy") {
+            return productData;
+        }
+
+        const sortedList = [...productData];
+
+        if (selectedSortOption === "Giá từ thấp tới cao") {
+            return sortedList.sort((a, b) => a.price - b.price)
+        }
+
+        if (selectedSortOption === "Giá từ cao tới thấp") {
+            return sortedList.sort((a, b) => b.price - a.price);
+        }
+
+        return productData;
+    }, [productData, selectedSortOption])
 
     if (isLoading) {
         return (
@@ -122,12 +151,14 @@ export default function ProductPage() {
                     />
 
                     {/* 2. Danh sách sản phẩm */}
-                    <ProductList products={productData} />
+                    <ProductList products={displayProducts} />
 
                     {/* 3. Sidebar Phải (Filter) */}
                     <FilterSidebar 
                         isOpen={isOpenFilter} 
-                        options={filterOptions} 
+                        options={filterOptions}
+                        selectedFilter={selectedSortOption}
+                        onToggle={handleSortToggle} 
                     />
 
                 </div>
