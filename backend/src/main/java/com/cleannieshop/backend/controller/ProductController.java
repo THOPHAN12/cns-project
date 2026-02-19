@@ -1,6 +1,7 @@
 package com.cleannieshop.backend.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cleannieshop.backend.dto.AddToCartDTO;
@@ -34,8 +35,12 @@ public class ProductController {
 
     @GetMapping
     @Tag(name = "Get All Products", description = "Trả về tất cả các sản phẩm từ db")
-    public ResponseEntity<List<Product>> getAllProducts() {
-        return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
+    public ResponseEntity<List<Product>> getAllProducts(@RequestParam(required = false) List<String> filter) {
+        // return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
+        if (filter == null) {
+            return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(productService.getProductsByFilter(filter), HttpStatus.OK);
     }
 
     @GetMapping("{id}")

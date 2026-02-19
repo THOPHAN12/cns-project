@@ -1,5 +1,6 @@
 package com.cleannieshop.backend.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +30,14 @@ public class ProductService {
 
     public List<Product> getProducts() {
         return productRepository.findAll();
+    }
+
+    public List<Product> getProductsByFilter(List<String> filterStrings) {
+        List<Product> allProducts = productRepository.findAll();
+        List<Product> result = allProducts.stream()
+        .filter(e -> e.getCategories().containsAll(filterStrings))
+        .toList();
+        return result;
     }
 
     public Product getProductById(String id) {
