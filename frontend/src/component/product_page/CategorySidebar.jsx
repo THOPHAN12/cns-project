@@ -1,20 +1,7 @@
 import { useState } from "react";
 import { MdCheckCircle, MdCheckCircleOutline } from "react-icons/md";
 
-const CategorySidebar = ({ isOpen, options }) => {
-    // State lưu danh sách các mục đã chọn
-    const [selectedItems, setSelectedItems] = useState([]);
-
-    const handleToggle = (item) => {
-        if (selectedItems.includes(item)) {
-            // Nếu đã có -> Xóa khỏi mảng (Uncheck)
-            setSelectedItems(selectedItems.filter((i) => i !== item));
-        } else {
-            // Nếu chưa có -> Thêm vào mảng (Check)
-            setSelectedItems([...selectedItems, item]);
-        }
-    };
-
+const CategorySidebar = ({ isOpen, options, selectedCategories, onToggle }) => {
     return (
         <div
             className={`shrink-0 transition-all duration-500 ease-in-out overflow-hidden 
@@ -22,13 +9,13 @@ const CategorySidebar = ({ isOpen, options }) => {
         >
             <div className="w-75">
                 {options.map((option, idx) => {
-                    const isSelected = selectedItems.includes(option);
+                    const isSelected = selectedCategories.includes(option);
                     return (
                         <div
                             key={idx}
                             // Thêm cursor-pointer và sự kiện click vào cả dòng để dễ bấm
                             className="flex flex-row border-b-2 border-gray-400 py-5 justify-between items-center cursor-pointer select-none"
-                            onClick={() => handleToggle(option)}
+                            onClick={() => onToggle(option)}
                         >
                             <span className={isSelected ? "font-bold text-black" : "text-gray-700"}>
                                 {option}

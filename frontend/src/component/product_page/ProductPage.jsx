@@ -18,19 +18,48 @@ export default function ProductPage() {
     const [isOpenFilter, setIsOpenFilter] = useState(false);
     const [isOpenPopUp, setIsOpenPopUp] = useState(false);
 
+    // State lưu các categories
+    const [selectedCategories, setSelectedCategories] = useState([]);
+
     // Dữ liệu tĩnh cho sidebar
     const categoryOptions = ["Nữ", "Nam", "Trang phục màu sáng", "Trang phục màu tối"];
     const filterOptions = ["Giá từ thấp tới cao", "Giá từ cao tới thấp", "Độ bán chạy"];
 
+    const handleCategoryToggle = (category) => {
+        setSelectedCategories(prev => {
+            if (prev.includes(category)) {
+                return prev.filter(c => c !== category); // Bỏ chọn
+            } else {
+                return [...prev, category]; // Chọn thêm
+            }
+        });
+    }
+
     useEffect(() => {
         const fetchProduct = async () => {
+            setIsLoading(true);
             try {
-                const response = await fetch('http://localhost:8080/api/products');
+                // --- TẠO QUERY STRING ---
+                // URLSearchParams giúp tự động encode (ví dụ: "Nữ" -> "N%E1%BB%AF")
+                const params = new URLSearchParams();
+                
+                // Duyệt qua mảng state để append từng cái filter=...
+                selectedCategories.forEach(cat => {
+                    params.append('filter', cat);
+                });
+
+                // Kết quả query string sẽ là: ?filter=N%E1%BB%AF&filter=Nam
+                const queryString = params.toString(); 
+                const url = `http://localhost:8080/api/products?${queryString}`;
+
+                console.log("Fetching URL:", url); // Log để kiểm tra
+
+                const response = await fetch(url);
+                
                 if (!response.ok) throw new Error('Không thể kết nối tới server');
                 
                 const data = await response.json();
                 
-                // Logic xử lý ảnh giữ nguyên như cũ
                 setProductData(data.map(e => ({
                     id: e.id,
                     imageSrc: `data:image/jpeg;base64,${e.imageData}`,
@@ -44,7 +73,7 @@ export default function ProductPage() {
             }
         };
         fetchProduct();
-    }, []);
+    }, [selectedCategories]);
 
     if (isLoading) {
         return (
@@ -87,7 +116,9 @@ export default function ProductPage() {
                     {/* 1. Sidebar Trái (Category) - Đã xử lý logic check/uncheck bên trong component này */}
                     <CategorySidebar 
                         isOpen={isOpenTypeSel} 
-                        options={categoryOptions} 
+                        options={categoryOptions}
+                        selectedCategories={selectedCategories}
+                        onToggle={handleCategoryToggle} 
                     />
 
                     {/* 2. Danh sách sản phẩm */}

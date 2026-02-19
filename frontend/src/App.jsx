@@ -15,6 +15,7 @@ import SuccessPage from './component/login/successpage/SuccessPage'
 import CartPage from './component/cart/CartPage'
 import ARTryOnPage from './component/ai-ar/try-on-page/ARTryOnPage'
 import AIAR from './component/ai-ar/AIAR'
+import RegisterPage from './component/register/RegisterPage'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path='/about-us' element={<AboutUsPage />} />
         <Route path='/support' element={<SupportPage />} />
         <Route path='/login' element={<LoginPage />} />
+        <Route path='/register' element={<RegisterPage />} />
         <Route path='/success' element={<SuccessPage />} />
         <Route path='/cart' element={<CartPage />} />
         <Route path='/ar-ai' element={<AIAR />} />

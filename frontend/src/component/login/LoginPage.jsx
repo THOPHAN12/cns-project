@@ -6,7 +6,7 @@ export default function LoginPage() {
         <Navbar />
         <div className=" flex items-center justify-center bg-white mt-30">
             {/* Container Card */}
-            <div className="w-full max-w-[550px] bg-[#f9f3f0] px-12 py-16 shadow-sm">
+            <div className="w-full max-w-137.5 bg-[#f9f3f0] px-12 py-16 shadow-sm">
                 
                 {/* Header */}
                 <h1 className="text-center text-[#3e2b1d] font-serif text-3xl tracking-widest uppercase mb-10 font-medium">
@@ -53,9 +53,9 @@ export default function LoginPage() {
 
                 {/* Register Link */}
                 <div className="text-center">
-                    <a href="#" className="text-[#a89c96] text-xs hover:text-[#3e2b1d] hover:underline transition-colors">
-                    Đăng ký
-                    </a>
+                    <Link to={"/register"} className="text-[#a89c96] text-xs hover:text-[#3e2b1d] hover:underline transition-colors">
+                    <p>Đăng ký</p>
+                    </Link>
                 </div>
                 </form>
             </div>
