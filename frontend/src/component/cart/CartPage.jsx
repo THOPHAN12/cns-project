@@ -6,6 +6,7 @@ import Footer from '../Footer';
 // import { mockProducts } from '../product_page/ProductPage';
 import img_4965 from "../../assets/mock_product/IMG_4965.JPG"
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 // --- 1. Chọn lọc dữ liệu ban đầu ---
 // Chỉ lấy 3 sản phẩm có ID cụ thể (ví dụ: 2, 4, 7) để hiển thị trong giỏ
@@ -90,9 +91,38 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
 export default function CartPage() {
     // Sử dụng State để quản lý danh sách sản phẩm
     const [cartItems, setCartItems] = useState([]);
+    const [cartId, setCartId] = useState("");
     useEffect(() => {
         const fetchCart = async () => {
-            const res = await fetch("http://localhost:8080/api/cart/sb");
+            const userId = Cookies.get("id");
+            let currentCartId = null;
+            try {
+                const cartRes = await fetch(`http://localhost:8080/api/user/cart?userId=${userId}`, {
+                    headers: {
+                        "Authorization" : `Bearer ${Cookies.get("token")}` 
+                    }
+                });
+                if (cartRes.ok) {
+                    const cartData = await cartRes.json();
+                    currentCartId = cartData.cartId;
+                } else {
+                    console.log("Failed to fetch cartId, status:", cartRes.status);
+                    setShowFailureNotification(true);
+                    return; // Dừng lại ngay nếu lỗi
+                }
+            } catch (err) {
+                console.error("Failed to fetch cartId", err);
+                setShowFailureNotification(true);
+                return; // Dừng lại nếu rớt mạng/server sập
+            }
+            console.log("Cart Id là", currentCartId);
+            setCartId(currentCartId);
+
+            const res = await fetch(`http://localhost:8080/api/cart/${currentCartId}`, {
+                headers: {
+                    "Authorization" : `Bearer ${Cookies.get("token")}` 
+                }
+            });
             if (!res.ok) {
                 console.log("Error fetching data ", res.status)
             }
@@ -115,10 +145,11 @@ export default function CartPage() {
         const response = await fetch(`http://localhost:8080/api/products/${id}`, {
             method: "PUT",
             headers: {
-                "Content-Type" : "application/json"  
+                "Content-Type" : "application/json",
+                "Authorization" : `Bearer ${Cookies.get("token")}`  
             },
             body: JSON.stringify({
-                "cartId": "sb",
+                "cartId": cartId,
                 "quantity": 1,
                 // "size": selectedSize,
             })
@@ -142,10 +173,11 @@ export default function CartPage() {
         const response = await fetch(`http://localhost:8080/api/products/${id}`, {
             method: "DELETE",
             headers: {
-                "Content-Type" : "application/json"  
+                "Content-Type" : "application/json",
+                "Authorization" : `Bearer ${Cookies.get("token")}`   
             },
             body: JSON.stringify({
-                "cartId": "sb",
+                "cartId": cartId,
                 "quantity": 1,
                 // "size": selectedSize,
             })
@@ -164,10 +196,11 @@ export default function CartPage() {
             const response = await fetch(`http://localhost:8080/api/products/${id}`, {
                 method: "DELETE",
                 headers: {
-                    "Content-Type" : "application/json"  
+                    "Content-Type" : "application/json",
+                    "Authorization" : `Bearer ${Cookies.get("token")}`   
                 },
                 body: JSON.stringify({
-                    "cartId": "sb",
+                    "cartId": cartId,
                     "quantity": currentQuantity,
                     // "size": selectedSize,
                 })
