@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cleannieshop.backend.dto.UserCartDTO;
 import com.cleannieshop.backend.dto.UserResponseDTO;
 import com.cleannieshop.backend.service.UserService;
 
@@ -22,12 +23,20 @@ public class UserInfoController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<UserResponseDTO> getMethodName(@RequestParam String userId) {
+    public ResponseEntity<UserResponseDTO> getUserInfo(@RequestParam String userId) {
         UserResponseDTO response = userService.getUserInfo(userId);
         if (response == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
+    @GetMapping("cart")
+    public ResponseEntity<UserCartDTO> getCartId(@RequestParam String userId) {
+        UserCartDTO response = userService.getUserCartInfo(userId);
+        if (response == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.cleannieshop.backend.dto.UserCartDTO;
 import com.cleannieshop.backend.dto.UserRegisterDTO;
 import com.cleannieshop.backend.dto.UserResponseDTO;
 import com.cleannieshop.backend.model.Cart;
@@ -111,5 +112,15 @@ public class UserService {
         userResponseDTO.setEmail(user.getEmail());
         userResponseDTO.setPhoneNumber(user.getPhoneNumber());
         return userResponseDTO;
+    }
+
+    public UserCartDTO getUserCartInfo(String userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        UserCartDTO cartDTO = new UserCartDTO();
+        cartDTO.setCartId(user.getCartId().getCartId());
+        return cartDTO;
     }
 }
