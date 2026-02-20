@@ -67,7 +67,7 @@ export default function Navbar() {
                     onCancel={() => setShowLogoutModal(false)}
                 />
                 <div className='flex flex-row gap-2 items-center'>
-                    <Link to={"/"}><img src={logo} alt="Logo" className='overflow-hidden w-[110px] object-fit hover:scale-130 transition'/></Link>
+                    <Link to={"/"}><img src={logo} alt="Logo" className='overflow-hidden w-27.5 object-fit hover:scale-130 transition'/></Link>
                     <NavbarMenu menu={menu} />
                 </div>
                 <div className='flex flex-row jusitfy-between gap-5 items-center relative right-10'>

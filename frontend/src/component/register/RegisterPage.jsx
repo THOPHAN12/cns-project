@@ -20,11 +20,6 @@ export default function RegisterPage() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const registerUser = async () => {
-        console.log("Full name:", fullName);
-        console.log("Email: ", email);
-        console.log("Username: ", username);
-        console.log("Password:", password);
-        console.log("Confirm password", confirmPassword)
         // Check input validation
         if (fullName === "" || email === "" || username === "" || password === "" || password !== confirmPassword){
             if (fullName === "") {
@@ -55,6 +50,7 @@ export default function RegisterPage() {
                 "email": email,
                 "username": username,
                 "password": password,
+                "phoneNumber": phoneNumber,
             })
         });
 

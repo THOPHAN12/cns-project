@@ -40,8 +40,11 @@ export default function LoginPage() {
             showFailureNotification(true);
             return;
         }
-        const token = await res.text();
-        Cookies.set("token", token, {
+        const data = await res.json();
+        Cookies.set("token", data.token, {
+            expires: 1
+        })
+        Cookies.set("id", data.userId, {
             expires: 1
         })
         nav("/profile")

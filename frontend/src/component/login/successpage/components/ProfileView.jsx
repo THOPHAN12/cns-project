@@ -1,14 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import profile from "../../../../assets/profile.jpg"; // Chỉnh sửa lại path nếu cần
+import Cookies from "js-cookie";
 
 export default function ProfileView() {
+    const userId = Cookies.get("id");
+    const token = Cookies.get("token");
+    const [userData, setUserData] = useState([])
+    useEffect(() => {
+        const fetchUser = async () => {
+            const res = await fetch(`http://localhost:8080/api/user?userId=${userId}`, {
+                method: "GET",
+                headers: {
+                    "Authorization" : `Bearer ${token}`
+                }
+            })
+            if (!res.ok) {
+                console.log(res.status);
+                return;
+            }
+            const data = await res.json();
+            console.log(data);
+            setUserData(data);
+        }
+        fetchUser();
+    }, [userId])
+
     return (
         <div className="flex-1 bg-[#F5EFE9] p-12 rounded-sm relative flex justify-between">
         {/* Left Info Section */}
         <div className="flex-1 pr-10">
             <div className="flex items-end mb-10">
             <h1 className="text-5xl font-semibold tracking-wide mr-4">
-                Xin chào, Elanor
+                Xin chào, {userData.fullName}
             </h1>
             <div className="flex-1 border-b border-[#D8CFC6] mb-2"></div>
             </div>
@@ -16,11 +39,11 @@ export default function ProfileView() {
             <div className="space-y-8 text-lg">
             <div className="flex items-center">
                 <span className="w-32 shrink-0">E-mail:</span>
-                <div className="flex-1 border-b border-[#D8CFC6] h-6">elanorbb@gmail.com</div>
+                <div className="flex-1 border-b border-[#D8CFC6] h-6">{userData.email}</div>
             </div>
             <div className="flex items-center">
                 <span className="w-32 shrink-0">Số điện thoại:</span>
-                <div className="flex-1 border-b border-[#D8CFC6] h-6">0937080900</div>
+                <div className="flex-1 border-b border-[#D8CFC6] h-6">{userData.phoneNumber}</div>
             </div>
             <div className="flex items-center">
                 <span className="w-44 shrink-0">Giới thiệu bản thân:</span>
