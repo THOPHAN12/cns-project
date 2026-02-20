@@ -3,10 +3,8 @@ package com.cleannieshop.backend.dto;
 import lombok.Data;
 
 @Data
-public class UserRegisterDTO {
+public class UserResponseDTO {
     private String fullName;
     private String email;
-    private String username;
-    private String password;
     private String phoneNumber;
 }

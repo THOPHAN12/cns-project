@@ -3,8 +3,10 @@ package com.cleannieshop.backend.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cleannieshop.backend.dto.UserLoginDTO;
+import com.cleannieshop.backend.dto.UserLoginResponseDTO;
 import com.cleannieshop.backend.dto.UserRegisterDTO;
 import com.cleannieshop.backend.model.User;
+import com.cleannieshop.backend.model.UserPrincipal;
 import com.cleannieshop.backend.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -45,12 +50,24 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> loginUser(@RequestBody UserLoginDTO user) {
+    public ResponseEntity<UserLoginResponseDTO> loginUser(@RequestBody UserLoginDTO user) {
         //TODO: process POST request
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        return authentication.isAuthenticated() ? 
-        new ResponseEntity<>(userService.generateToken(user.getUsername()), HttpStatus.ACCEPTED)
-        : new ResponseEntity<>("Login Failed", HttpStatus.OK);
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+        );
+        // return authentication.isAuthenticated() ? 
+        // new ResponseEntity<>(userService.generateToken(user.getUsername()), HttpStatus.ACCEPTED)
+        // : new ResponseEntity<>("Login Failed", HttpStatus.OK);
+        if (authentication.isAuthenticated()) {
+            UserLoginResponseDTO responseDTO = new UserLoginResponseDTO();
+            responseDTO.setToken(userService.generateToken(user.getUsername()));
+            
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+
+            responseDTO.setUserId(principal.getUser().getUserId());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }    
     
 }

@@ -1,6 +1,5 @@
 package com.cleannieshop.backend.service;
 
-import java.security.Key;
 // import java.security.Key;
 // import java.security.NoSuchAlgorithmException;
 // import java.util.Base64;
@@ -17,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.cleannieshop.backend.dto.UserRegisterDTO;
+import com.cleannieshop.backend.dto.UserResponseDTO;
 import com.cleannieshop.backend.model.Cart;
 import com.cleannieshop.backend.model.User;
 import com.cleannieshop.backend.repository.CartRepository;
@@ -100,5 +100,16 @@ public class UserService {
         return extractClaim(token, Claims::getExpiration).before(new Date()); // get expiration claim from the token
     }
 
-
+    public UserResponseDTO getUserInfo(String userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        System.out.println(user);
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        userResponseDTO.setFullName(user.getFullName());
+        userResponseDTO.setEmail(user.getEmail());
+        userResponseDTO.setPhoneNumber(user.getPhoneNumber());
+        return userResponseDTO;
+    }
 }
