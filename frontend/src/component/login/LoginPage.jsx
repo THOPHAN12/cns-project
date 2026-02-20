@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 
 export default function LoginPage() {
@@ -10,6 +10,12 @@ export default function LoginPage() {
     const [showWarning, setShowWarning] = useState(false);
     const [failureNotification, showFailureNotification] = useState(false);
     const nav = useNavigate();
+
+    useEffect(() => {
+        if (Cookies.get("token")) {
+            nav("/profile");
+        }
+    }, [nav]);
 
     const login = async () => {
         if (username === "" || password === "") {
