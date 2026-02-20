@@ -76,13 +76,38 @@ export default function ProductDetail() {
             return;
         }
 
+        // Fetch cartId using userId from cookie
+        const userId = Cookies.get("id");
+        let currentCartId = null;
+        try {
+            const cartRes = await fetch(`http://localhost:8080/api/user/cart?userId=${userId}`, {
+                headers: {
+                    "Authorization" : `Bearer ${Cookies.get("token")}` 
+                }
+            });
+            if (cartRes.ok) {
+                const cartData = await cartRes.json();
+                currentCartId = cartData.cartId;
+            } else {
+                console.log("Failed to fetch cartId, status:", cartRes.status);
+                setShowFailureNotification(true);
+                return; // Dừng lại ngay nếu lỗi
+            }
+        } catch (err) {
+            console.error("Failed to fetch cartId", err);
+            setShowFailureNotification(true);
+            return; // Dừng lại nếu rớt mạng/server sập
+        }
+        console.log("Cart Id là", currentCartId);
+
         const response = await fetch(`http://localhost:8080/api/products/${id}`, {
             method: "PUT",
             headers: {
-                "Content-Type" : "application/json"  
+                "Content-Type" : "application/json",
+                "Authorization" : `Bearer ${Cookies.get("token")}`  
             },
             body: JSON.stringify({
-                "cartId": "sb",
+                "cartId": currentCartId,
                 "quantity": quantity,
                 "size": selectedSize,
             })
