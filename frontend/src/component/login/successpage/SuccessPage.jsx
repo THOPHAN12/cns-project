@@ -9,41 +9,41 @@ import HistoryView from "./components/HistoryView";
 import WishlistView from "./components/WishListView";
 
 export default function SuccessPage() {
-  const [activeTab, setActiveTab] = useState("profile");
-  const nav = useNavigate();
+    const [activeTab, setActiveTab] = useState("profile");
+    const nav = useNavigate();
 
-  useEffect(() => {
-    if (!Cookies.get("token")) {
-      nav("/login");
-    }
-  }, [nav]);
+    useEffect(() => {
+      if (!Cookies.get("token")) {
+        nav("/login");
+      }
+    }, [nav]);
 
-  // Render nội dung tương ứng với tab đang chọn
-  const renderContent = () => {
-    switch (activeTab) {
-      case "profile": return <ProfileView />;
-      case "history": return <HistoryView />;
-      case "wishlist": return <WishlistView />;
-      default: return <ProfileView />;
-    }
-  };
+    // Render nội dung tương ứng với tab đang chọn
+    const renderContent = () => {
+      switch (activeTab) {
+        case "profile": return <ProfileView />;
+        case "history": return <HistoryView />;
+        case "wishlist": return <WishlistView />;
+        default: return <ProfileView />;
+      }
+    };
 
-  return (
-    <>
-      <Navbar />
-      <div className="min-h-screen relative top-30 bg-white flex justify-center items-start p-10 font-sans text-[#4a3b32]">
-        <div className="flex w-full max-w-6xl gap-16">
-          
-          {/* Main Content Area */}
-          <div className="flex-1">
-            {renderContent()}
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen relative top-30 bg-white flex justify-center items-start p-10 font-sans text-[#4a3b32]">
+          <div className="flex w-full max-w-6xl gap-16">
+            
+            {/* Main Content Area */}
+            <div className="flex-1">
+              {renderContent()}
+            </div>
+
+            {/* Sidebar Menu */}
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+            
           </div>
-
-          {/* Sidebar Menu */}
-          <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-          
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
 }

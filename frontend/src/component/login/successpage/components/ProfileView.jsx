@@ -1,5 +1,5 @@
 import React from "react";
-import profile from "../../../assets/profile.jpg"; // Chỉnh sửa lại path nếu cần
+import profile from "../../../../assets/profile.jpg"; // Chỉnh sửa lại path nếu cần
 
 export default function ProfileView() {
     return (

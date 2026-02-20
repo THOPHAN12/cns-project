@@ -237,7 +237,7 @@ export default function ProductDetail() {
 
                     {/* Action buttons */}
                     <div className="flex flex-row gap-4 mb-4">
-                        <button className="flex-1 py-3 hover:scale-120 transition hover:cursor-pointer bg-[#f3eae5] border border-[#e5d8ce] text-[#7c6f63] font-medium rounded hover:bg-[#e5d8ce] transition"
+                        <button className="flex-1 py-3 hover:scale-120 transition hover:cursor-pointer bg-[#f3eae5] border border-[#e5d8ce] text-[#7c6f63] font-medium rounded hover:bg-[#e5d8ce]"
                             onClick={() => {
                                 handleAddToCart();
                             }}>Thêm Vào Giỏ Hàng</button>
