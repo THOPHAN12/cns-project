@@ -3,8 +3,9 @@ import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { IoSearch } from "react-icons/io5";
 import { CiCircleChevDown } from "react-icons/ci";
-import { Link, useParams } from "react-router-dom";
+import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
+import Cookies from "js-cookie";
 
 import img_4965 from "../../assets/mock_product/IMG_4965.JPG"
 
@@ -18,8 +19,11 @@ export default function ProductDetail() {
 
     const [showNotification, setShowNotification] = useState(false);
     const [showFailureNotification, setShowFailureNotification] = useState(false);
+    const [showLoginModal, setShowLoginModal] = useState(false);
     const notificationTimeoutRef = useRef(null);
     const failureNotificationTimeoutRef = useRef(null);
+
+    const nav = useNavigate()
     
     useEffect(() => {
         const fetchProduct = async () => {
@@ -67,6 +71,11 @@ export default function ProductDetail() {
             clearTimeout(failureNotificationTimeoutRef.current);
         }
 
+        if (!Cookies.get("token")) {
+            setShowLoginModal(true);
+            return;
+        }
+
         const response = await fetch(`http://localhost:8080/api/products/${id}`, {
             method: "PUT",
             headers: {
@@ -92,6 +101,12 @@ export default function ProductDetail() {
                 setShowNotification(false);
             }, 3000);
         }
+    };
+
+    // Handler for closing login modal
+    const handleCloseLoginModal = () => {
+        setShowLoginModal(false);
+        nav("/login");
     };
 
     return (
@@ -123,6 +138,19 @@ export default function ProductDetail() {
                             <h4 className="font-bold">Thất bại!</h4>
                             <p className="text-sm text-gray-200">Thêm sản phẩm vào giỏ hàng thất bại.</p>
                         </div>
+                    </div>
+                </div>
+            )}
+            {/* Login Required Modal */}
+            {showLoginModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(60, 40, 20, 0.18)' }}>
+                    <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full flex flex-col items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 text-[#d7263d] mb-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 className="text-xl font-bold mb-2 text-[#3a2415]">Bạn cần đăng nhập</h3>
+                        <p className="text-gray-700 mb-6 text-center">Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.</p>
+                        <button onClick={handleCloseLoginModal} className="px-6 py-2 bg-[#3a2415] text-white rounded hover:bg-[#5a3a1a] font-semibold transition">Đăng nhập</button>
                     </div>
                 </div>
             )}

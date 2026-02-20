@@ -33,6 +33,15 @@ export default function RegisterPage() {
                             />
                         </div>
 
+                        {/* Username Input */}
+                        <div className="mb-5">
+                            <input
+                                type="text"
+                                placeholder="Tên tài khoản"
+                                className="w-full bg-transparent border border-[#d4c5bc] text-[#4a3b32] px-4 py-3 rounded-lg focus:outline-none focus:border-[#8c7365] placeholder-[#8c7365] text-sm"
+                            />
+                        </div>
+
                         {/* Password Input */}
                         <div className="mb-5">
                             <input

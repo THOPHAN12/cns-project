@@ -30,7 +30,7 @@ function App() {
         <Route path='/support' element={<SupportPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
-        <Route path='/success' element={<SuccessPage />} />
+        <Route path='/profile' element={<SuccessPage />} />
         <Route path='/cart' element={<CartPage />} />
         <Route path='/ar-ai' element={<AIAR />} />
         <Route path='/ar-ai/try-on' element={<ARTryOnPage />} />
