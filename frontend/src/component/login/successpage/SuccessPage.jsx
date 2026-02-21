@@ -6,7 +6,7 @@ import Navbar from "../../Navbar"; // Kiểm tra lại path
 import Sidebar from "./components/Sidebar";
 import ProfileView from "./components/ProfileView";
 import HistoryView from "./components/HistoryView";
-import WishlistView from "./components/WishListView";
+import WishlistView from "./components/WishlistView";
 
 export default function SuccessPage() {
     const [activeTab, setActiveTab] = useState("profile");
