@@ -4,28 +4,135 @@ import Footer from '../Footer'
 import { Link } from 'react-router-dom'
 import ctaVideo from '../../assets/homepage/cta-vid.MOV'
 
+import image1 from '../../assets/homepage/image1.png'
+import image2 from '../../assets/homepage/image2.png'
+import image3 from '../../assets/homepage/image3.png'
+import image4 from '../../assets/homepage/image4.png'
+import image5 from '../../assets/homepage/image5.png'
+import image6 from '../../assets/homepage/image6.png'
+
 export default function Homepage() {
-    return (<div id='homepage' className=''>
-        <Navbar />
-        <div id='homepage-body' className='flex flex-col items-center w-full h-screen gap-5 p-4'>
-            <Link to={"/product"} className='relative top-70 left-12'><Button content={"Mua sắm ngay"} /></Link>
-            <Link to={"/"} className='relative top-70 left-12'><Button content={"AR try-on"} /></Link>
-        </div>
-        <div className='px-40 py-15'>
-            <div className="overflow-hidden shadow-lg">
-                <video 
-                className="w-full h-auto" 
-                controls 
-                autoPlay 
-                muted 
-                loop
-                >
-                {/* Replace with your video path. If in 'public', use '/video.mp4' */}
-                <source src={ctaVideo} type="video/mp4" />
-                Your browser does not support the video tag.
-                </video>
+    return (
+        <div id='homepage' className=''>
+            <Navbar />
+            
+            <div id='homepage-body' className='flex flex-col items-center w-full h-screen gap-5 p-4'>
+                <Link to={"/product"} className='relative top-70 left-12'>
+                    <Button content={"Mua sắm ngay"} />
+                </Link>
+                <Link to={"/ar-ai"} className='relative top-70 left-12'>
+                    <Button content={"CNS AI"} />
+                </Link>
             </div>
+
+            <div className='px-40 py-15'>
+                <div className="overflow-hidden shadow-lg">
+                    <video 
+                        className="w-full h-auto" 
+                        controls 
+                        autoPlay 
+                        muted 
+                        loop
+                    >
+                        <source src={ctaVideo} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+
+            {/* --- SECTION 1: VỀ CLEANNIE STUDIO --- */}
+            <div className="w-full px-40 py-15 flex flex-col gap-10">
+                {/* Image Container */}
+                <div className="flex w-full h-[500px]">
+                    <div className="w-1/2 h-full">
+                        <img 
+                            src={image1}
+                            alt="Cleannie Studio Model on Hammock" 
+                            className="w-full h-full object-cover" 
+                        />
+                    </div>
+                    <div className="w-1/2 h-full">
+                        <img 
+                            src={image2}
+                            alt="Cleannie Studio Model on Hammock"
+                            className="w-full h-full object-cover object-top" 
+                        />
+                    </div>
+                </div>
+                
+                {/* Text Container */}
+                <div className="flex w-full justify-between items-start pt-5">
+                    <div className="w-1/3 pr-8">
+                        <h2 className="text-4xl font-bold text-[#4a3629] tracking-wide uppercase">
+                            Về Cleannie Studio
+                        </h2>
+                    </div>
+                    <div className="w-2/3">
+                        <p className="text-gray-600 leading-relaxed text-sm text-justify">
+                            "Vào năm 2025, Cleannie Studio được ra đời với khát vọng tạo nên những thiết kế thời trang không chỉ đẹp về hình thức mà còn vừa vặn hoàn hảo với từng vóc dáng. Chúng tôi tin rằng mỗi cơ thể đều mang một câu chuyện riêng, và thời trang cần tôn vinh sự khác biệt đó. Bằng việc kết hợp tư duy thiết kế hiện đại, chất liệu chọn lọc và công nghệ đo lường thông số cơ thể chính xác, nhãn hàng hướng đến việc mang lại trải nghiệm cá nhân hóa, giúp mỗi khách hàng tự tin thể hiện phong cách và bản sắc của chính mình trong từng sản phẩm."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* --- SECTION 2: BÁN CHẠY NHẤT --- */}
+            <div className="w-full px-40 py-15 mb-10">
+                <div className="flex w-full h-[600px] gap-8">
+                    {/* Left Side: Large Image */}
+                    <div className="w-[40%] h-full">
+                        <img 
+                            src={image3}
+                            alt="Best Seller Main - Models" 
+                            className="w-full h-full object-cover object-center" 
+                        />
+                    </div>
+                    
+                    {/* Right Side: Grid of Images and Text */}
+                    <div className="w-[60%] flex flex-col justify-between h-full">
+                        {/* Top 3 Small Images */}
+                        <div className="flex justify-between h-[65%] gap-6">
+                            <div className="w-1/3">
+                                <img 
+                                    src={image4}
+                                    alt="Product 1" 
+                                    className="w-full h-full object-cover object-center" 
+                                />
+                            </div>
+                            <div className="w-1/3">
+                                <img 
+                                    src={image5}
+                                    alt="Product 2" 
+                                    className="w-full h-full object-cover object-center" 
+                                />
+                            </div>
+                            <div className="w-1/3">
+                                <img 
+                                    src={image6}
+                                    alt="Product 3" 
+                                    className="w-full h-full object-cover object-top" 
+                                />
+                            </div>
+                        </div>
+                        
+                        {/* Bottom Text and CTA */}
+                        <div className="flex flex-col h-[30%] justify-end pb-2">
+                            <h2 className="text-5xl font-serif text-[#4a3629] mb-4">
+                                BÁN CHẠY NHẤT
+                            </h2>
+                            <div className="flex justify-between items-end gap-10">
+                                <p className="w-[70%] text-gray-700 text-sm leading-relaxed">
+                                    Với Khả Năng Định Hình, Ôm Sát Và Cảm Giác Nhẹ Nhàng, Chúng Tôi Đã Thiết Kế Các Sản Phẩm Với Chất Liệu Phù Hợp Mọi Nhu Cầu Và Phong Cách Sống Của Bạn.
+                                </p>
+                                    <Link to={"/product"} className="px-10 py-3 w-fit bg-gray-200 hover:bg-gray-300 transition-colors text-black font-medium rounded-md w-[30%] cursor-pointer">
+                                        Mua Ngay
+                                    </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <Footer />
         </div>
-        <Footer />
-    </div>)
+    )
 }

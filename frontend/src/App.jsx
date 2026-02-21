@@ -15,6 +15,8 @@ import SuccessPage from './component/login/successpage/SuccessPage'
 import CartPage from './component/cart/CartPage'
 import ARTryOnPage from './component/ai-ar/try-on-page/ARTryOnPage'
 import AIAR from './component/ai-ar/AIAR'
+import RegisterPage from './component/register/RegisterPage'
+import CheckoutPage from './component/cart/checkout/CheckoutPage'
 
 function App() {
   return (
@@ -22,14 +24,16 @@ function App() {
       <Routes>
         <Route path='/' element={<Homepage />}/>
         <Route path='/product' element={<ProductPage />} />
-        <Route path='/product-detail' element={<ProductDetail />} />
+        <Route path='/product-detail/:id' element={<ProductDetail />} />
         <Route path='/collection' element={<CollectionPage />} />
         <Route path='/whats-new' element={<WhatsNewPage />} />
         <Route path='/about-us' element={<AboutUsPage />} />
         <Route path='/support' element={<SupportPage />} />
         <Route path='/login' element={<LoginPage />} />
-        <Route path='/success' element={<SuccessPage />} />
+        <Route path='/register' element={<RegisterPage />} />
+        <Route path='/profile' element={<SuccessPage />} />
         <Route path='/cart' element={<CartPage />} />
+        <Route path='/checkout' element={<CheckoutPage />} />
         <Route path='/ar-ai' element={<AIAR />} />
         <Route path='/ar-ai/try-on' element={<ARTryOnPage />} />
       </Routes>
