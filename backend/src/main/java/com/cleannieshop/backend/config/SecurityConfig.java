@@ -72,7 +72,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         
         // Cấp phép cho domain của React App
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); 
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://www.cleannieshop.com/")); 
         
         // Bắt buộc phải có OPTIONS để trình duyệt gửi Preflight Request
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
