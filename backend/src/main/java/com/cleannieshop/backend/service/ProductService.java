@@ -27,10 +27,12 @@ public class ProductService {
     @Autowired
     private CartHasProductRepository cartHasProductRepository;
 
+    @Transactional
     public List<Product> getProducts() {
         return productRepository.findAll();
     }
 
+    @Transactional
     public List<Product> getProductsByFilter(List<String> filterStrings) {
         List<Product> allProducts = productRepository.findAll();
         List<Product> result = allProducts.stream()
@@ -39,6 +41,7 @@ public class ProductService {
         return result;
     }
 
+    @Transactional
     public Product getProductById(String id) {
         // TODO Auto-generated method stub
         return productRepository.findById(id).orElse(null);
