@@ -272,9 +272,9 @@ export default function CartPage() {
                                     </div>
                                 </div> */}
 
-                                <button className="w-full bg-black text-white font-bold py-4 px-6 mt-6 hover:bg-gray-800 transition-colors uppercase text-sm tracking-widest rounded-sm">
+                                <Link to={"/checkout"} className="w-full bg-black text-white font-bold py-4 px-6 mt-6 hover:bg-gray-800 transition-colors uppercase text-sm tracking-widest rounded-sm">
                                     THANH TOÁN
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </>
