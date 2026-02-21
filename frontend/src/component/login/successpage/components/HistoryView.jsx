@@ -3,7 +3,7 @@ import product1 from "../../../../assets/product1.png"; // Chỉnh sửa lại p
 import product2 from "../../../../assets/product2.png"; 
 
 // Sub-component chỉ dùng trong HistoryView để hiển thị từng sản phẩm
-const HistoryItem = ({ image, title, price, sizes, stockWarning, colorDotClass }) => (
+const Item = ({ image, title, price, sizes, stockWarning, colorDotClass }) => (
     <div className="flex gap-6 pb-6 border-b border-[#D8CFC6]">
         <div className="w-32 h-40 bg-white rounded-2xl overflow-hidden shrink-0 shadow-sm">
         <img src={image} alt={title} className="w-full h-full object-cover" />
@@ -55,10 +55,12 @@ const HistoryItem = ({ image, title, price, sizes, stockWarning, colorDotClass }
     </div>
 );
 
+export { Item };
+
 export default function HistoryView() {
     return (
         <div className="flex-1 space-y-8">
-        <HistoryItem
+        <Item
             image={product1}
             title="Butterline Tennis Dress"
             price="1,000,000vnd"
@@ -72,7 +74,7 @@ export default function HistoryView() {
             ]}
         />
 
-        <HistoryItem
+        <Item
             image={product2}
             title="Baby Top"
             price="1,000,000vnd"
