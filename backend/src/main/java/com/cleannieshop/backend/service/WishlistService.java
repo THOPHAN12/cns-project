@@ -63,10 +63,13 @@ public class WishlistService {
         Wishlist wishlist = user.getWishlist();
         Product product = productRepository.findById(productId).orElse(null);
         if (product == null)
-            return;
+            throw new Error("Cannot find product with id = " + productId);
         if (wishlist.getProducts().size() <= 0) {
             wishlist.setProducts(new ArrayList<>(Arrays.asList(product)));
         } else {
+            if (wishlist.getProducts().contains(product)) {
+                throw new Error("Product Exists");
+            }
             wishlist.getProducts().add(product);
         }
         wishlistRepository.save(wishlist);

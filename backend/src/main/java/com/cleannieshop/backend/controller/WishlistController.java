@@ -3,7 +3,6 @@ package com.cleannieshop.backend.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cleannieshop.backend.dto.ProductDTO;
-import com.cleannieshop.backend.model.Product;
 import com.cleannieshop.backend.service.WishlistService;
 
 import java.util.List;
