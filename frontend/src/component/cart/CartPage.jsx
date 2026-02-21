@@ -226,8 +226,8 @@ export default function CartPage() {
                 {/* Nếu giỏ hàng trống thì hiện thông báo */}
                 {cartItems.length === 0 ? (
                     <div className="text-center py-20 text-gray-500">
-                        <p className="text-xl">Your cart is currently empty.</p>
-                        <Link to={"/product"} className="mt-10 text-black underline hover:text-gray-600">Continue Shopping</Link>
+                        <p className="text-xl">Giỏ hàng của bạn hiện đang trống.</p>
+                        <Link to={"/product"} className="mt-10 text-black underline hover:text-gray-600">Mua sắm ngay</Link>
                     </div>
                 ) : (
                     <>

@@ -278,7 +278,7 @@ function OrderSummary({ shippingInfo, paymentMethod }) {
                 <div className="fixed bottom-10 right-10 z-50 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl flex items-center space-x-3 animate-fade-in-up">
                     <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     <div className="flex flex-col">
-                        <span className="font-medium text-lg">CNS đã lên đơn hàng thành công 🎉</span>
+                        <span className="font-medium text-lg">CNS đã lên đơn hàng thành công</span>
                         <span className="text-sm opacity-90">Mã đơn: <strong>{invoiceResult.invoiceId}</strong></span>
                     </div>
                 </div>

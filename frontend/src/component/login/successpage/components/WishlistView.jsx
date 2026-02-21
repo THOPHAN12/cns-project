@@ -5,8 +5,56 @@ const WishlistView = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cartId, setCartId] = useState("");
 
   const userId = Cookies.get("id");
+
+  const handleAddToCart = async (productId) => {
+        if (!Cookies.get("token")) {
+            setShowLoginModal(true);
+            return;
+        }
+
+        const userId = Cookies.get("id");
+        let currentCartId = null;
+        try {
+            const cartRes = await fetch(`http://localhost:8080/api/user/cart?userId=${userId}`, {
+                headers: { "Authorization" : `Bearer ${Cookies.get("token")}` }
+            });
+            if (cartRes.ok) {
+                const cartData = await cartRes.json();
+                currentCartId = cartData.cartId;
+            } else {
+                alert("Thất bại! Lỗi lấy thông tin giỏ hàng.");
+                return; 
+            }
+        } catch (err) {
+            alert("Lỗi! Không thể kết nối đến server.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/products/${productId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type" : "application/json",
+                    "Authorization" : `Bearer ${Cookies.get("token")}`  
+                },
+                body: JSON.stringify({
+                    "cartId": currentCartId,
+                    "quantity": quantity,
+                    "size": selectedSize,
+                })
+            });
+            if (!response.ok) {
+                alert("Thất bại! Thêm sản phẩm vào giỏ hàng thất bại.");
+            } else {
+                alert("Thành công! Đã thêm sản phẩm vào giỏ hàng.");
+            }
+        } catch (err) {
+            alert("Lỗi! Lỗi thêm vào giỏ hàng.");
+        }
+    };
 
   // Gọi API lấy danh sách Wishlist
   const fetchWishlist = async () => {
@@ -27,6 +75,7 @@ const WishlistView = () => {
       if (!response.ok) throw new Error('Lỗi khi tải danh sách yêu thích');
 
       const data = await response.json();
+      console.log(data);
       setWishlist(data);
     } catch (err) {
       setError(err.message);
@@ -124,6 +173,7 @@ const WishlistView = () => {
                 <button 
                   disabled={product.stockQuantity === 0}
                   className="w-max border border-gray-600 text-gray-800 bg-transparent px-5 py-1.5 text-sm font-medium hover:bg-gray-900 hover:text-white transition-colors disabled:border-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  onClick={() => handleAddToCart(product.id)}
                 >
                   {product.stockQuantity > 0 ? 'Thêm vào giỏ' : 'Hết hàng'}
                 </button>
