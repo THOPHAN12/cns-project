@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import profile from "../../../../assets/profile.jpg"; // Chỉnh sửa lại path nếu cần
 import Cookies from "js-cookie";
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function ProfileView() {
     const userId = Cookies.get("id");
     const token = Cookies.get("token");
     const [userData, setUserData] = useState([])
     useEffect(() => {
         const fetchUser = async () => {
-            const res = await fetch(`http://localhost:8080/api/user?userId=${userId}`, {
+            const res = await fetch(`${apiUrl}/api/user?userId=${userId}`, {
                 method: "GET",
                 headers: {
                     "Authorization" : `Bearer ${token}`

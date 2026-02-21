@@ -3,6 +3,7 @@ import Footer from "../../Footer";
 import Navbar from "../../Navbar";
 import Cookies from "js-cookie";
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 // ==========================================
 // 1. Component Form Thông Tin Giao Hàng
 // ==========================================
@@ -13,7 +14,7 @@ function ShippingForm({ shippingInfo, setShippingInfo }) {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/user?userId=${userId}`, {
+                const res = await fetch(`${apiUrl}/api/user?userId=${userId}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`
@@ -114,7 +115,7 @@ function OrderSummary({ shippingInfo, paymentMethod }) {
             let currentCartId = null;
             
             try {
-                const cartRes = await fetch(`http://localhost:8080/api/user/cart?userId=${userId}`, {
+                const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${userId}`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 if (cartRes.ok) {
@@ -128,7 +129,7 @@ function OrderSummary({ shippingInfo, paymentMethod }) {
             }
 
             try {
-                const res = await fetch(`http://localhost:8080/api/cart/${currentCartId}`, {
+                const res = await fetch(`${apiUrl}/api/cart/${currentCartId}`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -172,7 +173,7 @@ function OrderSummary({ shippingInfo, paymentMethod }) {
         };
 
         try {
-            const res = await fetch('http://localhost:8080/api/invoice', {
+            const res = await fetch(`${apiUrl}/api/invoice`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

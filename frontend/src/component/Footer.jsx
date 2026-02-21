@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 const Footer = () => {
   const [email, setEmail] = useState("");
   const [isInvited, setIsInvited] = useState(false);
@@ -7,7 +9,7 @@ const Footer = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const sendEmailTo = async (email) => {
-    const res = await fetch("http://localhost:8080/api/support-email", {
+    const res = await fetch(`${apiUrl}/api/support-email`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',

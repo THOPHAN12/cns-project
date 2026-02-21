@@ -9,6 +9,8 @@ import CategorySidebar from "./CategorySidebar";
 import FilterSidebar from "./FilterSidebar";
 import ProductList from "./ProductList";
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function ProductPage() {
     const [productData, setProductData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -61,7 +63,7 @@ export default function ProductPage() {
 
                 // Kết quả query string sẽ là: ?filter=N%E1%BB%AF&filter=Nam
                 const queryString = params.toString(); 
-                const url = `http://localhost:8080/api/products?${queryString}`;
+                const url = `${apiUrl}/api/products?${queryString}`;
 
                 console.log("Fetching URL:", url); // Log để kiểm tra
 

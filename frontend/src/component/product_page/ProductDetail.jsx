@@ -4,6 +4,7 @@ import Footer from "../Footer";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 // ==========================================
 // 1. COMPONENT THÔNG BÁO (GÓC DƯỚI BÊN PHẢI)
 // ==========================================
@@ -181,7 +182,7 @@ export default function ProductDetail() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/products/${id}`);
+                const response = await fetch(`${apiUrl}/api/products/${id}`);
                 if (!response.ok) {
                     console.log("Error fetching data with status ", response.status);
                 }
@@ -217,7 +218,7 @@ export default function ProductDetail() {
         const userId = Cookies.get("id");
         let currentCartId = null;
         try {
-            const cartRes = await fetch(`http://localhost:8080/api/user/cart?userId=${userId}`, {
+            const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${userId}`, {
                 headers: { "Authorization" : `Bearer ${Cookies.get("token")}` }
             });
             if (cartRes.ok) {
@@ -233,7 +234,7 @@ export default function ProductDetail() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+            const response = await fetch(`${apiUrl}/api/products/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type" : "application/json",
@@ -268,7 +269,7 @@ export default function ProductDetail() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/wishlist/product/${id}`, {
+            const response = await fetch(`${apiUrl}/api/wishlist/product/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

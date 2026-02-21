@@ -8,6 +8,7 @@ import img_4965 from "../../assets/mock_product/IMG_4965.JPG"
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 // --- 1. Chọn lọc dữ liệu ban đầu ---
 // Chỉ lấy 3 sản phẩm có ID cụ thể (ví dụ: 2, 4, 7) để hiển thị trong giỏ
 const selectedIds = [4, 5]; 
@@ -97,7 +98,7 @@ export default function CartPage() {
             const userId = Cookies.get("id");
             let currentCartId = null;
             try {
-                const cartRes = await fetch(`http://localhost:8080/api/user/cart?userId=${userId}`, {
+                const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${userId}`, {
                     headers: {
                         "Authorization" : `Bearer ${Cookies.get("token")}` 
                     }
@@ -118,7 +119,7 @@ export default function CartPage() {
             console.log("Cart Id là", currentCartId);
             setCartId(currentCartId);
 
-            const res = await fetch(`http://localhost:8080/api/cart/${currentCartId}`, {
+            const res = await fetch(`${apiUrl}/api/cart/${currentCartId}`, {
                 headers: {
                     "Authorization" : `Bearer ${Cookies.get("token")}` 
                 }
@@ -142,7 +143,7 @@ export default function CartPage() {
                     : item
             )
         );
-        const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+        const response = await fetch(`${apiUrl}/api/products/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type" : "application/json",
@@ -170,7 +171,7 @@ export default function CartPage() {
             )
         );
 
-        const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+        const response = await fetch(`${apiUrl}/api/products/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type" : "application/json",
@@ -193,7 +194,7 @@ export default function CartPage() {
             const itemToRemove = cartItems.find(item => item.id === id);
             const currentQuantity = itemToRemove ? itemToRemove.quantity : 1;
             setCartItems(prevItems => prevItems.filter(item => item.id !== id));
-            const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+            const response = await fetch(`${apiUrl}/api/products/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type" : "application/json",

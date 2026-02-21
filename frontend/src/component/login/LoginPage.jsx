@@ -3,6 +3,8 @@ import Navbar from "../Navbar";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -23,7 +25,7 @@ export default function LoginPage() {
             return;
         }
 
-        const res = await fetch("http://localhost:8080/auth/login", {
+        const res = await fetch(`${apiUrl}/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

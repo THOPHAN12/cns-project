@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 const WishlistView = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +20,7 @@ const WishlistView = () => {
         const userId = Cookies.get("id");
         let currentCartId = null;
         try {
-            const cartRes = await fetch(`http://localhost:8080/api/user/cart?userId=${userId}`, {
+            const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${userId}`, {
                 headers: { "Authorization" : `Bearer ${Cookies.get("token")}` }
             });
             if (cartRes.ok) {
@@ -34,7 +36,7 @@ const WishlistView = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/products/${productId}`, {
+            const response = await fetch(`${apiUrl}/api/products/${productId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type" : "application/json",
@@ -65,7 +67,7 @@ const WishlistView = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/wishlist?userId=${userId}`, {
+      const response = await fetch(`${apiUrl}/api/wishlist?userId=${userId}`, {
         method: 'GET',
         headers: {
           "Authorization": `Bearer ${Cookies.get("token")}`
@@ -91,7 +93,7 @@ const WishlistView = () => {
   // Gọi API xóa sản phẩm khỏi Wishlist
   const handleRemoveFromWishlist = async (productId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/wishlist/product/${productId}`, {
+      const response = await fetch(`${apiUrl}/api/wishlist/product/${productId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
