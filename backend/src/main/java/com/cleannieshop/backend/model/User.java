@@ -2,6 +2,8 @@ package com.cleannieshop.backend.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -28,9 +31,14 @@ public class User {
     private String phoneNumber;
     
 
-    @OneToOne
-    private Cart cartId;
+    @OneToOne(mappedBy = "user")
+    @JsonManagedReference
+    private Cart cart;
 
-    @OneToMany
+    @OneToOne(mappedBy = "user")
+    @JsonManagedReference
+    private Wishlist wishlist;
+
+    @OneToMany(mappedBy = "user")
     private List<Invoice> invoices;
 }

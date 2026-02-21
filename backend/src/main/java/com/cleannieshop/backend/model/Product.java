@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -32,4 +33,8 @@ public class Product {
     @OneToMany(mappedBy = "product")
     @JsonBackReference
     private List<InvoiceHasProduct> invoiceHasProducts;
+
+    @ManyToMany(mappedBy = "products")
+    @JsonBackReference
+    private List<Wishlist> wishlists;
 }

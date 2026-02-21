@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cleannieshop.backend.dto.InvoiceRequestDTO;
 import com.cleannieshop.backend.dto.InvoiceResponseDTO;
-import com.cleannieshop.backend.model.Invoice;
 import com.cleannieshop.backend.service.InvoiceService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;

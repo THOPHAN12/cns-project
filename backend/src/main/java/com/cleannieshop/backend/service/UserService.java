@@ -1,5 +1,6 @@
 package com.cleannieshop.backend.service;
 
+import java.util.ArrayList;
 // import java.security.Key;
 // import java.security.NoSuchAlgorithmException;
 // import java.util.Base64;
@@ -20,8 +21,10 @@ import com.cleannieshop.backend.dto.UserRegisterDTO;
 import com.cleannieshop.backend.dto.UserResponseDTO;
 import com.cleannieshop.backend.model.Cart;
 import com.cleannieshop.backend.model.User;
+import com.cleannieshop.backend.model.Wishlist;
 import com.cleannieshop.backend.repository.CartRepository;
 import com.cleannieshop.backend.repository.UserRepository;
+import com.cleannieshop.backend.repository.WishlistRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -33,6 +36,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private CartRepository cartRepository;
+    @Autowired
+    private WishlistRepository wishlistRepository;
 
     private SecretKey secretKey;
 
@@ -56,11 +61,21 @@ public class UserService {
         newUser.setUsername(userDTO.getUsername());
         newUser.setPassword(userDTO.getPassword());
         newUser.setPhoneNumber(userDTO.getPhoneNumber());
+
+        newUser = userRepository.save(newUser);
+
         Cart newCart = new Cart();
         newCart.setDateCreated(new Date());
+        newCart.setUser(newUser);
         newCart = cartRepository.save(newCart);
-        newUser.setCartId(newCart);
-        return userRepository.save(newUser);
+        newUser.setCart(newCart);
+
+        Wishlist newWishlist = new Wishlist();
+        newWishlist.setUser(newUser);
+        newWishlist = wishlistRepository.save(newWishlist);
+        newUser.setWishlist(newWishlist);
+
+        return newUser;
     }
 
     public String generateToken(String username) {
@@ -120,7 +135,7 @@ public class UserService {
             return null;
         }
         UserCartDTO cartDTO = new UserCartDTO();
-        cartDTO.setCartId(user.getCartId().getCartId());
+        cartDTO.setCartId(user.getCart().getCartId());
         return cartDTO;
     }
 }

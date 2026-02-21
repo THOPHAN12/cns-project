@@ -1,36 +1,34 @@
 package com.cleannieshop.backend.model;
 
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
+@Table(name = "wishlist")
 @Data
-public class Invoice {
+public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String invoiceId;
-    private String customerFullName;
-    private String email;
-    private String address;
-    private String phoneNumber;
-    private String payMethodOption;
-    private Date dateCreated;
-    @OneToMany(mappedBy = "invoice")
-    @JsonBackReference
-    private List<InvoiceHasProduct> invoiceHasProducts;
-    private double totalPrice;
-    @ManyToOne
+    private String wishlistId;
+    
+    @ManyToMany
+    @JsonManagedReference
+    private List<Product> products;
+
+    @OneToOne
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
