@@ -55,6 +55,7 @@ public class UserService {
         newUser.setRole("USER");
         newUser.setUsername(userDTO.getUsername());
         newUser.setPassword(userDTO.getPassword());
+        newUser.setPhoneNumber(userDTO.getPhoneNumber());
         Cart newCart = new Cart();
         newCart.setDateCreated(new Date());
         newCart = cartRepository.save(newCart);
@@ -106,7 +107,6 @@ public class UserService {
         if (user == null) {
             return null;
         }
-        System.out.println(user);
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setFullName(user.getFullName());
         userResponseDTO.setEmail(user.getEmail());

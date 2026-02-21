@@ -28,4 +28,8 @@ public class Product {
     @OneToMany(mappedBy = "product")
     @JsonBackReference
     private List<CartHasProduct> cartHasProducts;
+
+    @OneToMany(mappedBy = "product")
+    @JsonBackReference
+    private List<InvoiceHasProduct> invoiceHasProducts;
 }

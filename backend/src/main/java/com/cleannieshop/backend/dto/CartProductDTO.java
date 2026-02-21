@@ -1,5 +1,7 @@
 package com.cleannieshop.backend.dto;
 
+import java.util.List;
+
 import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,4 +17,5 @@ public class CartProductDTO {
     private byte[] image;
     private double price;
     private int quantity;
+    private List<String> sizes;
 }
