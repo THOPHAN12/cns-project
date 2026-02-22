@@ -34,8 +34,8 @@ function App() {
         <Route path='/profile' element={<SuccessPage />} />
         <Route path='/cart' element={<CartPage />} />
         <Route path='/checkout' element={<CheckoutPage />} />
-        <Route path='/ar-ai' element={<AIAR />} />
-        <Route path='/ar-ai/try-on' element={<ARTryOnPage />} />
+        {/* <Route path='/ar-ai' element={<AIAR />} />
+        <Route path='/ar-ai/try-on' element={<ARTryOnPage />} /> */}
       </Routes>
     </BrowserRouter>
   )
