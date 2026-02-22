@@ -23,8 +23,7 @@ public class Product {
     private List<String> sizes;
     private long stockQuantity;
     private List<String> categories;
-    @Lob
-    private byte[] imageData;
+    private String imageSrc;
     
     @OneToMany(mappedBy = "product")
     @JsonBackReference

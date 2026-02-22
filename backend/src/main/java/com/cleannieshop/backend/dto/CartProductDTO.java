@@ -13,8 +13,7 @@ import lombok.NoArgsConstructor;
 public class CartProductDTO {
     private String id;
     private String name;
-    @Lob
-    private byte[] image;
+    private String imageSrc;
     private double price;
     private int quantity;
     private List<String> sizes;
