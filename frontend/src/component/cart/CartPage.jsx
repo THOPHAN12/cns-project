@@ -37,7 +37,7 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
       {/* Cột 1: Ảnh & Thông tin */}
       <div className="col-span-12 md:col-span-6 flex gap-6">
         <div className="w-24 h-24 flex-shrink-0 bg-gray-50 rounded-md overflow-hidden border border-gray-100">
-          <img src={`data:image/jpeg;base64,${item.image}`} alt={item.name} className="w-full h-full object-cover" /> 
+          <img src={item.imageSrc} alt={item.name} className="w-full h-full object-cover" /> 
         </div>
         <div className="flex flex-col gap-1">
             <h3 className="font-bold text-lg leading-tight text-gray-900">{item.name}</h3>
