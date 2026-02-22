@@ -43,7 +43,7 @@ public class WishlistService {
         return products.stream().map(product -> {
             // Việc gọi .getImageData() ở đây cực kỳ quan trọng
             // Nó buộc Postgres phải đọc LOB stream khi kết nối vẫn đang mở
-            byte[] imageBytes = product.getImageData();
+            String imageSrc = product.getImageSrc();
 
             return new ProductDTO(
                 product.getId(),
@@ -52,7 +52,7 @@ public class WishlistService {
                 product.getSizes(),
                 product.getStockQuantity(),
                 product.getCategories(),
-                imageBytes
+                imageSrc
             );
         }).collect(Collectors.toList());
     }

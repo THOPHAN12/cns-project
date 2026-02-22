@@ -35,7 +35,7 @@ public class CartService {
             Product product = cartHasProduct.getProduct();
             CartProductDTO e = new CartProductDTO();
             e.setId(product.getId());
-            e.setImage(product.getImageData());
+            e.setImageSrc(product.getImageSrc());
             e.setName(product.getProductName());
             e.setPrice(product.getPrice());
             e.setQuantity(cartHasProduct.getQuantity());

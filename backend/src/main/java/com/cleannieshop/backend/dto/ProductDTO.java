@@ -15,5 +15,5 @@ public class ProductDTO {
     private List<String> sizes;
     private long stockQuantity;
     private List<String> categories;
-    private byte[] imageData; 
+    private String imageSrc; 
 }
