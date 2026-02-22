@@ -147,7 +147,7 @@ const WishlistView = () => {
               {/* Vùng hình ảnh (Nền xám nhạt như thiết kế mẫu) */}
               <div className="w-28 h-28 sm:w-36 sm:h-36 bg-[#f8f8f8] flex-shrink-0 flex items-center justify-center rounded-sm overflow-hidden">
                 <img
-                  src={`data:image/jpeg;base64,${product.imageData}`}
+                  src={product.imageSrc}
                   alt={product.productName}
                   className="w-full h-full object-contain mix-blend-multiply"
                 />

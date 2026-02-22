@@ -75,7 +75,7 @@ export default function ProductPage() {
                 
                 setProductData(data.map(e => ({
                     id: e.id,
-                    imageSrc: `data:image/jpeg;base64,${e.imageData}`,
+                    imageSrc: e.imageSrc,
                     productName: e.productName,
                     price: e.price
                 })));

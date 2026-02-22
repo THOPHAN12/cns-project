@@ -214,7 +214,7 @@ function OrderSummary({ shippingInfo, paymentMethod }) {
                     <div className="flex justify-between">
                         <div className="flex">
                             <div className="w-16 h-16 bg-gray-200 rounded-md flex-shrink-0 object-cover overflow-hidden">
-                                <img src={`data:image/jpeg;base64,${item.image}`} alt={item.name} className="w-full h-full object-cover"/>
+                                <img src={item.image} alt={item.name} className="w-full h-full object-cover"/>
                             </div>
                             <div className="ml-4 flex flex-col justify-center">
                                 <span className="text-sm font-medium text-gray-900 line-clamp-2">{item.name}</span>

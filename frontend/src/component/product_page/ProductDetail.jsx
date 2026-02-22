@@ -73,7 +73,7 @@ const Breadcrumb = () => (
 // ==========================================
 const ProductGallery = ({ imageData }) => (
     <div className="shrink-0 w-120 flex flex-col items-center">
-        <img src={`data:image/jpeg;base64,${imageData}`} alt="Product image" className="rounded-lg object-cover border border-[#e5d8ce] w-200 h-full" />
+        <img src={imageData} alt="Product image" className="rounded-lg object-cover border border-[#e5d8ce] w-200 h-full" />
         <button className="mt-4 text-2xl text-[#bdbdbd] hover:text-[#e5d8ce] bg-white rounded-full p-2 border border-[#e5d8ce] w-10 h-10 flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 7.5l-6 6-3-3" />
@@ -187,6 +187,7 @@ export default function ProductDetail() {
                     console.log("Error fetching data with status ", response.status);
                 }
                 const data = await response.json();
+                console.log(data);
                 setProductData(data);
                 // Tự động set size đầu tiên nếu có
                 if (data.sizes && data.sizes.length > 0) setSelectedSize(data.sizes[0]);
@@ -316,7 +317,7 @@ export default function ProductDetail() {
             <Breadcrumb />
 
             <div className="flex flex-row gap-12 px-30 py-10">
-                <ProductGallery imageData={productData.imageData} />
+                <ProductGallery imageData={productData.imageSrc} />
                 <ProductInfo 
                     productData={productData}
                     selectedSize={selectedSize}

@@ -116,12 +116,12 @@ export default function Homepage() {
                         
                         {/* Bottom Text and CTA */}
                         <div className="flex flex-col h-[30%] justify-end pb-2">
-                            <h2 className="text-5xl font-serif text-[#4a3629] mb-4">
+                            <h2 className="text-5xl text-[#4a3629] mb-4">
                                 BÁN CHẠY NHẤT
                             </h2>
                             <div className="flex justify-between items-end gap-10">
                                 <p className="w-[70%] text-gray-700 text-sm leading-relaxed">
-                                    Với Khả Năng Định Hình, Ôm Sát Và Cảm Giác Nhẹ Nhàng, Chúng Tôi Đã Thiết Kế Các Sản Phẩm Với Chất Liệu Phù Hợp Mọi Nhu Cầu Và Phong Cách Sống Của Bạn.
+                                    Với khả năng định hình, ôm sát và cảm giác nhẹ nhàng, chúng tôi đã thiết kế các sản phẩm với chất liệu phù hợp mọi nhu cầu và phong cách sống của bạn.
                                 </p>
                                     <Link to={"/product"} className="px-10 py-3 w-fit bg-gray-200 hover:bg-gray-300 transition-colors text-black font-medium rounded-md w-[30%] cursor-pointer">
                                         Mua Ngay
