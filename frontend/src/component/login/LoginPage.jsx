@@ -3,8 +3,9 @@ import Navbar from "../Navbar";
 import logoImg from "../../assets/logo transparent.png";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
+import { getApiBaseUrl } from "../../utils/api";
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const apiUrl = getApiBaseUrl();
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");

@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import Navbar from "../Navbar";
 import { useState } from "react";
+import { getApiBaseUrl } from "../../utils/api";
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const apiUrl = getApiBaseUrl();
 
 export default function RegisterPage() {
     const [fullName, setFullName] = useState("");
@@ -58,6 +59,7 @@ export default function RegisterPage() {
             const res = await fetch(`${apiUrl}/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "omit",
                 body: JSON.stringify({
                     fullName: f,
                     email: e,
