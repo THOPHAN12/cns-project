@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class InvoiceRequestDTO {
+    private String userId;
     private String customerFullName;
     private String email;
     private String phoneNumber;

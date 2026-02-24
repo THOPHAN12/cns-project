@@ -26,6 +26,8 @@ public class Invoice {
     private String phoneNumber;
     private String payMethodOption;
     private Date dateCreated;
+    /** Trạng thái đơn hàng: PENDING, CONFIRMED, SHIPPING, DELIVERED, CANCELLED */
+    private String status;
     @OneToMany(mappedBy = "invoice")
     @JsonBackReference
     private List<InvoiceHasProduct> invoiceHasProducts;

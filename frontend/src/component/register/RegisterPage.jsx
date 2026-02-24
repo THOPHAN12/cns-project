@@ -20,6 +20,7 @@ export default function RegisterPage() {
     const [showPasswordMismatchWarning, setShowPasswordMismatchWarning] = useState(false);
 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const registerUser = async () => {
         // Check input validation
@@ -42,24 +43,29 @@ export default function RegisterPage() {
             return;
         }
 
+        setErrorMessage("");
         const res = await fetch(`${apiUrl}/auth/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "fullName": fullName,
-                "email": email,
-                "username": username,
-                "password": password,
-                "phoneNumber": phoneNumber,
+                fullName,
+                email,
+                username,
+                password,
+                phoneNumber: phoneNumber || null,
             })
         });
 
         if (res.ok) {
             setShowSuccessModal(true);
         } else {
-            console.log("Status code", res.status);
+            const text = await res.text();
+            let msg = "Đăng ký thất bại. Vui lòng thử lại.";
+            if (res.status === 406) msg = "Tên tài khoản đã tồn tại. Vui lòng chọn tên khác.";
+            else if (text) try { const j = JSON.parse(text); msg = j.message || j.error || msg; } catch {}
+            setErrorMessage(msg);
         }
     }
 
@@ -95,7 +101,7 @@ export default function RegisterPage() {
                                 type="text"
                                 placeholder="Họ và tên"
                                 className="w-full bg-transparent border border-[#d4c5bc] text-[#4a3b32] px-4 py-3 rounded-lg focus:outline-none focus:border-[#8c7365] placeholder-[#8c7365] text-sm"
-                                onChange={e => setTimeout(() => setFullName(e.target.value), 1000)}
+                                onChange={e => setFullName(e.target.value)}
                             />
                         </div>
                         {showFullNameWarning && (<div className="text-sm text-red-400 relative bottom-4 left-1">
@@ -107,7 +113,7 @@ export default function RegisterPage() {
                                 type="email"
                                 placeholder="E-mail"
                                 className="w-full bg-transparent border border-[#d4c5bc] text-[#4a3b32] px-4 py-3 rounded-lg focus:outline-none focus:border-[#8c7365] placeholder-[#8c7365] text-sm"
-                                onChange={e => setTimeout(() => setEmail(e.target.value), 1000)}
+                                onChange={e => setEmail(e.target.value)}
                             />
                         </div>
                         {showEmailWarning && (<div className="text-sm text-red-400 relative bottom-4 left-1">
@@ -119,7 +125,7 @@ export default function RegisterPage() {
                                 type="text"
                                 placeholder="Số điện thoại"
                                 className="w-full bg-transparent border border-[#d4c5bc] text-[#4a3b32] px-4 py-3 rounded-lg focus:outline-none focus:border-[#8c7365] placeholder-[#8c7365] text-sm"
-                                onChange={e => setTimeout(() => setPhoneNumber(e.target.value), 1000)}
+                                onChange={e => setPhoneNumber(e.target.value)}
                             />
                         </div>
                         {showPhoneNumberWarning && (<div className="text-sm text-red-400 relative bottom-4 left-1">
@@ -131,7 +137,7 @@ export default function RegisterPage() {
                                 type="text"
                                 placeholder="Tên tài khoản"
                                 className="w-full bg-transparent border border-[#d4c5bc] text-[#4a3b32] px-4 py-3 rounded-lg focus:outline-none focus:border-[#8c7365] placeholder-[#8c7365] text-sm"
-                                onChange={e => setTimeout(() => setUsername(e.target.value), 1000)}
+                                onChange={e => setUsername(e.target.value)}
                             />
                         </div>
                         {showUsernameWarning && (<div className="text-sm text-red-400 relative bottom-4 left-1">
@@ -143,7 +149,7 @@ export default function RegisterPage() {
                                 type="password"
                                 placeholder="Mật khẩu"
                                 className="w-full bg-transparent border border-[#d4c5bc] text-[#4a3b32] px-4 py-3 rounded-lg focus:outline-none focus:border-[#8c7365] placeholder-[#8c7365] text-sm"
-                                onChange={e => setTimeout(() => setPassword(e.target.value), 1000)}
+                                onChange={e => setPassword(e.target.value)}
                             />
                         </div>
                         {showPasswordWarning && (<div className="text-sm text-red-400 relative bottom-4 left-1">
@@ -155,12 +161,17 @@ export default function RegisterPage() {
                                 type="password"
                                 placeholder="Xác nhận mật khẩu"
                                 className="w-full bg-transparent border border-[#d4c5bc] text-[#4a3b32] px-4 py-3 rounded-lg focus:outline-none focus:border-[#8c7365] placeholder-[#8c7365] text-sm"
-                                onChange={e => setTimeout(() => setConfirmPassword(e.target.value), 1000)}
+                                onChange={e => setConfirmPassword(e.target.value)}
                             />
                         </div>
                         {showPasswordMismatchWarning && (<div className="text-sm text-red-400 relative bottom-4 left-1">
                             <p>* Mật khẩu chưa trùng khớp</p>
                         </div>)}
+                        {errorMessage && (
+                            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+                                {errorMessage}
+                            </div>
+                        )}
                         {/* Register Button */}
                         <div className="flex justify-center mb-6">
                             <button 

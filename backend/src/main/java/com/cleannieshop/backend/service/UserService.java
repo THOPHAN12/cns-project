@@ -50,7 +50,7 @@ public class UserService {
     }
 
     public User saveUser(UserRegisterDTO userDTO) {
-        if (userRepository.findById(userDTO.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
             return null;
         }
         User newUser = new User();

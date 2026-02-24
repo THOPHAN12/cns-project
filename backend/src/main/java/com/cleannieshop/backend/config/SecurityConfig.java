@@ -33,9 +33,14 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
 
     @Bean
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
+    @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+        provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
@@ -71,8 +76,14 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Cấp phép cho domain của React App
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://www.cleannieshop.com/")); 
+        // Cấp phép cho domain của React App (local + production)
+        configuration.setAllowedOriginPatterns(List.of(
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "https://www.cleannieshop.com",
+            "https://*.vercel.app",
+            "https://*.netlify.app"
+        ));
         
         // Bắt buộc phải có OPTIONS để trình duyệt gửi Preflight Request
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

@@ -163,6 +163,7 @@ function OrderSummary({ shippingInfo, paymentMethod }) {
         setErrorMessage("");
 
         const payload = {
+            userId: Cookies.get("id") || null,
             customerFullName: shippingInfo.customerFullName,
             email: shippingInfo.email,
             phoneNumber: shippingInfo.phoneNumber,

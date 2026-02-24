@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo transparent.png';
-import Button from './Button';
 import { IoSearch } from 'react-icons/io5';
 import { CgProfile } from 'react-icons/cg';
 import { BsBasket3 } from "react-icons/bs";
@@ -8,11 +7,20 @@ import { useState, useRef, useEffect } from 'react';
 import LogoutModal from './LogoutModal';
 import ProfileDropdown from './ProfileDropdown';
 import NavbarMenu from './NavbarMenu';
+import { getLocalCartCount, CART_UPDATED_EVENT } from '../utils/cartStorage';
 
 export default function Navbar() {
     const [searchToggle, setSearchToggle] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
+
+    useEffect(() => {
+        const update = () => setCartCount(getLocalCartCount());
+        update();
+        window.addEventListener(CART_UPDATED_EVENT, update);
+        return () => window.removeEventListener(CART_UPDATED_EVENT, update);
+    }, []);
     const profileRef = useRef(null);
     const navigator = useNavigate();
     const menu = [
@@ -20,7 +28,6 @@ export default function Navbar() {
         {route: "/product", content: "Sản phẩm"},
         {route: "/collection", content: "Bộ sưu tập"},
         // {route: "/ar-ai", content: "CNS AI"},
-        {route: "/whats-new", content: "Tính năng mới"},
         {route: "/login", content: "Tài khoản"},
         {route: "/support", content: "Hỗ trợ"},
     ];
@@ -52,7 +59,7 @@ export default function Navbar() {
 
     return (
         <div className=' sticky top-0 z-50'>
-            <div className='bg-black font-stretch-expanded text-white text-lg text-center py-2'>
+            <div className='bg-black font-stretch-expanded text-white text-lg text-center py-2 overflow-hidden'>
                 <p className="animate-marquee">Tại CNS, mọi thứ đều xuất phát từ sự tối giản và thấu hiểu – từ cách chúng tôi thiết kế, đến cách bạn mặc mỗi ngày.</p>
             </div>
             <div id="navbar" className='bg-white fixed w-full flex flex-row justify-between'>
@@ -95,7 +102,18 @@ export default function Navbar() {
                             profileRef={null}
                         />
                     </div>
-                    <Link to={'/cart'}><BsBasket3 size={30} className='opacity-50' /></Link>
+                    <Link
+                        to="/cart"
+                        className="relative"
+                        title={cartCount > 0 ? `Đang có ${cartCount} đơn hàng` : 'Giỏ hàng'}
+                    >
+                        <BsBasket3 size={30} className="opacity-50 hover:opacity-100 transition-opacity" />
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-xs font-bold text-white bg-[#3a2415] rounded-full">
+                                {cartCount}
+                            </span>
+                        )}
+                    </Link>
                 </div>
             </div>
         </div>

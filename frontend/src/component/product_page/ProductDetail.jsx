@@ -71,16 +71,24 @@ const Breadcrumb = () => (
 // ==========================================
 // 4. COMPONENT HÌNH ẢNH SẢN PHẨM
 // ==========================================
-const ProductGallery = ({ imageData }) => (
+const ProductGallery = ({ imageData }) => {
+    const imgSrc = imageData && (imageData.startsWith("http") ? imageData : encodeURI(imageData));
+    return (
     <div className="shrink-0 w-120 flex flex-col items-center">
-        <img src={imageData} alt="Product image" className="rounded-lg object-cover border border-[#e5d8ce] w-200 h-full" />
+        <img 
+            src={imgSrc || "https://via.placeholder.com/400x500?text=Sản+phẩm"} 
+            alt="Product image" 
+            className="rounded-lg object-cover border border-[#e5d8ce] w-200 h-full"
+            onError={(e) => { e.target.src = "https://via.placeholder.com/400x500?text=Sản+phẩm"; }}
+        />
         <button className="mt-4 text-2xl text-[#bdbdbd] hover:text-[#e5d8ce] bg-white rounded-full p-2 border border-[#e5d8ce] w-10 h-10 flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 7.5l-6 6-3-3" />
             </svg>
         </button>
     </div>
-);
+    );
+};
 
 // ==========================================
 // 5. COMPONENT THÔNG TIN & THAO TÁC SẢN PHẨM

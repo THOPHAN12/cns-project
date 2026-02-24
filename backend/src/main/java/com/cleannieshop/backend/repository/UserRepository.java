@@ -8,4 +8,5 @@ import com.cleannieshop.backend.model.User;
 
 public interface UserRepository extends JpaRepository<User, String>{
     Optional<User> findByUsername(String username);
+    Optional<User> findByAuthProviderAndAuthProviderId(String authProvider, String authProviderId);
 }

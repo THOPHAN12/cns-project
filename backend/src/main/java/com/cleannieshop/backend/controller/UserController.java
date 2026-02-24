@@ -2,11 +2,13 @@ package com.cleannieshop.backend.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cleannieshop.backend.dto.OAuthLoginRequestDTO;
 import com.cleannieshop.backend.dto.UserLoginDTO;
 import com.cleannieshop.backend.dto.UserLoginResponseDTO;
 import com.cleannieshop.backend.dto.UserRegisterDTO;
 import com.cleannieshop.backend.model.User;
 import com.cleannieshop.backend.model.UserPrincipal;
+import com.cleannieshop.backend.service.OAuthService;
 import com.cleannieshop.backend.service.UserService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private OAuthService oAuthService;
     private BCryptPasswordEncoder bEncoder = new BCryptPasswordEncoder(12);
 
     @Autowired
@@ -40,14 +44,14 @@ public class UserController {
 
     @PostMapping("register")
     @Tag(name = "Register New Account", description = "Đăng ký tài khoản mới")
-    public ResponseEntity<User> registerUser(@RequestBody UserRegisterDTO userDTO) {
-        //TODO: process POST request
+    public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO userDTO) {
         userDTO.setPassword(bEncoder.encode(userDTO.getPassword()));
         User newCreatedUser = userService.saveUser(userDTO);
         if (newCreatedUser != null) {
             return new ResponseEntity<>(newCreatedUser, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                .body(java.util.Map.of("message", "Tên tài khoản đã tồn tại"));
     }
 
     @PostMapping("login")
@@ -70,6 +74,33 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    }    
-    
+    }
+
+    @PostMapping("google")
+    @Tag(name = "Login with Google", description = "Đăng nhập bằng Google")
+    public ResponseEntity<UserLoginResponseDTO> loginWithGoogle(@RequestBody OAuthLoginRequestDTO dto) {
+        if (dto == null || dto.getCredential() == null || dto.getCredential().isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            UserLoginResponseDTO res = oAuthService.loginWithGoogle(dto.getCredential());
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("facebook")
+    @Tag(name = "Login with Facebook", description = "Đăng nhập bằng Facebook")
+    public ResponseEntity<UserLoginResponseDTO> loginWithFacebook(@RequestBody OAuthLoginRequestDTO dto) {
+        if (dto == null || dto.getAccessToken() == null || dto.getAccessToken().isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            UserLoginResponseDTO res = oAuthService.loginWithFacebook(dto.getAccessToken());
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
 }
