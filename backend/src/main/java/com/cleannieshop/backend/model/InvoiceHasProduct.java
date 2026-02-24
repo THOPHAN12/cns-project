@@ -2,9 +2,12 @@ package com.cleannieshop.backend.model;
 
 import java.util.List;
 
+import com.cleannieshop.backend.config.StringListConverter;
 import com.cleannieshop.backend.model.composite_keys.InvoiceHasProductKey;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -37,5 +40,7 @@ public class InvoiceHasProduct {
     private Product product;
 
     private int quantity;
+    @Convert(converter = StringListConverter.class)
+    @Column(columnDefinition = "text")
     private List<String> sizes;
 }

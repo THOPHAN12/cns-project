@@ -3,9 +3,9 @@ import { FiMinus, FiPlus, FiX } from "react-icons/fi";
 import { FaTruck } from "react-icons/fa";
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { getLocalCart, removeFromLocalCart, updateLocalCartQuantity } from '../../utils/cartStorage';
+import { getLocalCart, removeFromLocalCart, updateLocalCartQuantity, CART_UPDATED_EVENT } from '../../utils/cartStorage';
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -83,16 +83,36 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
 };
 
 // --- 3. Component Chính ---
+/** Chuẩn hóa item từ "Mua Ngay" (state.addedProduct) sang format CartItem */
+const normalizeAddedProduct = (p) => ({
+    id: p.id,
+    name: p.name ?? p.productName ?? 'Sản phẩm',
+    imageSrc: p.imageSrc ?? '',
+    price: Number(p.price) ?? 0,
+    quantity: Number(p.quantity) ?? 1,
+    isLocal: true,
+});
+
 export default function CartPage() {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [apiCartItems, setApiCartItems] = useState([]);
     const [localCartItems, setLocalCartItems] = useState([]);
     const [cartId, setCartId] = useState("");
 
+    const fromBuyNowProduct = location.state?.fromBuyNow && location.state?.addedProduct
+        ? normalizeAddedProduct(location.state.addedProduct)
+        : null;
+
     const cartItems = useMemo(() => {
         const api = (Array.isArray(apiCartItems) ? apiCartItems : []).map(normalizeApiItem);
         const local = Array.isArray(localCartItems) ? localCartItems : [];
-        return [...api, ...local];
-    }, [apiCartItems, localCartItems]);
+        const base = [...api, ...local];
+        if (fromBuyNowProduct && !base.some((i) => i.id === fromBuyNowProduct.id)) {
+            return [fromBuyNowProduct, ...base];
+        }
+        return base;
+    }, [apiCartItems, localCartItems, fromBuyNowProduct]);
 
     useEffect(() => {
         setLocalCartItems(getLocalCart());
@@ -116,7 +136,7 @@ export default function CartPage() {
                     return;
                 }
                 const cartData = await cartRes.json();
-                currentCartId = cartData.cartId;
+                currentCartId = cartData?.cartId ?? cartData?.cart_id;
                 setCartId(currentCartId);
             } catch (err) {
                 setLocalCartItems(getLocalCart());
@@ -138,6 +158,12 @@ export default function CartPage() {
             }
         };
         fetchCart();
+        const onCartUpdated = () => {
+            setLocalCartItems(getLocalCart());
+            fetchCart();
+        };
+        window.addEventListener(CART_UPDATED_EVENT, onCartUpdated);
+        return () => window.removeEventListener(CART_UPDATED_EVENT, onCartUpdated);
     }, []);
 
     const itemById = (id) => cartItems.find((item) => item.id === id);
@@ -230,6 +256,19 @@ export default function CartPage() {
             <Navbar />
 
             <div className="flex-grow py-30 container mx-auto px-4 lg:px-8 max-w-6xl">
+
+                {/* Nút đóng giỏ hàng / quay về trang chủ */}
+                <div className="mb-6">
+                    <button
+                        onClick={() => navigate("/")}
+                        className="text-gray-600 hover:text-gray-900 flex items-center gap-2 text-sm font-medium"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Quay về trang chủ
+                    </button>
+                </div>
 
                 {/* Nếu giỏ hàng trống thì hiện thông báo */}
                 {cartItems.length === 0 ? (

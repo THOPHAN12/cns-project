@@ -24,10 +24,10 @@ public class CartService {
 
     @Transactional
     public List<CartProductDTO> getAllProducts(String id) {
-        // TODO Auto-generated method stub
+        if (id == null || id.isBlank()) return new ArrayList<>();
         Cart cart = cartRepository.findById(id).orElse(null);
         if (cart == null) {
-            return null;
+            return new ArrayList<>();
         }
         List<CartHasProduct> cartHasProducts = cartHasProductRepository.findByCart(cart);
         List<CartProductDTO> res = new ArrayList<>();

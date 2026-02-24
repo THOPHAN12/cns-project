@@ -1,20 +1,18 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import VideoPopUp from "../VideoPopUp";
 import { CiCircleChevDown } from "react-icons/ci";
-import Cookies from "js-cookie";
 
 // Import các component con vừa tách
 import CategorySidebar from "./CategorySidebar"; 
 import FilterSidebar from "./FilterSidebar";
 import ProductList from "./ProductList";
-import { addToLocalCart, removeFromLocalCart, getLocalCart } from "../../utils/cartStorage";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
-// Toast thông báo
+// Toast thông báo (giữ cho tương lai nếu cần)
 const NotificationToast = ({ toast }) => {
     if (!toast?.show) return null;
     const isError = toast.isError;
@@ -28,7 +26,7 @@ const NotificationToast = ({ toast }) => {
     );
 };
 
-// Modal yêu cầu đăng nhập
+// Modal yêu cầu đăng nhập - giữ cho tương lai nếu cần
 const LoginModal = ({ show, onClose, onGoLogin }) => {
     if (!show) return null;
     return (
@@ -48,138 +46,69 @@ const LoginModal = ({ show, onClose, onGoLogin }) => {
 const IMG_BASE = "/images/products/HÌNH ẢNH SẢN PHẨM/HÌNH ẢNH SẢN PHẨM";
 const VALENTINE_BASE = `${IMG_BASE}/BỘ SƯU TẬP VALENTINE_S`;
 
-// Sản phẩm Bộ sưu tập Valentine
+// Sản phẩm Bộ sưu tập Valentine (hiển thị, thêm giỏ sẽ báo lỗi vì backend chưa có)
 const VALENTINE_PRODUCTS = [
-    { id: "val-blush-1", imageSrc: `${VALENTINE_BASE}/1. BLUSH TOP/1.JPG`, productName: "Blush Top 1", price: 349000, categories: ["Valentine"] },
-    { id: "val-blush-2", imageSrc: `${VALENTINE_BASE}/1. BLUSH TOP/2.jpg`, productName: "Blush Top 2", price: 349000, categories: ["Valentine"] },
-    { id: "val-blush-3", imageSrc: `${VALENTINE_BASE}/1. BLUSH TOP/3.jpg`, productName: "Blush Top 3", price: 349000, categories: ["Valentine"] },
-    { id: "val-kiss-1", imageSrc: `${VALENTINE_BASE}/2. KISS SET/1.JPG`, productName: "Kiss Set 1", price: 399000, categories: ["Valentine"] },
-    { id: "val-kiss-2", imageSrc: `${VALENTINE_BASE}/2. KISS SET/2.JPG`, productName: "Kiss Set 2", price: 399000, categories: ["Valentine"] },
-    { id: "val-kiss-3", imageSrc: `${VALENTINE_BASE}/2. KISS SET/3.JPG`, productName: "Kiss Set 3", price: 399000, categories: ["Valentine"] },
-    { id: "val-kiss-4", imageSrc: `${VALENTINE_BASE}/2. KISS SET/4.JPG`, productName: "Kiss Set 4", price: 399000, categories: ["Valentine"] },
-    { id: "val-kiss-5", imageSrc: `${VALENTINE_BASE}/2. KISS SET/5.JPG`, productName: "Kiss Set 5", price: 399000, categories: ["Valentine"] },
-    { id: "val-kiss-6", imageSrc: `${VALENTINE_BASE}/2. KISS SET/6.JPG`, productName: "Kiss Set 6", price: 399000, categories: ["Valentine"] },
-    { id: "val-crush-1", imageSrc: `${VALENTINE_BASE}/3. CRUSH BOTTOM/1.JPG`, productName: "Crush Bottom 1", price: 329000, categories: ["Valentine"] },
-    { id: "val-crush-2", imageSrc: `${VALENTINE_BASE}/3. CRUSH BOTTOM/2.JPG`, productName: "Crush Bottom 2", price: 329000, categories: ["Valentine"] },
-    { id: "val-crush-3", imageSrc: `${VALENTINE_BASE}/3. CRUSH BOTTOM/3.JPG`, productName: "Crush Bottom 3", price: 329000, categories: ["Valentine"] },
-    { id: "val-crush-4", imageSrc: `${VALENTINE_BASE}/3. CRUSH BOTTOM/4.JPG`, productName: "Crush Bottom 4", price: 329000, categories: ["Valentine"] },
-    { id: "val-luv-1", imageSrc: `${VALENTINE_BASE}/4. LUV TOP/1.JPG`, productName: "Luv Top 1", price: 369000, categories: ["Valentine"] },
-    { id: "val-luv-2", imageSrc: `${VALENTINE_BASE}/4. LUV TOP/2.JPG`, productName: "Luv Top 2", price: 369000, categories: ["Valentine"] },
-    { id: "val-luv-3", imageSrc: `${VALENTINE_BASE}/4. LUV TOP/3.JPG`, productName: "Luv Top 3", price: 369000, categories: ["Valentine"] },
-    { id: "val-luv-4", imageSrc: `${VALENTINE_BASE}/4. LUV TOP/4.JPG`, productName: "Luv Top 4", price: 369000, categories: ["Valentine"] },
-    { id: "val-sweet-1", imageSrc: `${VALENTINE_BASE}/5. SWEET BOTTOM/1.JPG`, productName: "Sweet Bottom 1", price: 319000, categories: ["Valentine"] },
-    { id: "val-sweet-2", imageSrc: `${VALENTINE_BASE}/5. SWEET BOTTOM/2.JPG`, productName: "Sweet Bottom 2", price: 319000, categories: ["Valentine"] },
-    { id: "val-sweet-3", imageSrc: `${VALENTINE_BASE}/5. SWEET BOTTOM/3.JPG`, productName: "Sweet Bottom 3", price: 319000, categories: ["Valentine"] },
+    { id: "val-blush-1", imageSrc: `${VALENTINE_BASE}/1. BLUSH TOP/1.JPG`, productName: "Blush Top 1", price: 349000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-blush-2", imageSrc: `${VALENTINE_BASE}/1. BLUSH TOP/2.jpg`, productName: "Blush Top 2", price: 349000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-blush-3", imageSrc: `${VALENTINE_BASE}/1. BLUSH TOP/3.jpg`, productName: "Blush Top 3", price: 349000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-kiss-1", imageSrc: `${VALENTINE_BASE}/2. KISS SET/1.JPG`, productName: "Kiss Set 1", price: 399000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-kiss-2", imageSrc: `${VALENTINE_BASE}/2. KISS SET/2.JPG`, productName: "Kiss Set 2", price: 399000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-kiss-3", imageSrc: `${VALENTINE_BASE}/2. KISS SET/3.JPG`, productName: "Kiss Set 3", price: 399000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-kiss-4", imageSrc: `${VALENTINE_BASE}/2. KISS SET/4.JPG`, productName: "Kiss Set 4", price: 399000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-kiss-5", imageSrc: `${VALENTINE_BASE}/2. KISS SET/5.JPG`, productName: "Kiss Set 5", price: 399000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-kiss-6", imageSrc: `${VALENTINE_BASE}/2. KISS SET/6.JPG`, productName: "Kiss Set 6", price: 399000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-crush-1", imageSrc: `${VALENTINE_BASE}/3. CRUSH BOTTOM/1.JPG`, productName: "Crush Bottom 1", price: 329000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-crush-2", imageSrc: `${VALENTINE_BASE}/3. CRUSH BOTTOM/2.JPG`, productName: "Crush Bottom 2", price: 329000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-crush-3", imageSrc: `${VALENTINE_BASE}/3. CRUSH BOTTOM/3.JPG`, productName: "Crush Bottom 3", price: 329000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-crush-4", imageSrc: `${VALENTINE_BASE}/3. CRUSH BOTTOM/4.JPG`, productName: "Crush Bottom 4", price: 329000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-luv-1", imageSrc: `${VALENTINE_BASE}/4. LUV TOP/1.JPG`, productName: "Luv Top 1", price: 369000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-luv-2", imageSrc: `${VALENTINE_BASE}/4. LUV TOP/2.JPG`, productName: "Luv Top 2", price: 369000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-luv-3", imageSrc: `${VALENTINE_BASE}/4. LUV TOP/3.JPG`, productName: "Luv Top 3", price: 369000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-luv-4", imageSrc: `${VALENTINE_BASE}/4. LUV TOP/4.JPG`, productName: "Luv Top 4", price: 369000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-sweet-1", imageSrc: `${VALENTINE_BASE}/5. SWEET BOTTOM/1.JPG`, productName: "Sweet Bottom 1", price: 319000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-sweet-2", imageSrc: `${VALENTINE_BASE}/5. SWEET BOTTOM/2.JPG`, productName: "Sweet Bottom 2", price: 319000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
+    { id: "val-sweet-3", imageSrc: `${VALENTINE_BASE}/5. SWEET BOTTOM/3.JPG`, productName: "Sweet Bottom 3", price: 319000, categories: ["Valentine"], sizes: ["S", "M", "L"], stockQuantity: 100 },
 ];
 
-// Sản phẩm từ HÌNH ẢNH SẢN PHẨM - Thời trang Nam & Thời trang Nữ
-const REAL_PRODUCTS = [
+// Sản phẩm Thời trang Nam & Nữ (trùng backend seed – thêm giỏ được)
+const withDetail = (p) => ({ ...p, sizes: ["S", "M", "L"], stockQuantity: 100 });
+const PRODUCTS = [
     // --- THỜI TRANG NỮ ---
-    { id: "p-nu-1", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Black top.png`, productName: "Black Top", price: 389000, categories: ["Nữ"] },
-    { id: "p-nu-2", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Blush lift bra.JPG`, productName: "Blush Lift Bra", price: 319000, categories: ["Nữ"] },
-    { id: "p-nu-3", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Butter set.JPG`, productName: "Butter Set", price: 459000, categories: ["Nữ"] },
-    { id: "p-nu-4", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Cemly set_.png`, productName: "Cemly Set", price: 429000, categories: ["Nữ"] },
-    { id: "p-nu-5", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Contour fit short.JPG`, productName: "Contour Fit Short", price: 279000, categories: ["Nữ"] },
-    { id: "p-nu-6", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Core high-waist legging .png`, productName: "Core High-Waist Legging", price: 349000, categories: ["Nữ"] },
-    { id: "p-nu-7", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Dual tone sculpt bra.JPG`, productName: "Dual Tone Sculpt Bra", price: 339000, categories: ["Nữ"] },
-    { id: "p-nu-8", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Emily top.jpg`, productName: "Emily Top", price: 299000, categories: ["Nữ"] },
-    { id: "p-nu-9", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Second top.jpg`, productName: "Second Top", price: 269000, categories: ["Nữ"] },
-    { id: "p-nu-10", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Soft form short.png`, productName: "Soft Form Short", price: 309000, categories: ["Nữ"] },
-    { id: "p-nu-11", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Vanilla sculpt set.png`, productName: "Vanilla Sculpt Set", price: 499000, categories: ["Nữ"] },
+    withDetail({ id: "p-nu-1", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Black top.png`, productName: "Black Top", price: 389000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-2", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Blush lift bra.JPG`, productName: "Blush Lift Bra", price: 319000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-3", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Butter set.JPG`, productName: "Butter Set", price: 459000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-4", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Cemly set_.png`, productName: "Cemly Set", price: 429000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-5", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Contour fit short.JPG`, productName: "Contour Fit Short", price: 279000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-6", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Core high-waist legging .png`, productName: "Core High-Waist Legging", price: 349000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-7", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Dual tone sculpt bra.JPG`, productName: "Dual Tone Sculpt Bra", price: 339000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-8", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Emily top.jpg`, productName: "Emily Top", price: 299000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-9", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Second top.jpg`, productName: "Second Top", price: 269000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-10", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Soft form short.png`, productName: "Soft Form Short", price: 309000, categories: ["Nữ"] }),
+    withDetail({ id: "p-nu-11", imageSrc: `${IMG_BASE}/THỜI TRANG NỮ/Vanilla sculpt set.png`, productName: "Vanilla Sculpt Set", price: 499000, categories: ["Nữ"] }),
     // --- THỜI TRANG NAM ---
-    { id: "p-nam-1", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Campaign.jpg`, productName: "Campaign - Thời trang nam", price: 459000, categories: ["Nam"] },
-    { id: "p-nam-2", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Classic Zip Hoodie.jpg`, productName: "Classic Zip Hoodie", price: 499000, categories: ["Nam"] },
-    { id: "p-nam-3", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Essential Ribbed Tank Top – 3 Pack.jpg`, productName: "Essential Ribbed Tank Top – 3 Pack", price: 329000, categories: ["Nam"] },
-    { id: "p-nam-4", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Essential Long Sleeve T-Shirt.jpg`, productName: "Essential Long Sleeve T-Shirt", price: 349000, categories: ["Nam"] },
-    { id: "p-nam-5", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Essential Short Sleeve T-Shirt.jpg`, productName: "Essential Short Sleeve T-Shirt", price: 329000, categories: ["Nam"] },
-    { id: "p-nam-6", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Fleece Jogger Sweatpants.jpg`, productName: "Fleece Jogger Sweatpants", price: 449000, categories: ["Nam"] },
-    { id: "p-nam-7", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Lightweight Zip-Up Hoodie Set.jpg`, productName: "Lightweight Zip-Up Hoodie Set", price: 499000, categories: ["Nam"] },
-    { id: "p-nam-8", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Lightweight Zip-Up Hoodie Set(1).jpg`, productName: "Lightweight Zip-Up Hoodie Set (Variant)", price: 499000, categories: ["Nam"] },
-    { id: "p-nam-9", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Relaxed Fit Cotton T-Shirt.jpg`, productName: "Relaxed Fit Cotton T-Shirt", price: 299000, categories: ["Nam"] },
-    { id: "p-nam-10", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Relaxed Fit Lounge T-Shirt & Shorts Set.jpg`, productName: "Relaxed Fit Lounge T-Shirt & Shorts Set", price: 429000, categories: ["Nam"] },
-    { id: "p-nam-11", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Slim Fit Cotton Tank Top.jpg`, productName: "Slim Fit Cotton Tank Top", price: 279000, categories: ["Nam"] },
+    withDetail({ id: "p-nam-1", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Campaign.jpg`, productName: "Campaign - Thời trang nam", price: 459000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-2", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Classic Zip Hoodie.jpg`, productName: "Classic Zip Hoodie", price: 499000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-3", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Essential Ribbed Tank Top – 3 Pack.jpg`, productName: "Essential Ribbed Tank Top – 3 Pack", price: 329000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-4", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Essential Long Sleeve T-Shirt.jpg`, productName: "Essential Long Sleeve T-Shirt", price: 349000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-5", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Essential Short Sleeve T-Shirt.jpg`, productName: "Essential Short Sleeve T-Shirt", price: 329000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-6", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Fleece Jogger Sweatpants.jpg`, productName: "Fleece Jogger Sweatpants", price: 449000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-7", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Lightweight Zip-Up Hoodie Set.jpg`, productName: "Lightweight Zip-Up Hoodie Set", price: 499000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-8", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Lightweight Zip-Up Hoodie Set(1).jpg`, productName: "Lightweight Zip-Up Hoodie Set (Variant)", price: 499000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-9", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Relaxed Fit Cotton T-Shirt.jpg`, productName: "Relaxed Fit Cotton T-Shirt", price: 299000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-10", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Relaxed Fit Lounge T-Shirt & Shorts Set.jpg`, productName: "Relaxed Fit Lounge T-Shirt & Shorts Set", price: 429000, categories: ["Nam"] }),
+    withDetail({ id: "p-nam-11", imageSrc: `${IMG_BASE}/THỜI TRANG NAM/Slim Fit Cotton Tank Top.jpg`, productName: "Slim Fit Cotton Tank Top", price: 279000, categories: ["Nam"] }),
 ];
 
 export default function ProductPage() {
     const nav = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const collectionParam = searchParams.get("collection");
-    const filterParam = searchParams.get("filter");
     const [productData, setProductData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [fetchError, setFetchError] = useState(null);
 
-    // State tích chọn sản phẩm
-    const [selectedIds, setSelectedIds] = useState([]);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [toast, setToast] = useState({ show: false, isError: false, title: "", message: "" });
-    const toastTimeoutRef = useRef(null);
-
-    const showToast = (isError, title, message) => {
-        if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-        setToast({ show: true, isError, title, message });
-        toastTimeoutRef.current = setTimeout(() => setToast(p => ({ ...p, show: false })), 3000);
-    };
-
-    const handleSelectToggle = (id, product) => {
-        setSelectedIds(prev => {
-            const isCurrentlySelected = prev.includes(id);
-            if (isCurrentlySelected) {
-                removeFromLocalCart(id);
-                return prev.filter(x => x !== id);
-            } else {
-                if (product) addToLocalCart(product);
-                return [...prev, id];
-            }
-        });
-    };
-
-    const handleAddSelectedToCart = async () => {
-        if (selectedIds.length === 0) return;
-        if (!Cookies.get("token")) {
-            setShowLoginModal(true);
-            return;
-        }
-        const userId = Cookies.get("id");
-        let cartId = null;
-        try {
-            const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${userId}`, {
-                headers: { Authorization: `Bearer ${Cookies.get("token")}` }
-            });
-            if (!cartRes.ok) {
-                showToast(true, "Thất bại", "Không lấy được thông tin giỏ hàng.");
-                return;
-            }
-            const cartData = await cartRes.json();
-            cartId = cartData.cartId;
-        } catch (err) {
-            showToast(true, "Lỗi", "Không thể kết nối server.");
-            return;
-        }
-        let success = 0, fail = 0;
-        for (const id of selectedIds) {
-            try {
-                const res = await fetch(`${apiUrl}/api/products/${id}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${Cookies.get("token")}`
-                    },
-                    body: JSON.stringify({ cartId, quantity: 1 })
-                });
-                if (res.ok) success++; else fail++;
-            } catch { fail++; }
-        }
-        if (success > 0) {
-            setSelectedIds([]);
-            const msg = fail > 0 
-                ? `Đã thêm ${success} sản phẩm. ${fail} sản phẩm không thêm được.`
-                : `Đã thêm ${success} sản phẩm vào giỏ hàng.`;
-            showToast(false, "Thành công", msg);
-        } else if (fail > 0) {
-            showToast(true, "Thất bại", "Không thêm được sản phẩm (có thể chưa có trên hệ thống).");
-        }
-    };
 
     const handleCloseLoginModal = () => {
         setShowLoginModal(false);
@@ -205,13 +134,12 @@ export default function ProductPage() {
     const filterOptions = ["Giá từ thấp tới cao", "Giá từ cao tới thấp", "Độ bán chạy"];
 
     const handleCategoryToggle = (category) => {
-        // Chọn "Tất cả" → hiển thị toàn bộ, bỏ filter
         if (category === "Tất cả") {
             setSearchParams({});
             setSelectedCategories([]);
             return;
         }
-        // Đang xem Valentine: chuyển sang trang Thời trang Nam/Nữ theo lựa chọn
+        // Đang xem Valentine: chuyển sang Thời trang Nữ/Nam
         if (collectionParam === "valentine") {
             setSearchParams({ filter: category });
             setSelectedCategories([category]);
@@ -236,52 +164,38 @@ export default function ProductPage() {
         }
     };
 
-    // Đồng bộ selectedCategories khi URL ?filter thay đổi (không có filter = Tất cả)
+    // Đồng bộ selectedCategories khi URL thay đổi
     useEffect(() => {
         const f = searchParams.get("filter");
         if (f && ["Nữ", "Nam"].includes(f)) {
             setSelectedCategories([f]);
         } else if (!searchParams.get("collection")) {
-            setSelectedCategories([]); // Tất cả
+            setSelectedCategories([]);
         }
     }, [searchParams]);
 
-    // Đồng bộ selectedIds với giỏ local (sản phẩm đã tích chọn)
+    // Hiển thị Valentine hoặc Thời trang theo ?collection=
     useEffect(() => {
-        if (!productData.length) return;
-        const localIds = getLocalCart().map((x) => x.id);
-        const productIds = new Set(productData.map((p) => p.id));
-        const synced = localIds.filter((id) => productIds.has(id));
-        setSelectedIds((prev) => (prev.length === 0 && synced.length > 0 ? synced : prev));
-    }, [productData]);
-
-    useEffect(() => {
-        // Bộ sưu tập Valentine: chỉ hiển thị sản phẩm Valentine
         if (collectionParam === "valentine") {
             setIsLoading(false);
             setProductData(VALENTINE_PRODUCTS);
+            setFetchError(null);
             return;
         }
-
-        // Trang Thời trang: luôn dùng REAL_PRODUCTS (Thời trang Nam/Nữ từ HÌNH ẢNH SẢN PHẨM)
-        // Lọc Nữ/Nam thực hiện ở displayProducts theo selectedCategories
         setIsLoading(false);
-        setProductData(REAL_PRODUCTS);
+        setProductData(PRODUCTS);
+        setFetchError(null);
     }, [collectionParam]);
 
     const displayProducts = useMemo(() => {
         let filtered = productData;
-        // Bộ sưu tập Valentine: hiển thị tất cả, không lọc theo Nữ/Nam
-        if (collectionParam !== "valentine") {
-            if (selectedCategories.length > 0) {
-                filtered = productData.filter(p => {
-                    const cats = p.categories || [];
-                    return selectedCategories.every(c => cats.includes(c));
-                });
-            }
+        if (collectionParam !== "valentine" && selectedCategories.length > 0) {
+            filtered = productData.filter(p => {
+                const cats = p.categories || [];
+                return selectedCategories.every(c => cats.includes(c));
+            });
         }
 
-        // Sắp xếp theo bộ lọc
         if (!selectedSortOption || selectedSortOption === "Độ bán chạy") {
             return filtered;
         }
@@ -314,14 +228,13 @@ export default function ProductPage() {
             <LoginModal show={showLoginModal} onClose={() => setShowLoginModal(false)} onGoLogin={handleCloseLoginModal} />
             
             <div id="product-page-body" className="px-10 py-30 text-2xl">
-                {/* Tiêu đề khi xem Bộ sưu tập Valentine */}
                 {collectionParam === "valentine" && (
                     <h1 className="text-2xl md:text-3xl font-semibold text-[#3a2415] mb-6 text-center md:text-left tracking-wide">
                         Set Collection Valentine
                     </h1>
                 )}
 
-                {/* --- HEADER CONTROL (Nút bấm mở Sidebar) --- */}
+                {/* HEADER CONTROL (Nút bấm mở Sidebar) */}
                 <div className="flex flex-row justify-between mb-5 select-none">
                     {/* Nút mở Phân Loại */}
                     <div className="flex flex-row gap-15 items-center justify-center px-10 cursor-pointer" 
@@ -349,13 +262,10 @@ export default function ProductPage() {
                         onToggle={handleCategoryToggle} 
                     />
 
-                    {/* 2. Danh sách sản phẩm */}
+                    {/* 2. Danh sách sản phẩm - click vào card → sang trang chi tiết chọn size & số lượng */}
                     <ProductList 
                         products={displayProducts} 
                         fetchError={fetchError}
-                        selectedIds={selectedIds}
-                        onSelectToggle={handleSelectToggle}
-                        onAddSelectedToCart={handleAddSelectedToCart}
                     />
 
                     {/* 3. Sidebar Phải (Filter) */}

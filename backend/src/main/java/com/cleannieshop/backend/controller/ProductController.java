@@ -56,8 +56,16 @@ public class ProductController {
     @PutMapping("{id}")
     @Tag(name = "Add Product To Cart", description = "Thêm sản phẩm vào giỏ hàng")
     public ResponseEntity<String> addToCart(@PathVariable String id, @RequestBody AddToCartDTO addToCartDTO) {
-        //TODO: process PUT request
-        if (addToCartDTO.getQuantity() <= 0 || addToCartDTO.getSize() == "") {
+        if (id == null || id.isBlank()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (addToCartDTO == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (addToCartDTO.getQuantity() <= 0 || addToCartDTO.getSize() == null || addToCartDTO.getSize().trim().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (addToCartDTO.getCartId() == null || addToCartDTO.getCartId().trim().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         if (productService.addToCart(id, addToCartDTO)) {

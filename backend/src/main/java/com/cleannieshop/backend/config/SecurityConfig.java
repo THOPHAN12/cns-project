@@ -57,6 +57,7 @@ public class SecurityConfig {
                     "/api/support-email"
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/seed/products").permitAll()
                 .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(session -> 
@@ -81,6 +82,8 @@ public class SecurityConfig {
             "http://localhost:5173",
             "http://localhost:5174",
             "https://www.cleannieshop.com",
+            "https://cleanniestudio.com",
+            "https://www.cleanniestudio.com",
             "https://*.vercel.app",
             "https://*.netlify.app"
         ));

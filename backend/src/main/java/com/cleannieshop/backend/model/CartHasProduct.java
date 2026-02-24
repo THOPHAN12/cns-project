@@ -2,9 +2,12 @@ package com.cleannieshop.backend.model;
 
 import java.util.List;
 
+import com.cleannieshop.backend.config.StringListConverter;
 import com.cleannieshop.backend.model.composite_keys.CartHasProductKey;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -17,7 +20,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "cart-has-product")
+@Table(name = "cart_has_product")
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartHasProduct {
@@ -37,5 +40,7 @@ public class CartHasProduct {
     private Cart cart;
 
     private int quantity;
+    @Convert(converter = StringListConverter.class)
+    @Column(columnDefinition = "text")
     private List<String> sizes;
 }

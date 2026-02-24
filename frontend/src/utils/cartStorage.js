@@ -29,19 +29,20 @@ export const getLocalCartCount = () => {
   return getLocalCart().reduce((sum, item) => sum + (item.quantity || 1), 0);
 };
 
-/** Thêm sản phẩm vào giỏ local. product: { id, productName, imageSrc, price }. Khi tích chọn, luôn giữ số lượng = 1 (không cộng thêm). */
+/** Thêm sản phẩm vào giỏ local. product: { id, productName?, name?, imageSrc, price, quantity? }. Nếu có quantity thì dùng, không thì 1. */
 export const addToLocalCart = (product) => {
   const items = getLocalCart();
+  const qty = Math.max(1, Number(product.quantity) || 1);
   const existing = items.find((x) => x.id === product.id);
   if (existing) {
-    existing.quantity = 1;
+    existing.quantity = (existing.quantity || 1) + qty;
   } else {
     items.push({
       id: product.id,
       name: product.productName || product.name || "Sản phẩm",
       imageSrc: product.imageSrc || "",
       price: Number(product.price) || 0,
-      quantity: 1,
+      quantity: qty,
       isLocal: true,
     });
   }
@@ -53,6 +54,12 @@ export const addToLocalCart = (product) => {
 export const removeFromLocalCart = (id) => {
   const items = getLocalCart().filter((x) => x.id !== id);
   setLocalCart(items);
+  dispatchCartUpdated();
+};
+
+/** Xóa toàn bộ giỏ local (dùng sau khi đặt hàng thành công) */
+export const clearLocalCart = () => {
+  setLocalCart([]);
   dispatchCartUpdated();
 };
 

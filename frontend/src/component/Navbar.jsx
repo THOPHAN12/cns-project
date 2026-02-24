@@ -8,15 +8,52 @@ import LogoutModal from './LogoutModal';
 import ProfileDropdown from './ProfileDropdown';
 import NavbarMenu from './NavbarMenu';
 import { getLocalCartCount, CART_UPDATED_EVENT } from '../utils/cartStorage';
+import Cookies from 'js-cookie';
+
+const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
+
+/** Lấy tổng số lượng sản phẩm trong giỏ từ API (khi đã đăng nhập). Trả về 0 nếu lỗi hoặc chưa đăng nhập. */
+async function fetchApiCartCount() {
+    const token = Cookies.get('token');
+    const userId = Cookies.get('id');
+    if (!token || !userId) return 0;
+    try {
+        const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${encodeURIComponent(userId)}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!cartRes.ok) return 0;
+        const cartData = await cartRes.json();
+        const cartId = cartData?.cartId ?? cartData?.cart_id;
+        if (!cartId) return 0;
+        const res = await fetch(`${apiUrl}/api/cart/${cartId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return 0;
+        const data = await res.json();
+        const items = Array.isArray(data) ? data : [];
+        return items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+    } catch {
+        return 0;
+    }
+}
 
 export default function Navbar() {
     const [searchToggle, setSearchToggle] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [cartCount, setCartCount] = useState(0);
+    const [apiCartCount, setApiCartCount] = useState(0);
 
     useEffect(() => {
-        const update = () => setCartCount(getLocalCartCount());
+        setCartCount(getLocalCartCount() + apiCartCount);
+    }, [apiCartCount]);
+
+    useEffect(() => {
+        const update = async () => {
+            const api = await fetchApiCartCount();
+            setApiCartCount(api);
+            setCartCount(getLocalCartCount() + api);
+        };
         update();
         window.addEventListener(CART_UPDATED_EVENT, update);
         return () => window.removeEventListener(CART_UPDATED_EVENT, update);

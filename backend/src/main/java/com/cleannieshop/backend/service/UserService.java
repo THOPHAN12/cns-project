@@ -133,6 +133,9 @@ public class UserService {
         if (user == null) {
             return null;
         }
+        if (user.getCart() == null) {
+            return null;
+        }
         UserCartDTO cartDTO = new UserCartDTO();
         cartDTO.setCartId(user.getCart().getCartId());
         return cartDTO;
