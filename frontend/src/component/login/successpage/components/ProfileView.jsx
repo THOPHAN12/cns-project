@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import profile from "../../../../assets/profile.jpg"; // Chỉnh sửa lại path nếu cần
+import profile from "../../../../assets/profile.jpg";
 import Cookies from "js-cookie";
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { getApiBaseUrl } from "../../../../utils/api";
 
 export default function ProfileView() {
     const userId = Cookies.get("id");
     const token = Cookies.get("token");
-    const [userData, setUserData] = useState([])
+    const [userData, setUserData] = useState({ fullName: "", email: "", phoneNumber: "" });
     useEffect(() => {
+        if (!userId || !token) return;
+        const apiUrl = getApiBaseUrl();
         const fetchUser = async () => {
-            const res = await fetch(`${apiUrl}/api/user?userId=${userId}`, {
+            const res = await fetch(`${apiUrl}/api/user?userId=${encodeURIComponent(userId)}`, {
                 method: "GET",
                 headers: {
                     "Authorization" : `Bearer ${token}`
@@ -25,7 +26,7 @@ export default function ProfileView() {
             setUserData(data);
         }
         fetchUser();
-    }, [userId])
+    }, [userId, token])
 
     return (
         <div className="flex-1 bg-[#F5EFE9] p-12 rounded-sm relative flex justify-between">

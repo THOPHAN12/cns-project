@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { getApiBaseUrl } from "../../../../utils/api";
 
 const WishlistView = () => {
+  const apiUrl = getApiBaseUrl();
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

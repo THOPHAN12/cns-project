@@ -8,15 +8,15 @@ import LogoutModal from './LogoutModal';
 import ProfileDropdown from './ProfileDropdown';
 import NavbarMenu from './NavbarMenu';
 import { getLocalCartCount, CART_UPDATED_EVENT } from '../utils/cartStorage';
+import { getApiBaseUrl } from '../utils/api';
 import Cookies from 'js-cookie';
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL || '';
 
 /** Lấy tổng số lượng sản phẩm trong giỏ từ API (khi đã đăng nhập). Trả về 0 nếu lỗi hoặc chưa đăng nhập. */
 async function fetchApiCartCount() {
     const token = Cookies.get('token');
     const userId = Cookies.get('id');
     if (!token || !userId) return 0;
+    const apiUrl = getApiBaseUrl();
     try {
         const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${encodeURIComponent(userId)}`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -64,6 +64,7 @@ export default function Navbar() {
         {route: "/about-us", content: "Về chúng tôi"},
         {route: "/product", content: "Sản phẩm"},
         {route: "/collection", content: "Bộ sưu tập"},
+        {route: "/blog", content: "Blog"},
         // {route: "/ar-ai", content: "CNS AI"},
         {route: "/login", content: "Tài khoản"},
         {route: "/support", content: "Hỗ trợ"},
@@ -134,6 +135,7 @@ export default function Navbar() {
                         </button>
                         <ProfileDropdown
                             open={showProfileDropdown}
+                            isLoggedIn={!!Cookies.get('token')}
                             onLogout={() => setShowLogoutModal(true)}
                             onClose={() => setShowProfileDropdown(false)}
                             profileRef={null}

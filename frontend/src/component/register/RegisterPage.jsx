@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "../Navbar";
 import { useState } from "react";
-import { getApiBaseUrl } from "../../utils/api";
-
-const apiUrl = getApiBaseUrl();
+import { getAuthRegisterUrl } from "../../utils/api";
 
 export default function RegisterPage() {
     const [fullName, setFullName] = useState("");
@@ -49,17 +47,15 @@ export default function RegisterPage() {
             return;
         }
 
-        if (!apiUrl) {
-            setErrorMessage("Chưa cấu hình địa chỉ API (VITE_API_BASE_URL).");
-            return;
-        }
-
         setIsSubmitting(true);
         try {
-            const res = await fetch(`${apiUrl}/auth/register`, {
+            const ctrl = new AbortController();
+            const timeout = setTimeout(() => ctrl.abort(), 90000); // 90s cho backend Render cold start
+            const res = await fetch(getAuthRegisterUrl(), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "omit",
+                signal: ctrl.signal,
                 body: JSON.stringify({
                     fullName: f,
                     email: e,
@@ -68,6 +64,7 @@ export default function RegisterPage() {
                     phoneNumber: ph || null,
                 }),
             });
+            clearTimeout(timeout);
 
             if (res.ok) {
                 setShowSuccessModal(true);
@@ -80,7 +77,7 @@ export default function RegisterPage() {
             }
         } catch (err) {
             console.error("Register error:", err);
-            setErrorMessage("Không kết nối được máy chủ. Kiểm tra backend đang chạy và mạng.");
+            setErrorMessage("Không kết nối được máy chủ. Backend có thể đang khởi động (chờ 30–60 giây và thử lại) hoặc kiểm tra mạng.");
         } finally {
             setIsSubmitting(false);
         }

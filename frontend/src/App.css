@@ -4,6 +4,14 @@ body {
   color: #3e3226;
 }
 
+/* Cải thiện độ nét ảnh blog: tối ưu scaling khi thu phóng, GPU rendering, tăng nhẹ contrast */
+.blog-img-sharp {
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  filter: contrast(1.04) saturate(1.03);
+}
+
 /* Homepage hero */
 #homepage-body {
   background-color: #000;

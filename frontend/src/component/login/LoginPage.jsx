@@ -3,7 +3,7 @@ import Navbar from "../Navbar";
 import logoImg from "../../assets/logo transparent.png";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { getApiBaseUrl } from "../../utils/api";
+import { getApiBaseUrl, getAuthLoginUrl } from "../../utils/api";
 
 const apiUrl = getApiBaseUrl();
 
@@ -23,8 +23,7 @@ export default function LoginPage() {
             setShowWarning(true);
             return;
         }
-
-        const res = await fetch(`${apiUrl}/auth/login`, {
+        const res = await fetch(getAuthLoginUrl(), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
