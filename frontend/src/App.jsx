@@ -14,6 +14,8 @@ import AIAR from './component/ai-ar/AIAR'
 import RegisterPage from './component/register/RegisterPage'
 import CheckoutPage from './component/cart/checkout/CheckoutPage'
 import ChativeChat from './component/chat/ChativeChat'
+import BlogPage from './component/blog/BlogPage'
+import BlogPostDetail from './component/blog/BlogPostDetail'
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
       <ChativeChat />
       <Routes>
         <Route path='/' element={<Homepage />}/>
+        <Route path='/blog' element={<BlogPage />} />
+        <Route path='/blog/:slug' element={<BlogPostDetail />} />
         <Route path='/product' element={<ProductPage />} />
         <Route path='/product-detail/:id' element={<ProductDetail />} />
         <Route path='/collection' element={<CollectionPage />} />
