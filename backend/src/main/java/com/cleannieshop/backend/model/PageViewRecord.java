@@ -22,7 +22,7 @@ public class PageViewRecord {
     private String path;
 
     @Column(nullable = false)
-    private LocalDateTime viewedAt = LocalDateTime.now();
+    private LocalDateTime viewedAt;
 
     @Column(length = 100)
     private String userId;

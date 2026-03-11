@@ -1,17 +1,33 @@
 import { useState, useEffect } from "react";
 import { getApiBaseUrl, getApiHeaders } from "../../utils/api";
 
+/** Chuyển viewedAt thành chuỗi hiển thị. Hỗ trợ dd/MM/yyyy HH:mm hoặc ISO. */
+function formatViewedAt(val) {
+  if (!val || typeof val !== "string") return "—";
+  const s = val.trim();
+  if (!s) return "—";
+  if (/^\d{2}\/\d{2}\/\d{4}/.test(s)) return s;
+  try {
+    const d = new Date(s);
+    if (!isNaN(d.getTime())) {
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+  } catch (_) {}
+  return s || "—";
+}
+
 /** Mở rộng dữ liệu cũ (gộp theo path) thành từng record riêng. Định dạng mới (có viewedAt) giữ nguyên. */
 function expandAggregatedRecords(list) {
   const out = [];
   for (const item of list) {
     const count = typeof item.viewCount === "number" && item.viewCount > 0 ? item.viewCount : 1;
-    const hasDetail = item.viewedAt != null || item.userName != null;
+    const hasDetail = item.viewedAt != null && String(item.viewedAt).trim() !== "";
     if (hasDetail) {
       out.push({
         id: item.id,
         path: item.path,
-        viewedAt: item.viewedAt ?? "—",
+        viewedAt: formatViewedAt(item.viewedAt),
         userName: item.userName ?? "Khách",
       });
     } else {
@@ -109,7 +125,7 @@ export default function AdminPageViews() {
               {records.map((v, idx) => (
                 <tr key={v.id || idx} className="border-b border-[#e8e4df]">
                   <td className="py-3 pr-4 text-[#A59588]">{idx + 1}</td>
-                  <td className="py-3 pr-4 text-[#5C4A3D]">{v.viewedAt || "—"}</td>
+                  <td className="py-3 pr-4 text-[#5C4A3D]">{formatViewedAt(v.viewedAt)}</td>
                   <td className="py-3 pr-4 font-mono text-[#3e3226]">{v.path || "/"}</td>
                   <td className="py-3 font-medium text-[#3e3226]">{v.userName || "Khách"}</td>
                 </tr>

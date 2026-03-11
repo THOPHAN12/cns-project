@@ -66,5 +66,6 @@ export function trackPageView(path) {
         method: "POST",
         headers: getApiHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(body),
+        credentials: "omit",
     }).catch(() => {});
 }
