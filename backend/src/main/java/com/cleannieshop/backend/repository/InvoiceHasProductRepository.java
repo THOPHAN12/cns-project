@@ -13,4 +13,6 @@ import com.cleannieshop.backend.model.composite_keys.InvoiceHasProductKey;
 public interface InvoiceHasProductRepository extends JpaRepository<InvoiceHasProduct, InvoiceHasProductKey> {
     @Query("SELECT ihp FROM InvoiceHasProduct ihp JOIN FETCH ihp.product WHERE ihp.invoice = :invoice")
     List<InvoiceHasProduct> findByInvoice(@Param("invoice") Invoice invoice);
+
+    List<InvoiceHasProduct> findByInvoiceHasProductKey_ProductId(String productId);
 }

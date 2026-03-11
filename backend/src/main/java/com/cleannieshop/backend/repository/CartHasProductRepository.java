@@ -13,4 +13,6 @@ import com.cleannieshop.backend.model.composite_keys.CartHasProductKey;
 public interface CartHasProductRepository extends JpaRepository<CartHasProduct, CartHasProductKey> {
     @Query("SELECT chp FROM CartHasProduct chp JOIN FETCH chp.product WHERE chp.cart = :cart")
     List<CartHasProduct> findByCart(@Param("cart") Cart cart);
+
+    List<CartHasProduct> findByCartHasProductKey_ProductId(String productId);
 }

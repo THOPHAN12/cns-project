@@ -9,12 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cleannieshop.backend.dto.AddToCartDTO;
 import com.cleannieshop.backend.dto.DeleteFromCartDTO;
+import com.cleannieshop.backend.dto.ProductDTO;
 import com.cleannieshop.backend.model.Cart;
 import com.cleannieshop.backend.model.CartHasProduct;
 import com.cleannieshop.backend.model.Product;
 import com.cleannieshop.backend.model.composite_keys.CartHasProductKey;
 import com.cleannieshop.backend.repository.CartHasProductRepository;
 import com.cleannieshop.backend.repository.CartRepository;
+import com.cleannieshop.backend.repository.InvoiceHasProductRepository;
 import com.cleannieshop.backend.repository.ProductRepository;
 
 @Service
@@ -26,6 +28,8 @@ public class ProductService {
     private CartRepository cartRepository;
     @Autowired
     private CartHasProductRepository cartHasProductRepository;
+    @Autowired
+    private InvoiceHasProductRepository invoiceHasProductRepository;
 
     @Transactional(readOnly = true)
     public List<Product> getProducts() {
@@ -111,6 +115,43 @@ public class ProductService {
             for (int i = 0; i < dto.getQuantity(); i++) chp.getSizes().add(sizeToUse);
         }
         cartHasProductRepository.save(chp);
+        return true;
+    }
+
+    @Transactional
+    public Product createProduct(ProductDTO dto) {
+        Product p = new Product();
+        p.setId(dto.getId().trim());
+        p.setProductName(dto.getProductName() != null ? dto.getProductName().trim() : "");
+        p.setPrice(dto.getPrice() >= 0 ? dto.getPrice() : 0);
+        p.setStockQuantity(dto.getStockQuantity() >= 0 ? dto.getStockQuantity() : 0);
+        p.setImageSrc(dto.getImageSrc() != null ? dto.getImageSrc().trim() : "");
+        p.setSizes(dto.getSizes() != null && !dto.getSizes().isEmpty() ? dto.getSizes() : List.of("S", "M", "L"));
+        p.setCategories(dto.getCategories() != null && !dto.getCategories().isEmpty() ? dto.getCategories() : List.of("Nữ"));
+        return productRepository.save(p);
+    }
+
+    @Transactional
+    public Product updateProduct(String id, ProductDTO dto) {
+        Product p = productRepository.findById(id).orElse(null);
+        if (p == null) return null;
+        if (dto.getProductName() != null && !dto.getProductName().isBlank())
+            p.setProductName(dto.getProductName().trim());
+        if (dto.getPrice() >= 0) p.setPrice(dto.getPrice());
+        if (dto.getStockQuantity() >= 0) p.setStockQuantity(dto.getStockQuantity());
+        if (dto.getImageSrc() != null) p.setImageSrc(dto.getImageSrc().trim());
+        if (dto.getSizes() != null && !dto.getSizes().isEmpty()) p.setSizes(dto.getSizes());
+        if (dto.getCategories() != null && !dto.getCategories().isEmpty()) p.setCategories(dto.getCategories());
+        return productRepository.save(p);
+    }
+
+    @Transactional
+    public boolean deleteProduct(String id) {
+        if (id == null || id.isBlank()) return false;
+        if (productRepository.findById(id).isEmpty()) return false;
+        cartHasProductRepository.findByCartHasProductKey_ProductId(id).forEach(cartHasProductRepository::delete);
+        invoiceHasProductRepository.findByInvoiceHasProductKey_ProductId(id).forEach(invoiceHasProductRepository::delete);
+        productRepository.deleteById(id);
         return true;
     }
 
