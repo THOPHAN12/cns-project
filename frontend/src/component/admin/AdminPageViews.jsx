@@ -18,11 +18,13 @@ export default function AdminPageViews() {
           fetch(`${base}/api/analytics/pageviews/total`, { headers: getApiHeaders() }),
         ]);
         if (viewsRes.ok) {
-          const data = await viewsRes.json();
+          const ct = viewsRes.headers.get("content-type") || "";
+          const data = ct.includes("application/json") ? await viewsRes.json() : [];
           setViews(Array.isArray(data) ? data : []);
         }
         if (totalRes.ok) {
-          const data = await totalRes.json();
+          const ct = totalRes.headers.get("content-type") || "";
+          const data = ct.includes("application/json") ? await totalRes.json() : {};
           setTotal(data.total ?? 0);
         }
       } catch (e) {
