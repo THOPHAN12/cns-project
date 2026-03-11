@@ -3,8 +3,9 @@ package com.cleannieshop.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cleannieshop.backend.dto.UserCartDTO;
@@ -13,34 +14,23 @@ import com.cleannieshop.backend.service.UserService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-
 @RestController
 @RequestMapping("api/user")
-@CrossOrigin("http://localhost:5173")
 public class UserInfoController {
     @Autowired
     private UserService userService;
 
     @GetMapping
-    @Tag(name = "Get User Data Information", description = "Lấy data từ người dùng với userId")
-    public ResponseEntity<UserResponseDTO> getUserInfo(@RequestParam String userId) {
-        UserResponseDTO response = userService.getUserInfo(userId);
-        if (response == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @Tag(name = "User", description = "Thông tin user")
+    public ResponseEntity<UserResponseDTO> getInfo(@RequestParam String userId) {
+        UserResponseDTO dto = userService.getUserInfo(userId);
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
-    
+
     @GetMapping("cart")
-    @Tag(name = "Get User's Cart Id", description = "Lấy mã giỏ hàng của user với userId")
+    @Tag(name = "User", description = "Cart ID của user")
     public ResponseEntity<UserCartDTO> getCartId(@RequestParam String userId) {
-        UserCartDTO response = userService.getUserCartInfo(userId);
-        if (response == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        UserCartDTO dto = userService.getUserCartInfo(userId);
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

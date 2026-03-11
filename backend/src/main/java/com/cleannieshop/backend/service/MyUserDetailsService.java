@@ -10,20 +10,15 @@ import com.cleannieshop.backend.model.User;
 import com.cleannieshop.backend.model.UserPrincipal;
 import com.cleannieshop.backend.repository.UserRepository;
 
-
 @Service
 public class MyUserDetailsService implements UserDetailsService {
-    @Autowired UserRepository userRepo;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // TODO Auto-generated method stub
-        User user = userRepo.findByUsername(username).orElse(null);
-        if (user == null) {
-            throw new UsernameNotFoundException("Username not found");
-        }
-
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) throw new UsernameNotFoundException("Username not found: " + username);
         return new UserPrincipal(user);
     }
-
 }

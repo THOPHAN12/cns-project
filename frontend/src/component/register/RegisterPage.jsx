@@ -72,7 +72,7 @@ export default function RegisterPage() {
                 const text = await res.text();
                 let msg = "Đăng ký thất bại. Vui lòng thử lại.";
                 if (res.status === 406) msg = "Tên tài khoản đã tồn tại. Vui lòng chọn tên khác.";
-                else if (text) try { const j = JSON.parse(text); msg = j.message || j.error || msg; } catch (_) {}
+                else if (text) try { const j = JSON.parse(text); msg = j.message || j.error || msg; } catch {}
                 setErrorMessage(msg);
             }
         } catch (err) {

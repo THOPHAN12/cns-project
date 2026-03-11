@@ -28,11 +28,8 @@ public class User {
     private String fullName;
     private String email;
     private String phoneNumber;
-    /** OAuth: GOOGLE hoặc FACEBOOK */
     private String authProvider;
-    /** OAuth: ID người dùng từ Google/Facebook */
     private String authProviderId;
-    
 
     @OneToOne(mappedBy = "user")
     @JsonManagedReference

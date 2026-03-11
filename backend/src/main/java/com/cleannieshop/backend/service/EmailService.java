@@ -7,20 +7,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
+
     @Autowired
-    private JavaMailSender sender;
+    private JavaMailSender mailSender;
 
     public Boolean sendEmailTo(String email) {
-        // TODO Auto-generated method stub
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("noreply@cleannieshop.com");
-        message.setTo(email);
-        message.setSubject("Lời mời tham gia chương trình");
-        message.setText("Thư này được gửi nghĩa là bạn đã đăng ký tham gia chương trình. Mời bạn tham gia vào group cộng đồng!");
-
-        sender.send(message);
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setFrom("noreply@cleannieshop.com");
+        msg.setTo(email);
+        msg.setSubject("Lời mời tham gia chương trình");
+        msg.setText("Thư này được gửi nghĩa là bạn đã đăng ký tham gia chương trình. Mời bạn tham gia vào group cộng đồng!");
+        mailSender.send(msg);
         return true;
     }
-
-    
 }

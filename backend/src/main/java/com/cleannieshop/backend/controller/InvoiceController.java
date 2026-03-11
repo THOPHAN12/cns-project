@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,8 +40,9 @@ public class InvoiceController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    /** Lấy tất cả đơn hàng (dành cho admin quản lý) */
+    /** Lấy tất cả đơn hàng (chỉ ADMIN) */
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<InvoiceDetailDTO>> getAllInvoices() {
         return ResponseEntity.ok(invoiceService.getAllInvoices());
     }
@@ -53,8 +55,9 @@ public class InvoiceController {
         return ResponseEntity.ok(dto);
     }
 
-    /** Cập nhật trạng thái đơn hàng. Body: { "status": "CONFIRMED" | "SHIPPING" | "DELIVERED" | "CANCELLED" } */
+    /** Cập nhật trạng thái đơn hàng (chỉ ADMIN). Body: { "status": "CONFIRMED" | "SHIPPING" | "DELIVERED" | "CANCELLED" } */
     @PatchMapping("/{invoiceId}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InvoiceDetailDTO> updateStatus(
             @PathVariable String invoiceId,
             @RequestBody Map<String, String> body) {

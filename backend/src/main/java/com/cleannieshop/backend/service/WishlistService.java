@@ -3,10 +3,10 @@ package com.cleannieshop.backend.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cleannieshop.backend.dto.ProductDTO;
 import com.cleannieshop.backend.model.Product;
@@ -16,10 +16,9 @@ import com.cleannieshop.backend.repository.ProductRepository;
 import com.cleannieshop.backend.repository.UserRepository;
 import com.cleannieshop.backend.repository.WishlistRepository;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class WishlistService {
+
     @Autowired
     private WishlistRepository wishlistRepository;
     @Autowired
@@ -27,49 +26,33 @@ public class WishlistService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ProductDTO> getProductFromWishlist(String userId) {
         User user = userRepository.findById(userId).orElse(null);
-        
-        // Xử lý an toàn nếu user không tồn tại hoặc chưa có wishlist
         if (user == null || user.getWishlist() == null || user.getWishlist().getProducts() == null) {
             return new ArrayList<>();
         }
-
-        // Lấy danh sách Product Entity
-        List<Product> products = user.getWishlist().getProducts();
-
-        // Chuyển đổi sang DTO ngay TRONG transaction
-        return products.stream().map(product -> {
-            // Việc gọi .getImageData() ở đây cực kỳ quan trọng
-            // Nó buộc Postgres phải đọc LOB stream khi kết nối vẫn đang mở
-            String imageSrc = product.getImageSrc();
-
-            return new ProductDTO(
-                product.getId(),
-                product.getProductName(),
-                product.getPrice(),
-                product.getSizes(),
-                product.getStockQuantity(),
-                product.getCategories(),
-                imageSrc
-            );
-        }).collect(Collectors.toList());
+        return user.getWishlist().getProducts().stream().map(p -> new ProductDTO(
+                p.getId(), p.getProductName(), p.getPrice(), p.getSizes(),
+                p.getStockQuantity(), p.getCategories(), p.getImageSrc())).toList();
     }
 
     @Transactional
     public void addProductToWishlist(String productId, String userId) {
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Wishlist wishlist = user.getWishlist();
-        Product product = productRepository.findById(productId).orElse(null);
-        if (product == null)
-            throw new Error("Cannot find product with id = " + productId);
-        if (wishlist.getProducts().size() <= 0) {
+        if (wishlist == null) {
+            wishlist = new Wishlist();
+            wishlist.setUser(user);
+            wishlist = wishlistRepository.save(wishlist);
+            user.setWishlist(wishlist);
+            userRepository.save(user);
+        }
+        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+        if (wishlist.getProducts() == null || wishlist.getProducts().isEmpty()) {
             wishlist.setProducts(new ArrayList<>(Arrays.asList(product)));
         } else {
-            if (wishlist.getProducts().contains(product)) {
-                throw new Error("Product Exists");
-            }
+            if (wishlist.getProducts().contains(product)) throw new RuntimeException("Product already in wishlist");
             wishlist.getProducts().add(product);
         }
         wishlistRepository.save(wishlist);
@@ -78,10 +61,10 @@ public class WishlistService {
     @Transactional
     public void deleteProductFromWishlist(String productId, String userId) {
         User user = userRepository.findById(userId).orElse(null);
-        Wishlist wishlist = user.getWishlist();
+        if (user == null || user.getWishlist() == null) return;
         Product product = productRepository.findById(productId).orElse(null);
-        if (product == null)
-            return;
+        if (product == null) return;
+        Wishlist wishlist = user.getWishlist();
         wishlist.getProducts().remove(product);
         wishlistRepository.save(wishlist);
     }

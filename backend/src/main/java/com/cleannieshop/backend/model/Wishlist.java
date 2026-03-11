@@ -22,7 +22,7 @@ public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String wishlistId;
-    
+
     @ManyToMany
     @JsonManagedReference
     private List<Product> products;

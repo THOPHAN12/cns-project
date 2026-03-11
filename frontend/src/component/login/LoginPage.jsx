@@ -3,9 +3,7 @@ import Navbar from "../Navbar";
 import logoImg from "../../assets/logo transparent.png";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { getApiBaseUrl, getAuthLoginUrl } from "../../utils/api";
-
-const apiUrl = getApiBaseUrl();
+import { getAuthLoginUrl } from "../../utils/api";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
@@ -41,13 +39,10 @@ export default function LoginPage() {
             return;
         }
         const data = await res.json();
-        Cookies.set("token", data.token, {
-            expires: 1
-        })
-        Cookies.set("id", data.userId, {
-            expires: 1
-        })
-        nav("/profile")
+        Cookies.set("token", data.token, { expires: 1/24 });
+        Cookies.set("id", data.userId, { expires: 1/24 });
+        if (data.role) Cookies.set("role", data.role, { expires: 1/24 });
+        nav(data.role === "ADMIN" ? "/admin" : "/profile");
     }
 
     return (<>
@@ -71,7 +66,7 @@ export default function LoginPage() {
                     type="text"
                     placeholder="Tên tài khoản"
                     className="w-full bg-transparent border border-[#d4c5bc] text-[#4a3b32] px-4 py-3 rounded-lg focus:outline-none focus:border-[#8c7365] placeholder-[#8c7365] text-base"
-                    onChange={e => setTimeout(() => setUsername(e.target.value), 500)}
+                    onChange={e => setUsername(e.target.value)}
                     />
                 </div>
 
@@ -81,7 +76,7 @@ export default function LoginPage() {
                     type="password"
                     placeholder="Mật khẩu"
                     className="w-full bg-transparent border border-[#d4c5bc] text-[#4a3b32] px-4 py-3 rounded-lg focus:outline-none focus:border-[#8c7365] placeholder-[#8c7365] text-base"
-                    onChange={e => setTimeout(() => setPassword(e.target.value), 500)}
+                    onChange={e => setPassword(e.target.value)}
                     />
                 </div>
 

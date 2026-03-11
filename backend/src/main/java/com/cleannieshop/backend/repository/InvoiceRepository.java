@@ -1,12 +1,12 @@
 package com.cleannieshop.backend.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.cleannieshop.backend.model.Invoice;
 
-@Repository
 public interface InvoiceRepository extends JpaRepository<Invoice, String> {
-    java.util.List<Invoice> findAllByOrderByDateCreatedDesc();
-    java.util.List<Invoice> findByUser_UserIdOrderByDateCreatedDesc(String userId);
+    List<Invoice> findAllByOrderByDateCreatedDesc();
+    List<Invoice> findByUser_UserIdOrderByDateCreatedDesc(String userId);
 }

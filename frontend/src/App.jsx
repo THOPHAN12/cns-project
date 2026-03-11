@@ -16,6 +16,7 @@ import CheckoutPage from './component/cart/checkout/CheckoutPage'
 import ChativeChat from './component/chat/ChativeChat'
 import BlogPage from './component/blog/BlogPage'
 import BlogPostDetail from './component/blog/BlogPostDetail'
+import AdminDashboard from './component/admin/AdminDashboard'
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/profile' element={<SuccessPage />} />
+        <Route path='/admin' element={<AdminDashboard />} />
         <Route path='/cart' element={<CartPage />} />
         <Route path='/checkout' element={<CheckoutPage />} />
         {/* <Route path='/ar-ai' element={<AIAR />} />

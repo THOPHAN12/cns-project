@@ -1,0 +1,14 @@
+{
+  "name": "cns-project",
+  "private": true,
+  "scripts": {
+    "check": "npm run check:frontend && npm run check:backend",
+    "check:frontend": "cd frontend && npm run check",
+    "check:backend": "cd backend && mvnw.cmd test -B -q",
+    "fix": "cd frontend && npm run fix",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

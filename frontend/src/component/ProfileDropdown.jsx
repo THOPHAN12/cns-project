@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 export default function ProfileDropdown({ open, isLoggedIn, onLogout, onClose, profileRef }) {
+    const isAdmin = Cookies.get('role') === 'ADMIN';
     if (!open) return null;
     return (
         <div className='absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-30 border border-gray-200' ref={profileRef}>
@@ -14,6 +16,15 @@ export default function ProfileDropdown({ open, isLoggedIn, onLogout, onClose, p
                     >
                         Trang cá nhân
                     </Link>
+                    {isAdmin && (
+                        <Link
+                            to='/admin'
+                            className='block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors'
+                            onClick={onClose}
+                        >
+                            Quản trị
+                        </Link>
+                    )}
                     <button
                         className='block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors'
                         onClick={onLogout}

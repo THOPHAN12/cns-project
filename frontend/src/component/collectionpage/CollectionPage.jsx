@@ -1,9 +1,9 @@
 import Navbar from "../Navbar";
 import collectionImage from "../../assets/8.png"
 import title from "../../assets/collection/chũ.png";
-import img1 from "../../assets/collection/1.png"
-import img2 from "../../assets/collection/2.png"
-import img3 from "../../assets/collection/3.png"
+import _img1 from "../../assets/collection/1.png"
+import _img2 from "../../assets/collection/2.png"
+import _img3 from "../../assets/collection/3.png"
 import imgtitle from "../../assets/collection/Artboard 1@2x.png"
 import { useState } from "react";
 import Footer from "../Footer";

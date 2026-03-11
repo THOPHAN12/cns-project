@@ -4,8 +4,9 @@ import Footer from "../Footer";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { dispatchCartUpdated, addToLocalCart } from "../../utils/cartStorage";
+import { getApiBaseUrl } from "../../utils/api";
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const apiUrl = getApiBaseUrl();
 // ==========================================
 // 1. COMPONENT THÔNG BÁO (GÓC DƯỚI BÊN PHẢI)
 // ==========================================
@@ -59,15 +60,28 @@ const LoginModal = ({ show, onClose }) => {
 };
 
 // ==========================================
-// 3. COMPONENT BREADCRUMB
+// 3. COMPONENT BREADCRUMB (có mũi tên quay lại trang trước)
 // ==========================================
-const Breadcrumb = () => (
-    <div className="text-base text-[#7c6f63] flex items-center gap-2 px-30 py-10">
-        <Link to={"/product"} className="hover:underline">Sản Phẩm</Link>
-        <span className="mx-1">/</span>
-        <span className="font-bold text-2xl text-black">Chi Tiết Sản Phẩm</span>
-    </div>
-);
+const Breadcrumb = () => {
+    const navigate = useNavigate();
+    return (
+        <div className="text-base text-[#7c6f63] font-normal lowercase flex items-center gap-3 px-30 pt-20 pb-10">
+            <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="flex items-center justify-center w-10 h-10 rounded-full border border-[#e5d8ce] hover:bg-[#f3eae5] text-[#7c6f63] transition"
+                title="Quay lại trang trước"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </button>
+            <Link to={"/product"} className="hover:underline">sản phẩm</Link>
+            <span className="mx-1">/</span>
+            <span className="text-2xl text-black">chi tiết sản phẩm</span>
+        </div>
+    );
+};
 
 // ==========================================
 // 4. COMPONENT HÌNH ẢNH SẢN PHẨM
@@ -310,12 +324,6 @@ export default function ProductDetail() {
             return;
         }
 
-        // --- 5. Check API URL ---
-        if (!apiUrl || apiUrl.trim() === "") {
-            showToastMessage(true, "Lỗi cấu hình", "Không tìm thấy địa chỉ API. Kiểm tra VITE_API_BASE_URL.");
-            return;
-        }
-
         if (isAddingToCart) return;
         setIsAddingToCart(true);
 
@@ -327,8 +335,12 @@ export default function ProductDetail() {
             });
             if (!cartRes.ok) {
                 if (cartRes.status === 401) {
+                    Cookies.remove("token");
+                    Cookies.remove("id");
+                    Cookies.remove("role");
                     showToastMessage(true, "Phiên hết hạn", "Vui lòng đăng nhập lại.");
                     setIsAddingToCart(false);
+                    setShowLoginModal(true);
                     return;
                 }
                 if (cartRes.status === 404) {
@@ -347,8 +359,8 @@ export default function ProductDetail() {
                 setIsAddingToCart(false);
                 return;
             }
-        } catch (err) {
-            console.error(err);
+        } catch (e) {
+            console.error(e);
             showToastMessage(true, "Lỗi!", "Không thể kết nối đến server. Kiểm tra mạng hoặc backend.");
             setIsAddingToCart(false);
             return;
@@ -389,12 +401,16 @@ export default function ProductDetail() {
                         message = text;
                     }
                 }
-            } catch (_) {}
+            } catch {}
 
             if (status === 400) {
                 showToastMessage(true, "Dữ liệu không hợp lệ", message || "Kiểm tra size và số lượng.");
             } else if (status === 401) {
+                Cookies.remove("token");
+                Cookies.remove("id");
+                Cookies.remove("role");
                 showToastMessage(true, "Phiên hết hạn", "Vui lòng đăng nhập lại.");
+                setShowLoginModal(true);
             } else if (status === 404 || status === 406) {
                 // Sản phẩm hoặc giỏ chưa sẵn sàng: gọi seed rồi thử thêm giỏ lại 1 lần
                 try {
@@ -402,7 +418,7 @@ export default function ProductDetail() {
                     let seedData = null;
                     try {
                         seedData = await seedRes.json();
-                    } catch (_) {}
+                    } catch {}
                     const added = seedData?.added ?? 0;
                     // Thử thêm giỏ lại sau khi seed (dù added = 0 vẫn thử, vì có thể lỗi do cart)
                     const retryRes = await fetch(`${apiUrl}/api/products/${id}`, {
@@ -441,7 +457,7 @@ export default function ProductDetail() {
                             showToastMessage(true, "Thất bại!", "Không thêm được. Kiểm tra backend đang chạy và đã gọi " + apiUrl + "/api/seed/products chưa.");
                         }
                     }
-                } catch (_) {
+                } catch {
                     showToastMessage(true, "Thất bại!", "Không kết nối được server. Kiểm tra backend và mạng.");
                     if (productData && id) {
                         addToLocalCart({
@@ -459,8 +475,8 @@ export default function ProductDetail() {
             } else {
                 showToastMessage(true, "Thất bại!", message);
             }
-        } catch (err) {
-            console.error(err);
+        } catch (e) {
+            console.error(e);
             showToastMessage(true, "Lỗi!", "Không thể kết nối server. Kiểm tra mạng hoặc backend.");
         } finally {
             setIsAddingToCart(false);
@@ -471,8 +487,6 @@ export default function ProductDetail() {
     const handleAddToWishlist = async () => {
         const token = Cookies.get("token");
         const userId = Cookies.get("id");
-
-        console.log("user id = ", userId);
 
         if (!token || !userId) {
             setShowLoginModal(true);
@@ -486,16 +500,41 @@ export default function ProductDetail() {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                // Theo swagger hình ảnh cung cấp, API nhận body dạng string (application/json)
                 body: JSON.stringify(userId)
             });
 
+            const bodyText = await response.text().catch(() => "");
+
             if (response.ok) {
                 showToastMessage(false, "Thành công!", "Đã thêm vào danh sách yêu thích.");
-            } else {
-                showToastMessage(true, "Thất bại!", "Không thể thêm vào danh sách yêu thích.");
+                return;
             }
-        } catch (err) {
+
+            if (response.status === 401) {
+                Cookies.remove("token");
+                Cookies.remove("id");
+                Cookies.remove("role");
+                setShowLoginModal(true);
+                showToastMessage(true, "Phiên hết hạn", "Vui lòng đăng nhập lại.");
+                return;
+            }
+
+            let message = "Không thể thêm vào danh sách yêu thích.";
+            if (bodyText) {
+                const lower = bodyText.toLowerCase();
+                if (lower.includes("already in wishlist") || lower.includes("đã có")) {
+                    message = "Sản phẩm đã có trong danh sách yêu thích.";
+                } else {
+                    try {
+                        const err = JSON.parse(bodyText);
+                        if (err?.message) message = err.message;
+                    } catch {
+                        message = bodyText.length < 100 ? bodyText : message;
+                    }
+                }
+            }
+            showToastMessage(true, "Thất bại!", message);
+        } catch {
             showToastMessage(true, "Lỗi!", "Có lỗi xảy ra khi kết nối server.");
         }
     };
@@ -517,6 +556,7 @@ export default function ProductDetail() {
                     imageSrc: productData.imageSrc,
                     price: productData.price,
                     quantity: Number(quantity) || 1,
+                    size: selectedSize || null,
                 } : null,
             },
         });
@@ -542,10 +582,20 @@ export default function ProductDetail() {
                 <Navbar />
                 <NotificationToast toast={toast} />
                 <LoginModal show={showLoginModal} onClose={handleCloseLoginModal} />
-                <div className="text-base text-[#7c6f63] flex items-center gap-2 px-30 py-10">
-                    <Link to="/product" className="hover:underline">Sản Phẩm</Link>
+                <div className="text-base text-[#7c6f63] font-normal lowercase flex items-center gap-3 px-30 pt-20 pb-10">
+                    <button
+                        type="button"
+                        onClick={() => nav(-1)}
+                        className="flex items-center justify-center w-10 h-10 rounded-full border border-[#e5d8ce] hover:bg-[#f3eae5] text-[#7c6f63] transition"
+                        title="Quay lại trang trước"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg>
+                    </button>
+                    <Link to="/product" className="hover:underline">sản phẩm</Link>
                     <span className="mx-1">/</span>
-                    <span className="text-black">Không tìm thấy sản phẩm</span>
+                    <span className="text-black">không tìm thấy sản phẩm</span>
                 </div>
                 <div className="flex flex-col items-center justify-center px-30 py-20 min-h-[40vh]">
                     <p className="text-xl text-[#7c6f63] mb-2">Không tìm thấy sản phẩm này.</p>

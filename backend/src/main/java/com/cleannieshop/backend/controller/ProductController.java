@@ -1,5 +1,15 @@
 package com.cleannieshop.backend.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,76 +21,43 @@ import com.cleannieshop.backend.service.ProductService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
-
-
 @RestController
 @RequestMapping("api/products")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {
     @Autowired
     private ProductService productService;
 
     @GetMapping
-    @Tag(name = "Get All Products", description = "Trả về tất cả các sản phẩm từ db")
-    public ResponseEntity<List<Product>> getAllProducts(@RequestParam(required = false) List<String> filter) {
-        // return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
-        if (filter == null) {
-            return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(productService.getProductsByFilter(filter), HttpStatus.OK);
+    @Tag(name = "Products", description = "Danh sách sản phẩm")
+    public ResponseEntity<List<Product>> getAll(@RequestParam(required = false) List<String> filter) {
+        if (filter == null) return ResponseEntity.ok(productService.getProducts());
+        return ResponseEntity.ok(productService.getProductsByFilter(filter));
     }
 
     @GetMapping("{id}")
-    @Tag(name = "Get Product By Id", description = "Trả về sản phẩm với id={id}")
-    public ResponseEntity<Product> getMethodName(@PathVariable String id) {
-        Product returnProduct = productService.getProductById(id);
-        if (returnProduct != null) {
-            return new ResponseEntity<>(returnProduct, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @Tag(name = "Products", description = "Chi tiết sản phẩm")
+    public ResponseEntity<Product> getById(@PathVariable String id) {
+        Product p = productService.getProductById(id);
+        return p != null ? ResponseEntity.ok(p) : ResponseEntity.notFound().build();
     }
-    
+
     @PutMapping("{id}")
-    @Tag(name = "Add Product To Cart", description = "Thêm sản phẩm vào giỏ hàng")
-    public ResponseEntity<String> addToCart(@PathVariable String id, @RequestBody AddToCartDTO addToCartDTO) {
-        if (id == null || id.isBlank()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if (addToCartDTO == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if (addToCartDTO.getQuantity() <= 0 || addToCartDTO.getSize() == null || addToCartDTO.getSize().trim().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if (addToCartDTO.getCartId() == null || addToCartDTO.getCartId().trim().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if (productService.addToCart(id, addToCartDTO)) {
-            return new ResponseEntity<>("Added successfully", HttpStatus.OK);
-        }
-        return new ResponseEntity<>("The process is not done successfully", HttpStatus.NOT_ACCEPTABLE);
+    @Tag(name = "Cart", description = "Thêm vào giỏ")
+    public ResponseEntity<String> addToCart(@PathVariable String id, @RequestBody AddToCartDTO dto) {
+        if (id == null || id.isBlank() || dto == null || dto.getQuantity() <= 0
+                || dto.getSize() == null || dto.getSize().trim().isEmpty()
+                || dto.getCartId() == null || dto.getCartId().trim().isEmpty())
+            return ResponseEntity.badRequest().build();
+        return productService.addToCart(id, dto)
+                ? ResponseEntity.ok("Added successfully")
+                : ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Failed");
     }
-    
+
     @DeleteMapping("{id}")
-    @Tag(name = "Delete Product From Cart", description = "Xóa sản phẩm từ giỏ hàng")
-    public ResponseEntity<String> removeFromCart(@PathVariable String id, @RequestBody DeleteFromCartDTO deleteFromCartDTO) {
-        //TODO: process PUT request
-        if (productService.deleteFromCart(id, deleteFromCartDTO)) {
-            return new ResponseEntity<>("Deleted successfully", HttpStatus.OK);
-        }
-        return new ResponseEntity<>("The process is not done successfully", HttpStatus.NOT_ACCEPTABLE);
+    @Tag(name = "Cart", description = "Xóa khỏi giỏ")
+    public ResponseEntity<String> removeFromCart(@PathVariable String id, @RequestBody DeleteFromCartDTO dto) {
+        return productService.deleteFromCart(id, dto)
+                ? ResponseEntity.ok("Deleted successfully")
+                : ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Failed");
     }
 }

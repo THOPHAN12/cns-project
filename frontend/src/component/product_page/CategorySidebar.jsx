@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { MdCheckCircle, MdCheckCircleOutline } from "react-icons/md";
 
 const CategorySidebar = ({ isOpen, options, selectedCategories, onToggle }) => {

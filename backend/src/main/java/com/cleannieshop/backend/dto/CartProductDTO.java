@@ -2,7 +2,6 @@ package com.cleannieshop.backend.dto;
 
 import java.util.List;
 
-import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

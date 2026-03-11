@@ -1,6 +1,8 @@
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { Link, useParams, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { trackBlogClick } from "../../utils/api";
 
 /** Nội dung bài Clean Girl - slug: 2026-02-25-clean-girl-la-gi-... */
 const CLEAN_GIRL_CONTENT = (
@@ -919,23 +921,32 @@ const TOI_GIAN_NU_SANG_TRONG_CONTENT = (
   </div>
 );
 
-/** Cấu hình bài viết: slug -> { title, date, content } - slug = chu-de-bai-viet-[hash] */
+/** Cấu hình bài viết: slug -> { title, date, publishDate, content } - bài ẩn nếu publishDate > hôm nay */
 const POSTS = {
-  "clean-girl-la-gi-huong-dan-xay-dung-phong-cach-clean-girl-tu-a-z-68cbd811fe6ca949df9db5b": { title: "Clean Girl là gì? Hướng dẫn xây dựng phong cách clean girl từ A–Z", date: "25 tháng 2 2026", content: CLEAN_GIRL_CONTENT },
-  "6-tips-giat-giu-chuan-chinh-cach-cham-soc-quan-ao-giup-do-luon-ben-dep-nhu-moi-53c14049d463b06370f31b": { title: "6 Tips Giặt Giũ Chuẩn Chỉnh: Cách chăm sóc quần áo giúp đồ luôn bền đẹp như mới", date: "26 tháng 2 2026", content: WASHING_TIPS_CONTENT },
-  "cach-phoi-do-clean-girl-giup-ton-dang-va-trong-cao-hon-bi-quyet-xay-dung-outfit-toi-gian-nhung-van-sang-trong-811931f030384980689708": { title: "Cách phối đồ clean girl giúp tôn dáng và trông cao hơn: Bí quyết xây dựng outfit tối giản nhưng vẫn sang trọng", date: "27 tháng 3 2026", content: PHOI_DO_CONTENT },
-  "5-item-khong-the-thieu-de-xay-dung-tu-do-clean-girl-hoan-hao-nen-tang-cua-phong-cach-toi-gian-tinh-te-va-sang-trong-5102b435290562806028a4": { title: "5 item không thể thiếu để xây dựng tủ đồ clean girl hoàn hảo: Nền tảng của phong cách tối giản, tinh tế và sang trọng", date: "28 tháng 3 2026", content: TU_DO_5_ITEM_CONTENT },
-  "vi-sao-phong-cach-clean-girl-dang-tro-thanh-xu-huong-thoi-trang-2026-635e9772f163b06370f31b": { title: "Vì sao phong cách clean girl đang trở thành xu hướng thời trang 2026?", date: "2 tháng 3 2026", content: CLEAN_GIRL_2026_CONTENT },
-  "top-ao-clean-girl-giup-nang-thanh-lich-va-sang-trong-lua-chon-nen-tang-cho-tu-do-toi-gian-hien-dai-52618338210562806028a4": { title: "Top áo clean girl giúp nàng thanh lịch và sang trọng: Lựa chọn nền tảng cho tủ đồ tối giản hiện đại", date: "4 tháng 3 2026", content: TOP_AO_CLEAN_GIRL_CONTENT },
-  "vay-clean-girl-lua-chon-hoan-hao-cho-ve-dep-nu-tinh-toi-gian-va-sang-trong-52618338210562806028a4": { title: "Váy clean girl – Lựa chọn hoàn hảo cho vẻ đẹp nữ tính tối giản và sang trọng", date: "6 tháng 3 2026", content: VAY_CLEAN_GIRL_CONTENT },
-  "cach-xay-dung-phong-cach-toi-gian-nu-nhung-van-sang-trong-tu-duy-nen-tang-cua-thoi-trang-hien-dai-52618338210562806028a4": { title: "Cách xây dựng phong cách tối giản nữ nhưng vẫn sang trọng: Tư duy nền tảng của thời trang hiện đại", date: "8 tháng 3 2026", content: TOI_GIAN_NU_SANG_TRONG_CONTENT },
+  "clean-girl-la-gi-huong-dan-xay-dung-phong-cach-clean-girl-tu-a-z-68cbd811fe6ca949df9db5b": { title: "Clean Girl là gì? Hướng dẫn xây dựng phong cách clean girl từ A–Z", date: "25 tháng 2 2026", publishDate: "2026-02-25", content: CLEAN_GIRL_CONTENT },
+  "6-tips-giat-giu-chuan-chinh-cach-cham-soc-quan-ao-giup-do-luon-ben-dep-nhu-moi-53c14049d463b06370f31b": { title: "6 Tips Giặt Giũ Chuẩn Chỉnh: Cách chăm sóc quần áo giúp đồ luôn bền đẹp như mới", date: "26 tháng 2 2026", publishDate: "2026-02-26", content: WASHING_TIPS_CONTENT },
+  "cach-phoi-do-clean-girl-giup-ton-dang-va-trong-cao-hon-bi-quyet-xay-dung-outfit-toi-gian-nhung-van-sang-trong-811931f030384980689708": { title: "Cách phối đồ clean girl giúp tôn dáng và trông cao hơn: Bí quyết xây dựng outfit tối giản nhưng vẫn sang trọng", date: "27 tháng 2 2026", publishDate: "2026-02-20", content: PHOI_DO_CONTENT },
+  "5-item-khong-the-thieu-de-xay-dung-tu-do-clean-girl-hoan-hao-nen-tang-cua-phong-cach-toi-gian-tinh-te-va-sang-trong-5102b435290562806028a4": { title: "5 item không thể thiếu để xây dựng tủ đồ clean girl hoàn hảo: Nền tảng của phong cách tối giản, tinh tế và sang trọng", date: "28 tháng 2 2026", publishDate: "2026-02-20", content: TU_DO_5_ITEM_CONTENT },
+  "vi-sao-phong-cach-clean-girl-dang-tro-thanh-xu-huong-thoi-trang-2026-635e9772f163b06370f31b": { title: "Vì sao phong cách clean girl đang trở thành xu hướng thời trang 2026?", date: "2 tháng 3 2026", publishDate: "2026-03-02", content: CLEAN_GIRL_2026_CONTENT },
+  "top-ao-clean-girl-giup-nang-thanh-lich-va-sang-trong-lua-chon-nen-tang-cho-tu-do-toi-gian-hien-dai-52618338210562806028a4": { title: "Top áo clean girl giúp nàng thanh lịch và sang trọng: Lựa chọn nền tảng cho tủ đồ tối giản hiện đại", date: "4 tháng 3 2026", publishDate: "2026-03-04", content: TOP_AO_CLEAN_GIRL_CONTENT },
+  "vay-clean-girl-lua-chon-hoan-hao-cho-ve-dep-nu-tinh-toi-gian-va-sang-trong-52618338210562806028a4": { title: "Váy clean girl – Lựa chọn hoàn hảo cho vẻ đẹp nữ tính tối giản và sang trọng", date: "6 tháng 3 2026", publishDate: "2026-03-06", content: VAY_CLEAN_GIRL_CONTENT },
+  "cach-xay-dung-phong-cach-toi-gian-nu-nhung-van-sang-trong-tu-duy-nen-tang-cua-thoi-trang-hien-dai-52618338210562806028a4": { title: "Cách xây dựng phong cách tối giản nữ nhưng vẫn sang trọng: Tư duy nền tảng của thời trang hiện đại", date: "8 tháng 3 2026", publishDate: "2026-03-08", content: TOI_GIAN_NU_SANG_TRONG_CONTENT },
 };
+
+const today = () => new Date().toISOString().slice(0, 10);
 
 export default function BlogPostDetail() {
   const { slug } = useParams();
   const post = slug ? POSTS[slug] : null;
 
+  useEffect(() => {
+    if (slug) {
+      trackBlogClick(slug);
+    }
+  }, [slug]);
+
   if (!post) return <Navigate to="/blog" replace />;
+  if (post.publishDate && post.publishDate > today()) return <Navigate to="/blog" replace />;
 
   return (
     <div>

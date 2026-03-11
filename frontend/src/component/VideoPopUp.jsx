@@ -1,4 +1,3 @@
-import { useState } from "react";
 import localVideo from "../assets/AR try on.mp4";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 

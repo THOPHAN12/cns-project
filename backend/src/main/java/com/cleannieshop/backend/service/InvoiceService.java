@@ -1,5 +1,6 @@
 package com.cleannieshop.backend.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import com.cleannieshop.backend.dto.InvoiceResponseDTO;
 import com.cleannieshop.backend.model.Invoice;
 import com.cleannieshop.backend.model.InvoiceHasProduct;
 import com.cleannieshop.backend.model.Product;
+import com.cleannieshop.backend.model.User;
 import com.cleannieshop.backend.model.composite_keys.CartHasProductKey;
 import com.cleannieshop.backend.model.composite_keys.InvoiceHasProductKey;
 import com.cleannieshop.backend.repository.CartHasProductRepository;
@@ -22,10 +24,10 @@ import com.cleannieshop.backend.repository.InvoiceHasProductRepository;
 import com.cleannieshop.backend.repository.InvoiceRepository;
 import com.cleannieshop.backend.repository.ProductRepository;
 import com.cleannieshop.backend.repository.UserRepository;
-import com.cleannieshop.backend.model.User;
 
 @Service
 public class InvoiceService {
+
     private static final String STATUS_PENDING = "PENDING";
 
     @Autowired
@@ -41,58 +43,53 @@ public class InvoiceService {
     @Autowired
     private UserRepository userRepository;
 
-    public InvoiceResponseDTO createInvoice(InvoiceRequestDTO invoiceDTO) {
-        // Create a new invoice instance
-        Invoice invoice = new Invoice();
-        invoice.setCustomerFullName(invoiceDTO.getCustomerFullName());
-        invoice.setEmail(invoiceDTO.getEmail());
-        invoice.setPhoneNumber(invoiceDTO.getPhoneNumber());
-        invoice.setAddress(invoiceDTO.getAddress());
-        invoice.setPayMethodOption(invoiceDTO.getPayMethodOption());
-        invoice.setDateCreated(new Date());
-        invoice.setTotalPrice(invoiceDTO.getTotalPrice());
-        invoice.setStatus(STATUS_PENDING);
-        if (invoiceDTO.getUserId() != null && !invoiceDTO.getUserId().isBlank()) {
-            User user = userRepository.findById(invoiceDTO.getUserId()).orElse(null);
-            if (user != null) invoice.setUser(user);
+    @Transactional
+    public InvoiceResponseDTO createInvoice(InvoiceRequestDTO dto) {
+        Invoice inv = new Invoice();
+        inv.setCustomerFullName(dto.getCustomerFullName());
+        inv.setEmail(dto.getEmail());
+        inv.setPhoneNumber(dto.getPhoneNumber());
+        inv.setAddress(dto.getAddress());
+        inv.setPayMethodOption(dto.getPayMethodOption());
+        inv.setDateCreated(new Date());
+        inv.setTotalPrice(dto.getTotalPrice());
+        inv.setStatus(STATUS_PENDING);
+        if (dto.getUserId() != null && !dto.getUserId().isBlank()) {
+            User user = userRepository.findById(dto.getUserId()).orElse(null);
+            if (user != null) inv.setUser(user);
         }
+        inv = invoiceRepository.save(inv);
 
-        invoice = invoiceRepository.save(invoice);
-        
-        List<CartProductDTO> productDTOs = cartService.getAllProducts(invoiceDTO.getCartId());
-
-        // Add all products to InvoiceHasProduct
-        for (CartProductDTO productDTO : productDTOs) {
-            InvoiceHasProductKey key = new InvoiceHasProductKey(invoice.getInvoiceId(), productDTO.getId());
-
-            Product product = productRepository.findById(productDTO.getId()).orElse(null);
-            if (product == null) {
-                return null;
+        List<CartProductDTO> items = cartService.getAllProducts(dto.getCartId());
+        for (CartProductDTO pdto : items) {
+            Product product = productRepository.findById(pdto.getId()).orElse(null);
+            if (product == null) return null;
+            List<String> sizesToStore = pdto.getSizes();
+            if (sizesToStore == null || sizesToStore.isEmpty()) {
+                sizesToStore = new ArrayList<>();
+                for (int i = 0; i < pdto.getQuantity(); i++) {
+                    String fallback = (product.getSizes() != null && !product.getSizes().isEmpty())
+                        ? product.getSizes().get(0) : "M";
+                    sizesToStore.add(fallback);
+                }
             }
-
-            InvoiceHasProduct invoiceHasProduct = new InvoiceHasProduct(
-                key, invoice, product, productDTO.getQuantity(), productDTO.getSizes()
-            );
-
-            product.setStockQuantity(product.getStockQuantity() - invoiceHasProduct.getQuantity());
-            
-            invoiceHasProductRepository.save(invoiceHasProduct);
-
-            CartHasProductKey cartHasProductKey = new CartHasProductKey(invoiceDTO.getCartId(), productDTO.getId());
-            cartHasProductRepository.deleteById(cartHasProductKey);
+            InvoiceHasProductKey key = new InvoiceHasProductKey(inv.getInvoiceId(), pdto.getId());
+            InvoiceHasProduct ihp = new InvoiceHasProduct(key, inv, product, pdto.getQuantity(), sizesToStore);
+            product.setStockQuantity(product.getStockQuantity() - ihp.getQuantity());
+            invoiceHasProductRepository.save(ihp);
+            cartHasProductRepository.deleteById(new CartHasProductKey(dto.getCartId(), pdto.getId()));
         }
 
-        InvoiceResponseDTO responseDTO = new InvoiceResponseDTO();
-        responseDTO.setInvoiceId(invoice.getInvoiceId());
-        responseDTO.setDateCreated(invoice.getDateCreated());
-        responseDTO.setTotalPrice(invoice.getTotalPrice());
-        return responseDTO;
+        InvoiceResponseDTO res = new InvoiceResponseDTO();
+        res.setInvoiceId(inv.getInvoiceId());
+        res.setDateCreated(inv.getDateCreated());
+        res.setTotalPrice(inv.getTotalPrice());
+        return res;
     }
 
     @Transactional(readOnly = true)
-    public java.util.List<InvoiceDetailDTO> getAllInvoices() {
-        List<Invoice> list = invoiceRepository.findAllByOrderByDateCreatedDesc();
-        return list.stream().map(this::toDetailDTO).toList();
+    public List<InvoiceDetailDTO> getAllInvoices() {
+        return invoiceRepository.findAllByOrderByDateCreatedDesc().stream().map(this::toDetailDTO).toList();
     }
 
     @Transactional(readOnly = true)
@@ -101,6 +98,7 @@ public class InvoiceService {
         return inv != null ? toDetailDTO(inv) : null;
     }
 
+    @Transactional
     public InvoiceDetailDTO updateStatus(String invoiceId, String status) {
         Invoice inv = invoiceRepository.findById(invoiceId).orElse(null);
         if (inv == null) return null;
@@ -110,9 +108,8 @@ public class InvoiceService {
     }
 
     @Transactional(readOnly = true)
-    public java.util.List<InvoiceDetailDTO> getInvoicesByUserId(String userId) {
-        List<Invoice> list = invoiceRepository.findByUser_UserIdOrderByDateCreatedDesc(userId);
-        return list.stream().map(this::toDetailDTO).toList();
+    public List<InvoiceDetailDTO> getInvoicesByUserId(String userId) {
+        return invoiceRepository.findByUser_UserIdOrderByDateCreatedDesc(userId).stream().map(this::toDetailDTO).toList();
     }
 
     private InvoiceDetailDTO toDetailDTO(Invoice inv) {
@@ -127,14 +124,30 @@ public class InvoiceService {
         dto.setTotalPrice(inv.getTotalPrice());
         dto.setStatus(inv.getStatus() != null ? inv.getStatus() : STATUS_PENDING);
         if (inv.getUser() != null) dto.setUserId(inv.getUser().getUserId());
-        if (inv.getInvoiceHasProducts() != null) {
-            dto.setItems(inv.getInvoiceHasProducts().stream().map(ihp -> {
+        List<InvoiceHasProduct> ihpList = invoiceHasProductRepository.findByInvoice(inv);
+        if (ihpList != null && !ihpList.isEmpty()) {
+            dto.setItems(ihpList.stream().map(ihp -> {
                 InvoiceItemDTO item = new InvoiceItemDTO();
                 item.setProductId(ihp.getProduct().getId());
                 item.setProductName(ihp.getProduct().getProductName());
                 item.setImageSrc(ihp.getProduct().getImageSrc());
                 item.setPrice(ihp.getProduct().getPrice());
                 item.setQuantity(ihp.getQuantity());
+                item.setSizes(ihp.getSizes());
+                String sizeDisplay = null;
+                if (ihp.getSizes() != null && !ihp.getSizes().isEmpty()) {
+                    for (String s : ihp.getSizes()) {
+                        if (s != null && !s.trim().isEmpty()) {
+                            sizeDisplay = s.trim();
+                            break;
+                        }
+                    }
+                }
+                if (sizeDisplay == null && ihp.getProduct() != null && ihp.getProduct().getSizes() != null && !ihp.getProduct().getSizes().isEmpty()) {
+                    sizeDisplay = ihp.getProduct().getSizes().get(0);
+                }
+                if (sizeDisplay == null) sizeDisplay = "M";
+                item.setSize(sizeDisplay);
                 return item;
             }).toList());
         }

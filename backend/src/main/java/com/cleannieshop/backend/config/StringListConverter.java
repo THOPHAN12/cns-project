@@ -9,10 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-/**
- * Lưu List<String> vào 1 cột DB dạng JSON (vd: ["S","M","L"]).
- * Tránh @ElementCollection để schema đơn giản và seed chạy ổn định.
- */
 @Converter
 public class StringListConverter implements AttributeConverter<List<String>, String> {
 

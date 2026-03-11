@@ -7,15 +7,16 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { getLocalCart, removeFromLocalCart, updateLocalCartQuantity, CART_UPDATED_EVENT } from '../../utils/cartStorage';
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { getApiBaseUrl } from '../../utils/api';
 
-/** Chuẩn hóa item từ API sang format CartItem */
+/** Chuẩn hóa item từ API sang format CartItem (giữ sizes để gửi khi tăng/giảm) */
 const normalizeApiItem = (item) => ({
     id: item.id,
-    name: item.name ?? item.productName ?? 'Sản phẩm',
-    imageSrc: item.imageSrc ?? item.image ?? '',
-    price: Number(item.price) ?? 0,
-    quantity: Number(item.quantity) ?? 1,
+    name: item.name || item.productName || 'Sản phẩm',
+    imageSrc: item.imageSrc || item.image || '',
+    price: Number(item.price) || 0,
+    quantity: Number(item.quantity) || 1,
+    sizes: Array.isArray(item.sizes) ? item.sizes : [],
     isLocal: false,
 });
 // --- 1. Component CartItem (Nhận thêm các hàm xử lý sự kiện từ cha) ---
@@ -35,6 +36,16 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
         </div>
         <div className="flex flex-col gap-1">
             <h3 className="font-bold text-lg leading-tight text-gray-900">{item.name}</h3>
+            {!item.isLocal && (
+                <p className="text-sm text-gray-500">
+                    Size: {Array.isArray(item.sizes) && item.sizes.length > 0 && item.sizes[0]
+                        ? item.sizes[0]
+                        : "-"}
+                </p>
+            )}
+            {item.isLocal && item.size && (
+                <p className="text-sm text-gray-500">Size: {item.size}</p>
+            )}
         </div>
       </div>
 
@@ -86,14 +97,16 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
 /** Chuẩn hóa item từ "Mua Ngay" (state.addedProduct) sang format CartItem */
 const normalizeAddedProduct = (p) => ({
     id: p.id,
-    name: p.name ?? p.productName ?? 'Sản phẩm',
-    imageSrc: p.imageSrc ?? '',
-    price: Number(p.price) ?? 0,
-    quantity: Number(p.quantity) ?? 1,
+    name: p.name || p.productName || 'Sản phẩm',
+    imageSrc: p.imageSrc || '',
+    price: Number(p.price) || 0,
+    quantity: Number(p.quantity) || 1,
+    size: p.size || null,
     isLocal: true,
 });
 
 export default function CartPage() {
+    const apiUrl = getApiBaseUrl();
     const navigate = useNavigate();
     const location = useLocation();
     const [apiCartItems, setApiCartItems] = useState([]);
@@ -138,7 +151,7 @@ export default function CartPage() {
                 const cartData = await cartRes.json();
                 currentCartId = cartData?.cartId ?? cartData?.cart_id;
                 setCartId(currentCartId);
-            } catch (err) {
+            } catch {
                 setLocalCartItems(getLocalCart());
                 return;
             }
@@ -153,7 +166,7 @@ export default function CartPage() {
                 }
                 const data = await res.json();
                 setApiCartItems(Array.isArray(data) ? data : []);
-            } catch (err) {
+            } catch {
                 setLocalCartItems(getLocalCart());
             }
         };
@@ -180,13 +193,14 @@ export default function CartPage() {
             prev.map(i => i.id === id ? { ...i, quantity: (i.quantity || 1) + 1 } : i)
         );
         try {
+            const size = (item.sizes && item.sizes.length > 0) ? item.sizes[0] : "M";
             await fetch(`${apiUrl}/api/products/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${Cookies.get("token")}`
                 },
-                body: JSON.stringify({ cartId, quantity: 1 })
+                body: JSON.stringify({ cartId, quantity: 1, size })
             });
         } catch (e) {
             console.error("Increase error", e);

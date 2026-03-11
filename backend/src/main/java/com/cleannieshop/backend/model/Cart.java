@@ -31,12 +31,4 @@ public class Cart {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
-
-    // public void addProductToCart(Product product) {
-    //     products.add(product);
-    // }
-
-    // public void removeProductFromCart(Product product) {
-    //     products.remove(product);
-    // }
 }

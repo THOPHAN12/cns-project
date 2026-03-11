@@ -21,6 +21,10 @@ import com.cleannieshop.backend.repository.UserRepository;
 import com.cleannieshop.backend.repository.WishlistRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 
 @Service
 public class OAuthService {
@@ -36,40 +40,31 @@ public class OAuthService {
     private WishlistRepository wishlistRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Value("${oauth.google.client-id:}")
     private String googleClientId;
-
     @Value("${oauth.facebook.app-id:}")
     private String facebookAppId;
-
     @Value("${oauth.facebook.app-secret:}")
     private String facebookAppSecret;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
-    /**
-     * Xác thực Google ID token và trả về UserLoginResponseDTO (token + userId).
-     */
     public UserLoginResponseDTO loginWithGoogle(String credential) {
         if (googleClientId == null || googleClientId.isBlank()) {
             throw new RuntimeException("Google OAuth chưa được cấu hình. Thêm oauth.google.client-id vào .env");
         }
         try {
-            com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier verifier =
-                new com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier.Builder(
-                    new com.google.api.client.http.javanet.NetHttpTransport(),
-                    new com.google.api.client.json.gson.GsonFactory())
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    new NetHttpTransport(), new GsonFactory())
                     .setAudience(java.util.Collections.singletonList(googleClientId))
                     .build();
-            com.google.api.client.googleapis.auth.oauth2.GoogleIdToken idToken = verifier.verify(credential);
+            GoogleIdToken idToken = verifier.verify(credential);
             if (idToken == null) throw new RuntimeException("Token không hợp lệ");
-            com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload payload = idToken.getPayload();
-
+            GoogleIdToken.Payload payload = idToken.getPayload();
             String providerId = payload.getSubject();
             String email = payload.getEmail();
             String name = payload.get("name") != null ? (String) payload.get("name") : null;
@@ -79,31 +74,22 @@ public class OAuthService {
             UserLoginResponseDTO res = new UserLoginResponseDTO();
             res.setToken(userService.generateToken(user.getUsername()));
             res.setUserId(user.getUserId());
+            res.setRole(user.getRole() != null ? user.getRole() : "USER");
             return res;
         } catch (Exception e) {
             throw new RuntimeException("Xác thực Google thất bại: " + e.getMessage());
         }
     }
 
-    /**
-     * Xác thực Facebook access token và trả về UserLoginResponseDTO (token + userId).
-     */
     public UserLoginResponseDTO loginWithFacebook(String accessToken) {
         if (facebookAppId == null || facebookAppId.isBlank() || facebookAppSecret == null || facebookAppSecret.isBlank()) {
-            throw new RuntimeException("Facebook OAuth chưa được cấu hình. Thêm oauth.facebook.app-id và oauth.facebook.app-secret vào .env");
+            throw new RuntimeException("Facebook OAuth chưa được cấu hình");
         }
         try {
-            // Verify token and get user info
             String url = "https://graph.facebook.com/me?fields=id,name,email&access_token=" + accessToken;
-            HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET()
-                .build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() != 200) {
-                throw new RuntimeException("Token Facebook không hợp lệ");
-            }
+            if (response.statusCode() != 200) throw new RuntimeException("Token Facebook không hợp lệ");
 
             JsonNode node = objectMapper.readTree(response.body());
             String providerId = node.get("id").asText();
@@ -114,6 +100,7 @@ public class OAuthService {
             UserLoginResponseDTO res = new UserLoginResponseDTO();
             res.setToken(userService.generateToken(user.getUsername()));
             res.setUserId(user.getUserId());
+            res.setRole(user.getRole() != null ? user.getRole() : "USER");
             return res;
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Xác thực Facebook thất bại: " + e.getMessage());
@@ -122,9 +109,7 @@ public class OAuthService {
 
     private User findOrCreateOAuthUser(String provider, String providerId, String email, String fullName) {
         var existing = userRepository.findByAuthProviderAndAuthProviderId(provider, providerId);
-        if (existing.isPresent()) {
-            return existing.get();
-        }
+        if (existing.isPresent()) return existing.get();
 
         String username = provider.toLowerCase() + "_" + providerId;
         if (userRepository.findByUsername(username).isPresent()) {
@@ -139,7 +124,6 @@ public class OAuthService {
         user.setAuthProvider(provider);
         user.setAuthProviderId(providerId);
         user.setPassword(passwordEncoder.encode("oauth-" + provider.toLowerCase() + "-" + providerId));
-
         user = userRepository.save(user);
 
         Cart cart = new Cart();

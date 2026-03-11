@@ -1,0 +1,11 @@
+============================================
+  MẬT KHẨU MẶC ĐỊNH SAU KHI RESET (CnsDev2026)
+============================================
+
+• PostgreSQL (user postgres):  CnsDev2026
+• Tài khoản đăng nhập web (admin):  CnsDev2026
+
+Backend đã có file .env với DB_PASSWORD=CnsDev2026.
+Bạn cần đổi mật khẩu PostgreSQL sang CnsDev2026 (theo Cách 3 trong SUA_LOI_POSTGRES.md) rồi chạy backend.
+
+Đăng nhập web: username = admin, password = CnsDev2026

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cleannieshop.backend.dto.CartProductDTO;
 import com.cleannieshop.backend.model.Cart;
@@ -13,8 +14,6 @@ import com.cleannieshop.backend.model.Product;
 import com.cleannieshop.backend.repository.CartHasProductRepository;
 import com.cleannieshop.backend.repository.CartRepository;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class CartService {
     @Autowired
@@ -22,27 +21,24 @@ public class CartService {
     @Autowired
     private CartRepository cartRepository;
 
-    @Transactional
-    public List<CartProductDTO> getAllProducts(String id) {
-        if (id == null || id.isBlank()) return new ArrayList<>();
-        Cart cart = cartRepository.findById(id).orElse(null);
-        if (cart == null) {
-            return new ArrayList<>();
-        }
-        List<CartHasProduct> cartHasProducts = cartHasProductRepository.findByCart(cart);
+    @Transactional(readOnly = true)
+    public List<CartProductDTO> getAllProducts(String cartId) {
+        if (cartId == null || cartId.isBlank()) return new ArrayList<>();
+        Cart cart = cartRepository.findById(cartId).orElse(null);
+        if (cart == null) return new ArrayList<>();
+        List<CartHasProduct> items = cartHasProductRepository.findByCart(cart);
         List<CartProductDTO> res = new ArrayList<>();
-        for (CartHasProduct cartHasProduct : cartHasProducts) {
-            Product product = cartHasProduct.getProduct();
-            CartProductDTO e = new CartProductDTO();
-            e.setId(product.getId());
-            e.setImageSrc(product.getImageSrc());
-            e.setName(product.getProductName());
-            e.setPrice(product.getPrice());
-            e.setQuantity(cartHasProduct.getQuantity());
-            e.setSizes(cartHasProduct.getSizes());
-            res.add(e);
+        for (CartHasProduct chp : items) {
+            Product p = chp.getProduct();
+            CartProductDTO dto = new CartProductDTO();
+            dto.setId(p.getId());
+            dto.setImageSrc(p.getImageSrc());
+            dto.setName(p.getProductName());
+            dto.setPrice(p.getPrice());
+            dto.setQuantity(chp.getQuantity());
+            dto.setSizes(chp.getSizes());
+            res.add(dto);
         }
         return res;
     }
-    
 }

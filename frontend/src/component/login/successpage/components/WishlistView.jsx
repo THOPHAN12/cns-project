@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 import { getApiBaseUrl } from "../../../../utils/api";
 
 const WishlistView = () => {
   const apiUrl = getApiBaseUrl();
+  const nav = useNavigate();
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [cartId, setCartId] = useState("");
 
   const userId = Cookies.get("id");
 
-  const handleAddToCart = async (productId) => {
+  const handleAddToCart = async (productId, quantity = 1, selectedSize = null) => {
         if (!Cookies.get("token")) {
-            setShowLoginModal(true);
+            nav("/login");
             return;
         }
 
@@ -31,7 +32,7 @@ const WishlistView = () => {
                 alert("Thất bại! Lỗi lấy thông tin giỏ hàng.");
                 return; 
             }
-        } catch (err) {
+        } catch {
             alert("Lỗi! Không thể kết nối đến server.");
             return;
         }
@@ -46,7 +47,7 @@ const WishlistView = () => {
                 body: JSON.stringify({
                     "cartId": currentCartId,
                     "quantity": quantity,
-                    "size": selectedSize,
+                    "size": selectedSize || undefined,
                 })
             });
             if (!response.ok) {
@@ -54,7 +55,7 @@ const WishlistView = () => {
             } else {
                 alert("Thành công! Đã thêm sản phẩm vào giỏ hàng.");
             }
-        } catch (err) {
+        } catch {
             alert("Lỗi! Lỗi thêm vào giỏ hàng.");
         }
     };
@@ -176,7 +177,7 @@ const WishlistView = () => {
                 <button 
                   disabled={product.stockQuantity === 0}
                   className="w-max border border-gray-600 text-gray-800 bg-transparent px-5 py-1.5 text-sm font-medium hover:bg-gray-900 hover:text-white transition-colors disabled:border-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
-                  onClick={() => handleAddToCart(product.id)}
+                  onClick={() => handleAddToCart(product.id, 1, product.sizes?.[0])}
                 >
                   {product.stockQuantity > 0 ? 'Thêm vào giỏ' : 'Hết hàng'}
                 </button>

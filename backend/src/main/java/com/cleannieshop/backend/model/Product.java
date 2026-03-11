@@ -30,7 +30,7 @@ public class Product {
     @Column(columnDefinition = "text")
     private List<String> categories;
     private String imageSrc;
-    
+
     @OneToMany(mappedBy = "product")
     @JsonBackReference
     private List<CartHasProduct> cartHasProducts;

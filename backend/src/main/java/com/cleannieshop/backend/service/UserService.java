@@ -1,17 +1,16 @@
 package com.cleannieshop.backend.service;
 
-// import java.security.Key;
-// import java.security.NoSuchAlgorithmException;
-// import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-// import javax.crypto.KeyGenerator;
+import java.nio.charset.StandardCharsets;
+
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +26,8 @@ import com.cleannieshop.backend.repository.WishlistRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class UserService {
@@ -38,21 +39,18 @@ public class UserService {
     @Autowired
     private WishlistRepository wishlistRepository;
 
+    @Value("${jwt.secret}")
+    private String jwtSecret;
     private SecretKey secretKey;
 
-    UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    private SecretKey generateSecretKey() {
-        secretKey = Jwts.SIG.HS256.key().build();
-        return secretKey;
+    @PostConstruct
+    public void init() {
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public User saveUser(UserRegisterDTO userDTO) {
-        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
-            return null;
-        }
+        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) return null;
         User newUser = new User();
         newUser.setEmail(userDTO.getEmail());
         newUser.setFullName(userDTO.getFullName());
@@ -60,84 +58,57 @@ public class UserService {
         newUser.setUsername(userDTO.getUsername());
         newUser.setPassword(userDTO.getPassword());
         newUser.setPhoneNumber(userDTO.getPhoneNumber());
-
         newUser = userRepository.save(newUser);
-
         Cart newCart = new Cart();
         newCart.setDateCreated(new Date());
         newCart.setUser(newUser);
         newCart = cartRepository.save(newCart);
         newUser.setCart(newCart);
-
         Wishlist newWishlist = new Wishlist();
         newWishlist.setUser(newUser);
         newWishlist = wishlistRepository.save(newWishlist);
         newUser.setWishlist(newWishlist);
-
         return newUser;
     }
 
     public String generateToken(String username) {
-        // TODO Auto-generated method stub
         Map<String, Object> map = new HashMap<>();
-
-        return Jwts.builder()
-                .claims(map)
-                .subject(username)
+        return Jwts.builder().claims(map).subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24))
-                .signWith(generateSecretKey())
-                .compact();
-
+                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .signWith(secretKey).compact();
     }
 
     public String extractUsername(String token) {
-        // TODO Auto-generated method stub
         return extractClaim(token, Claims::getSubject);
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolvers) {
-        final Claims claims = Jwts.parser()
-                                .verifyWith(secretKey)
-                                .build()
-                                .parseSignedClaims(token).getPayload();
-        return claimResolvers.apply(claims);
+    private <T> T extractClaim(String token, Function<Claims, T> fn) {
+        Claims claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+        return fn.apply(claims);
     }
-
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        // TODO Auto-generated method stub
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
-
-    private boolean isTokenExpired(String token) {
-        // TODO Auto-generated method stub
-        return extractClaim(token, Claims::getExpiration).before(new Date()); // get expiration claim from the token
+        String username = extractUsername(token);
+        return username.equals(userDetails.getUsername()) && !extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
     public UserResponseDTO getUserInfo(String userId) {
         User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            return null;
-        }
-        UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setFullName(user.getFullName());
-        userResponseDTO.setEmail(user.getEmail());
-        userResponseDTO.setPhoneNumber(user.getPhoneNumber());
-        return userResponseDTO;
+        if (user == null) return null;
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setFullName(user.getFullName());
+        dto.setEmail(user.getEmail());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setRole(user.getRole() != null ? user.getRole() : "USER");
+        return dto;
     }
 
     public UserCartDTO getUserCartInfo(String userId) {
         User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            return null;
-        }
-        if (user.getCart() == null) {
-            return null;
-        }
-        UserCartDTO cartDTO = new UserCartDTO();
-        cartDTO.setCartId(user.getCart().getCartId());
-        return cartDTO;
+        if (user == null || user.getCart() == null) return null;
+        UserCartDTO dto = new UserCartDTO();
+        dto.setCartId(user.getCart().getCartId());
+        return dto;
     }
 }

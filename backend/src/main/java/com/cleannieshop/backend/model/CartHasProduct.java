@@ -32,7 +32,7 @@ public class CartHasProduct {
     @JsonManagedReference
     @JoinColumn(name = "product_id")
     private Product product;
-    
+
     @ManyToOne
     @MapsId("cartId")
     @JsonManagedReference

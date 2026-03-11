@@ -10,8 +10,6 @@ import CategorySidebar from "./CategorySidebar";
 import FilterSidebar from "./FilterSidebar";
 import ProductList from "./ProductList";
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
-
 // Toast thông báo (giữ cho tương lai nếu cần)
 const NotificationToast = ({ toast }) => {
     if (!toast?.show) return null;
@@ -108,7 +106,7 @@ export default function ProductPage() {
     const [fetchError, setFetchError] = useState(null);
 
     const [showLoginModal, setShowLoginModal] = useState(false);
-    const [toast, setToast] = useState({ show: false, isError: false, title: "", message: "" });
+    const [toast, _setToast] = useState({ show: false, isError: false, title: "", message: "" });
 
     const handleCloseLoginModal = () => {
         setShowLoginModal(false);

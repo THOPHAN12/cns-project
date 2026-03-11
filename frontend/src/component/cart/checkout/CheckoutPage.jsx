@@ -1,19 +1,56 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import Footer from "../../Footer";
 import Navbar from "../../Navbar";
 import Cookies from "js-cookie";
 import { getLocalCart, CART_UPDATED_EVENT, clearLocalCart } from "../../../utils/cartStorage";
+import { getApiBaseUrl } from "../../../utils/api";
+import AddressSelector from "./AddressSelector";
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const apiUrl = getApiBaseUrl();
 
-/** Chuẩn hóa item từ API giống CartPage */
+/** Popup đặt hàng thành công: tự chuyển về trang chủ sau 3 giây hoặc khi bấm nút */
+function SuccessPopup({ invoiceId, onClose }) {
+    const onCloseRef = React.useRef(onClose);
+    onCloseRef.current = onClose;
+    React.useEffect(() => {
+        const t = setTimeout(() => {
+            onCloseRef.current?.();
+        }, 3000);
+        return () => clearTimeout(t);
+    }, []);
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-11/12 mx-4 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Đặt hàng thành công</h3>
+                <p className="text-gray-600 text-sm mb-1">Cảm ơn bạn đã đặt hàng.</p>
+                <p className="text-gray-700 font-medium">Mã đơn: <strong className="text-red-800">{invoiceId}</strong></p>
+                <p className="text-gray-500 text-xs mt-2">Tự chuyển về trang chủ sau 3 giây...</p>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="mt-6 w-full py-3 px-4 bg-red-800 text-white font-semibold rounded-lg hover:bg-red-900 transition"
+                >
+                    Về trang chủ
+                </button>
+            </div>
+        </div>
+    );
+}
+
+/** Chuẩn hóa item từ API giống CartPage (giữ sizes để hiển thị) */
 const normalizeApiItem = (item) => ({
     id: item.id,
-    name: item.name ?? item.productName ?? "Sản phẩm",
-    imageSrc: item.imageSrc ?? item.image ?? "",
-    price: Number(item.price) ?? 0,
-    quantity: Number(item.quantity) ?? 1,
+    name: item.name || item.productName || "Sản phẩm",
+    imageSrc: item.imageSrc || item.image || "",
+    price: Number(item.price) || 0,
+    quantity: Number(item.quantity) || 1,
+    sizes: Array.isArray(item.sizes) ? item.sizes : [],
 });
 // ==========================================
 // 1. Component Form Thông Tin Giao Hàng
@@ -23,32 +60,27 @@ function ShippingForm({ shippingInfo, setShippingInfo }) {
     const token = Cookies.get("token");
 
     useEffect(() => {
+        if (!userId || !token) return;
         const fetchUser = async () => {
             try {
-                const res = await fetch(`${apiUrl}/api/user?userId=${userId}`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
+                const res = await fetch(`${apiUrl}/api/user?userId=${encodeURIComponent(userId)}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
                 });
-                if (!res.ok) {
-                    console.log("Fetch user failed:", res.status);
-                    return;
-                }
+                if (!res.ok) return;
                 const data = await res.json();
-                
                 setShippingInfo(prev => ({
                     ...prev,
-                    customerFullName: data.fullName || prev.customerFullName,
-                    email: data.email || prev.email,
-                    phoneNumber: data.phoneNumber || prev.phoneNumber,
+                    customerFullName: data.fullName || "",
+                    email: data.email || "",
+                    phoneNumber: data.phoneNumber || "",
+                    address: prev.address || "",
                 }));
             } catch (error) {
-                console.error("Lỗi khi fetch user:", error);
+                console.error("Lỗi khi lấy thông tin user:", error);
             }
         };
-        if (userId) fetchUser();
-    }, [userId, token, setShippingInfo]);
+        fetchUser();
+    }, [userId, token]);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -75,8 +107,11 @@ function ShippingForm({ shippingInfo, setShippingInfo }) {
                     <input type="tel" id="phoneNumber" value={shippingInfo.phoneNumber} onChange={handleChange} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-red-800 focus:outline-none focus:ring-1 focus:ring-red-800" placeholder="0901234567" required />
                 </div>
                 <div className="md:col-span-2">
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-700">Địa chỉ cụ thể</label>
-                    <input type="text" id="address" value={shippingInfo.address} onChange={handleChange} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-red-800 focus:outline-none focus:ring-1 focus:ring-red-800" placeholder="123 Đường Lê Lợi, Phường Bến Nghé, Quận 1" required />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Địa chỉ giao hàng (bắt buộc nhập)</label>
+                    <AddressSelector
+                        value={shippingInfo.address}
+                        onChange={(addr) => setShippingInfo((prev) => ({ ...prev, address: addr }))}
+                    />
                 </div>
             </form>
         </div>
@@ -249,7 +284,12 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
                             </div>
                             <div className="ml-4 flex flex-col justify-center">
                                 <span className="text-sm font-medium text-gray-900 line-clamp-2">{item.name}</span>
-                                <span className="text-sm text-gray-500">Số lượng: {item.quantity}</span>
+                                <span className="text-sm text-gray-500">
+                                    Size: {Array.isArray(item.sizes) && item.sizes.length > 0 && item.sizes[0]
+                                        ? item.sizes[0]
+                                        : item.size || "-"}
+                                    {" · "}Số lượng: {item.quantity}
+                                </span>
                             </div>
                         </div>
                         <span className="text-sm font-medium text-gray-900 mt-2">{formatCurrency((item.price || 0) * (item.quantity || 1))}</span>
@@ -303,28 +343,14 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
 
             {/* Popup Đặt hàng thành công */}
             {showNotification && invoiceResult && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-11/12 mx-4 text-center">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
-                            <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Đặt hàng thành công</h3>
-                        <p className="text-gray-600 text-sm mb-1">Cảm ơn bạn đã đặt hàng.</p>
-                        <p className="text-gray-700 font-medium">Mã đơn: <strong className="text-red-800">{invoiceResult.invoiceId}</strong></p>
-                        <button
-                            onClick={() => {
-                                setShowNotification(false);
-                                clearLocalCart();
-                                if (onCloseSuccess) onCloseSuccess();
-                            }}
-                            className="mt-6 w-full py-3 px-4 bg-red-800 text-white font-semibold rounded-lg hover:bg-red-900 transition"
-                        >
-                            Đóng
-                        </button>
-                    </div>
-                </div>
+                <SuccessPopup
+                    invoiceId={invoiceResult.invoiceId}
+                    onClose={() => {
+                        setShowNotification(false);
+                        clearLocalCart();
+                        if (onCloseSuccess) onCloseSuccess();
+                    }}
+                />
             )}
         </div>
     );
@@ -334,7 +360,6 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
 // 4. Component Chính (Export Default)
 // ==========================================
 export default function CheckoutPage() {
-    const navigate = useNavigate();
     const [shippingInfo, setShippingInfo] = useState({
         customerFullName: "",
         email: "",
@@ -345,7 +370,8 @@ export default function CheckoutPage() {
     const [paymentMethod, setPaymentMethod] = useState("COD");
 
     const handleCloseOrderSuccess = () => {
-        navigate("/");
+        clearLocalCart();
+        window.location.href = "/";
     };
 
     return (
