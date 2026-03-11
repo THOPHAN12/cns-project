@@ -1,6 +1,33 @@
 import { useState, useEffect } from "react";
 import { getApiBaseUrl, getApiHeaders } from "../../utils/api";
 
+/** Mở rộng dữ liệu cũ (gộp theo path) thành từng record riêng. Định dạng mới (có viewedAt) giữ nguyên. */
+function expandAggregatedRecords(list) {
+  const out = [];
+  for (const item of list) {
+    const count = typeof item.viewCount === "number" && item.viewCount > 0 ? item.viewCount : 1;
+    const hasDetail = item.viewedAt != null || item.userName != null;
+    if (hasDetail) {
+      out.push({
+        id: item.id,
+        path: item.path,
+        viewedAt: item.viewedAt ?? "—",
+        userName: item.userName ?? "Khách",
+      });
+    } else {
+      for (let i = 0; i < count; i++) {
+        out.push({
+          id: (item.id || item.path) + "-" + i,
+          path: item.path,
+          viewedAt: "—",
+          userName: "Khách",
+        });
+      }
+    }
+  }
+  return out;
+}
+
 export default function AdminPageViews() {
   const [views, setViews] = useState([]);
   const [total, setTotal] = useState(0);
@@ -17,15 +44,21 @@ export default function AdminPageViews() {
           fetch(`${base}/api/analytics/pageviews`, { headers: getApiHeaders() }),
           fetch(`${base}/api/analytics/pageviews/total`, { headers: getApiHeaders() }),
         ]);
-        if (viewsRes.ok) {
-          const ct = viewsRes.headers.get("content-type") || "";
-          const data = ct.includes("application/json") ? await viewsRes.json() : [];
-          setViews(Array.isArray(data) ? data : []);
-        }
+        let totalVal = 0;
         if (totalRes.ok) {
           const ct = totalRes.headers.get("content-type") || "";
           const data = ct.includes("application/json") ? await totalRes.json() : {};
-          setTotal(data.total ?? 0);
+          totalVal = data.total ?? 0;
+        }
+        if (viewsRes.ok) {
+          const ct = viewsRes.headers.get("content-type") || "";
+          const data = ct.includes("application/json") ? await viewsRes.json() : [];
+          const list = Array.isArray(data) ? data : [];
+          const expanded = expandAggregatedRecords(list);
+          setViews(expanded);
+          setTotal(expanded.length > 0 ? expanded.length : totalVal);
+        } else {
+          setTotal(totalVal);
         }
       } catch (e) {
         console.error(e);
@@ -62,7 +95,7 @@ export default function AdminPageViews() {
       {records.length === 0 ? (
         <p className="text-[#A59588]">Chưa có dữ liệu truy cập.</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#e8e4df] text-left text-[#5C4A3D]">
