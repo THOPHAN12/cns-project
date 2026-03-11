@@ -63,21 +63,20 @@ public class PageViewRecordService {
     }
 
     public List<PageViewRecordDTO> getAllRecords() {
-        List<PageViewRecord> records = pageViewRecordRepository.findAllByOrderByViewedAtDesc();
-        if (!records.isEmpty()) {
-            return records.stream().map(PageViewRecordDTO::from).collect(Collectors.toList());
-        }
-        List<PageViewRecordDTO> result = new ArrayList<>();
-        for (PageView pv : pageViewRepository.findAll()) {
-            long count = pv.getViewCount();
-            for (long i = 0; i < count; i++) {
-                PageViewRecordDTO dto = new PageViewRecordDTO();
-                dto.id = pv.getId() + "-" + i;
-                dto.path = pv.getPath();
-                dto.viewedAt = "—";
-                dto.userId = null;
-                dto.userName = "Khách";
-                result.add(dto);
+        List<PageViewRecordDTO> result = pageViewRecordRepository.findAllByOrderByViewedAtDesc().stream()
+                .map(PageViewRecordDTO::from)
+                .collect(Collectors.toList());
+        if (result.isEmpty()) {
+            for (PageView pv : pageViewRepository.findAll()) {
+                for (long i = 0; i < pv.getViewCount(); i++) {
+                    PageViewRecordDTO dto = new PageViewRecordDTO();
+                    dto.id = pv.getId() + "-" + i;
+                    dto.path = pv.getPath();
+                    dto.viewedAt = "—";
+                    dto.userId = null;
+                    dto.userName = "Khách";
+                    result.add(dto);
+                }
             }
         }
         return result;
@@ -86,9 +85,7 @@ public class PageViewRecordService {
     public long getTotalCount() {
         long fromRecords = pageViewRecordRepository.count();
         if (fromRecords > 0) return fromRecords;
-        return pageViewRepository.findAll().stream()
-                .mapToLong(PageView::getViewCount)
-                .sum();
+        return pageViewRepository.findAll().stream().mapToLong(PageView::getViewCount).sum();
     }
 
     public static class PageViewRecordDTO {
