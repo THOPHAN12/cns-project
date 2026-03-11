@@ -2,17 +2,15 @@ import Cookies from "js-cookie";
 
 /**
  * Base URL của backend API.
- * Production: dùng "" (relative) vì Vercel proxy /api và /auth tới backend Render.
- * Development: dùng localhost:8080.
+ * Production: "" = Vercel proxy /api, /auth tới Render (hoặc set VITE_API_BASE_URL = Ngrok nếu dùng).
+ * Development: localhost:8080.
  */
-const PRODUCTION_API = "https://cns-backend-8v53.onrender.com";
-
 export function getApiBaseUrl() {
     const raw = import.meta.env.VITE_API_BASE_URL;
     const custom = raw && String(raw).trim();
     if (custom) return custom.replace(/\/$/, "");
     const isProd = import.meta.env.PROD;
-    if (isProd) return ""; // relative -> vercel proxy tới Render
+    if (isProd) return "";
     return "http://localhost:8080";
 }
 
@@ -36,7 +34,7 @@ export function getApiHeaders(extra = {}) {
     return { ...extra };
 }
 
-/** Warm-up backend (Render free tier cold start ~50s). Gọi khi load trang login/checkout. */
+/** Warm-up backend. Gọi khi load trang login/checkout. */
 export function warmUpBackend() {
     const base = getApiBaseUrl();
     const url = base ? `${base}/api/products` : "/api/products";
