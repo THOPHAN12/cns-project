@@ -60,10 +60,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/seed/products").permitAll()
                         // Thống kê blog: cho phép public ghi nhận click / xem
-                        .requestMatchers(HttpMethod.POST, "/api/blog/click").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/blog/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/analytics/pageview").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/analytics/**").permitAll()
+                        .requestMatchers("/api/blog/**").permitAll()
+                        .requestMatchers("/api/analytics/**").permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
