@@ -1,3 +1,5 @@
+import Cookies from "js-cookie";
+
 /**
  * Base URL của backend API.
  * Production: dùng "" (relative) vì Vercel proxy /api và /auth tới backend Render.
@@ -50,5 +52,19 @@ export function trackBlogClick(slug) {
         method: "POST",
         headers: getApiHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ slug }),
+    }).catch(() => {});
+}
+
+/** Ghi nhận lượt truy cập trang (page view). Gọi khi user vào mỗi trang. Gửi userId nếu đã đăng nhập. */
+export function trackPageView(path) {
+    if (!path) return;
+    const base = getApiBaseUrl();
+    const url = base ? `${base}/api/analytics/pageview` : "/api/analytics/pageview";
+    const userId = Cookies.get("id") || null;
+    const body = userId ? { path, userId } : { path };
+    fetch(url, {
+        method: "POST",
+        headers: getApiHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify(body),
     }).catch(() => {});
 }

@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cleannieshop.backend.service.PageViewService;
-import com.cleannieshop.backend.service.PageViewService.PageViewDTO;
+import com.cleannieshop.backend.service.PageViewRecordService;
+import com.cleannieshop.backend.service.PageViewRecordService.PageViewRecordDTO;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -23,25 +23,27 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class PageViewController {
 
     @Autowired
-    private PageViewService pageViewService;
+    private PageViewRecordService pageViewRecordService;
 
     @PostMapping("pageview")
-    public ResponseEntity<Void> recordPageView(@RequestBody Map<String, String> body) {
-        String path = body != null ? body.get("path") : null;
+    public ResponseEntity<Void> recordPageView(@RequestBody Map<String, Object> body) {
+        String path = body != null && body.get("path") != null ? body.get("path").toString() : null;
         if (path == null || path.isBlank()) {
             return ResponseEntity.badRequest().build();
         }
-        pageViewService.recordView(path);
+        String userId = body != null && body.get("userId") != null ? body.get("userId").toString().trim() : null;
+        if (userId != null && userId.isEmpty()) userId = null;
+        pageViewRecordService.recordView(path, userId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @GetMapping("pageviews")
-    public ResponseEntity<List<PageViewDTO>> getAllPageViews() {
-        return ResponseEntity.ok(pageViewService.getAll());
+    public ResponseEntity<List<PageViewRecordDTO>> getAllPageViewRecords() {
+        return ResponseEntity.ok(pageViewRecordService.getAllRecords());
     }
 
     @GetMapping("pageviews/total")
     public ResponseEntity<Map<String, Long>> getTotalViews() {
-        return ResponseEntity.ok(Map.of("total", pageViewService.getTotalViews()));
+        return ResponseEntity.ok(Map.of("total", pageViewRecordService.getTotalCount()));
     }
 }
