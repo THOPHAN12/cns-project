@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/api/support-email").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/seed/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/seed/products", "/api/seed/invoices").permitAll()
                         // Thống kê blog: cho phép public ghi nhận click / xem
                         .requestMatchers("/api/blog/**").permitAll()
                         .requestMatchers("/api/analytics/**").permitAll()
@@ -82,13 +82,18 @@ public class SecurityConfig {
                 "http://localhost:*", "http://127.0.0.1:*",
                 // Domain production chính
                 "https://www.cleannieshop.com", "https://cleannieshop.com",
+                "https://deannieshop.com", "https://www.deannieshop.com",
                 "https://cleanniestudio.com", "https://www.cleanniestudio.com",
                 // Các domain deploy thử
                 "https://*.vercel.app", "https://*--*.vercel.app", "https://*.netlify.app",
                 // Tunnel / demo
                 "https://*.ngrok-free.app", "https://*.ngrok-free.dev", "https://*.ngrok.io", "https://*.loca.lt"));
         cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        cfg.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "ngrok-skip-browser-warning"));
+        cfg.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "X-Authorization",
+                "Content-Type",
+                "ngrok-skip-browser-warning"));
         cfg.setAllowCredentials(true);
         cfg.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();

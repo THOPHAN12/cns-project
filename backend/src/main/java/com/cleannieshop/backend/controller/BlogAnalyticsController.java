@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +33,7 @@ public class BlogAnalyticsController {
             return ResponseEntity.badRequest().build();
         }
         blogAnalyticsService.recordClick(req.getSlug().trim());
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("clicks")

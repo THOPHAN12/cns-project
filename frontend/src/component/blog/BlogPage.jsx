@@ -1,26 +1,65 @@
+import { useState, useEffect } from "react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { Link } from "react-router-dom";
+import { getApiBaseUrl, getApiHeaders } from "../../utils/api";
 
-/**
- * Dữ liệu mẫu cho blog. Sau này có thể thay bằng API hoặc CMS.
- * Mỗi item: image (url ảnh), title, date, slug (đường dẫn bài viết).
- */
-/**
- * Slug = blog/YYYY-MM-DD-chu-de-bai-viet (ghép ngày với chủ đề từ tiêu đề)
- */
-const BLOG_PLACEHOLDER = [
-  { id: 1, slug: "/blog/clean-girl-la-gi-huong-dan-xay-dung-phong-cach-clean-girl-tu-a-z-68cbd811fe6ca949df9db5b", title: "Clean Girl là gì? Hướng dẫn xây dựng phong cách clean girl từ A–Z", date: "25 tháng 2 2026", image: "/blog/2026/02/25/cover.png" },
-  { id: 2, slug: "/blog/6-tips-giat-giu-chuan-chinh-cach-cham-soc-quan-ao-giup-do-luon-ben-dep-nhu-moi-53c14049d463b06370f31b", title: "6 Tips Giặt Giũ Chuẩn Chỉnh: Cách chăm sóc quần áo giúp đồ luôn bền đẹp như mới", date: "26 tháng 2 2026", image: "/blog/2026/02/26/cover.png" },
-  { id: 3, slug: "/blog/cach-phoi-do-clean-girl-giup-ton-dang-va-trong-cao-hon-bi-quyet-xay-dung-outfit-toi-gian-nhung-van-sang-trong-811931f030384980689708", title: "Cách phối đồ clean girl giúp tôn dáng và trông cao hơn: Bí quyết xây dựng outfit tối giản nhưng vẫn sang trọng", date: "27 tháng 3 2026", image: "/blog/2026/02/27/cover.png" },
-  { id: 4, slug: "/blog/5-item-khong-the-thieu-de-xay-dung-tu-do-clean-girl-hoan-hao-nen-tang-cua-phong-cach-toi-gian-tinh-te-va-sang-trong-5102b435290562806028a4", title: "5 item không thể thiếu để xây dựng tủ đồ clean girl hoàn hảo: Nền tảng của phong cách tối giản, tinh tế và sang trọng", date: "28 tháng 3 2026", image: "/blog/2026/02/28/cover.png" },
-  { id: 5, slug: "/blog/vi-sao-phong-cach-clean-girl-dang-tro-thanh-xu-huong-thoi-trang-2026-635e9772f163b06370f31b", title: "Vì sao phong cách clean girl đang trở thành xu hướng thời trang 2026?", date: "2 tháng 3 2026", image: "/blog/2026/03/02/cover.png" },
-  { id: 6, slug: "/blog/top-ao-clean-girl-giup-nang-thanh-lich-va-sang-trong-lua-chon-nen-tang-cho-tu-do-toi-gian-hien-dai-52618338210562806028a4", title: "Top áo clean girl giúp nàng thanh lịch và sang trọng: Lựa chọn nền tảng cho tủ đồ tối giản hiện đại", date: "4 tháng 3 2026", image: "/blog/2026/03/04/cover.png" },
-  { id: 7, slug: "/blog/vay-clean-girl-lua-chon-hoan-hao-cho-ve-dep-nu-tinh-toi-gian-va-sang-trong-52618338210562806028a4", title: "Váy clean girl – Lựa chọn hoàn hảo cho vẻ đẹp nữ tính tối giản và sang trọng", date: "6 tháng 3 2026", image: "/blog/2026/03/06/cover.png" },
-  { id: 8, slug: "/blog/cach-xay-dung-phong-cach-toi-gian-nu-nhung-van-sang-trong-tu-duy-nen-tang-cua-thoi-trang-hien-dai-52618338210562806028a4", title: "Cách xây dựng phong cách tối giản nữ nhưng vẫn sang trọng: Tư duy nền tảng của thời trang hiện đại", date: "8 tháng 3 2026", image: "/blog/2026/03/08/cover.png" },
-];
+const resolveUploadsUrl = (base, url) => {
+  if (!url) return url;
+  const s = String(url).trim();
+  if (!s) return s;
+  if (s.startsWith("/uploads/")) return `${base || ""}${s}`;
+  return s;
+};
+
+const today = () => new Date().toISOString().slice(0, 10);
+const isPublished = (publishDate) => publishDate && String(publishDate).slice(0, 10) <= today();
+
+/** Chuẩn hóa item từ API thành format thẻ bài viết (slug không có prefix /blog/) */
+function toCardItem(p, base) {
+  const slug = p.slug && p.slug.startsWith("/blog/") ? p.slug.replace(/^\/blog\/?/, "") : (p.slug || "");
+  const dateStr = p.publishDate ? new Date(p.publishDate).toLocaleDateString("vi-VN", { day: "numeric", month: "long", year: "numeric" }) : "";
+  return {
+    id: p.id,
+    slug: `/blog/${slug}`,
+    title: p.title,
+    date: dateStr,
+    publishDate: p.publishDate ? String(p.publishDate).slice(0, 10) : "",
+    createdAt: p.createdAt,
+    image: resolveUploadsUrl(base, p.imageUrl || ""),
+  };
+}
 
 export default function BlogPage() {
+  const [apiPosts, setApiPosts] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const base = getApiBaseUrl() || "";
+    if (!base) {
+      setLoaded(true);
+      return;
+    }
+    fetch(`${base}/api/blog/posts`, { headers: getApiHeaders() })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        setApiPosts(Array.isArray(data) ? data.map((p) => toCardItem(p, base)) : []);
+      })
+      .catch(() => setApiPosts([]))
+      .finally(() => setLoaded(true));
+  }, []);
+
+  const toTime = (d) => {
+    if (!d) return 0;
+    const t = new Date(String(d)).getTime();
+    return Number.isFinite(t) ? t : 0;
+  };
+  const posts = [...apiPosts].filter((p) => isPublished(p.publishDate));
+  posts.sort((a, b) => {
+    const byPublish = toTime(b.publishDate) - toTime(a.publishDate);
+    if (byPublish !== 0) return byPublish;
+    return toTime(b.createdAt) - toTime(a.createdAt);
+  });
   return (
     <div>
       <Navbar />
@@ -43,7 +82,10 @@ export default function BlogPage() {
 
           {/* Grid thẻ bài viết */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 mt-10">
-            {BLOG_PLACEHOLDER.map((post) => (
+            {posts.length === 0 && (
+              <p className="text-[#5C4A3D] col-span-full py-8">Chưa có bài nào. Đăng bài từ trang Admin → Đăng bài blog.</p>
+            )}
+            {posts.map((post) => (
               <article
                 key={post.id}
                 className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"

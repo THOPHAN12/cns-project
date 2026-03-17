@@ -6,10 +6,17 @@ import Navbar from "../Navbar";
 import AdminOrders from "./AdminOrders";
 import AdminStats from "./AdminStats";
 import AdminProducts from "./AdminProducts";
+import AdminBlogClicks from "./AdminBlogClicks";
+import AdminBlogPosts from "./AdminBlogPosts";
+import AdminPageViews from "./AdminPageViews";
+
 const TABS = [
   { id: "stats", label: "Thống kê", icon: "📊" },
   { id: "orders", label: "Đơn hàng", icon: "📦" },
   { id: "products", label: "Sản phẩm", icon: "👗" },
+  { id: "blog", label: "Thống kê blog", icon: "📝" },
+  { id: "blogposts", label: "Đăng bài blog", icon: "✏️" },
+  { id: "pageviews", label: "Truy cập trang", icon: "👁️" },
 ];
 
 export default function AdminDashboard() {
@@ -20,7 +27,7 @@ export default function AdminDashboard() {
     const token = Cookies.get("token");
     const role = Cookies.get("role");
     if (!token) {
-      nav("/login", { replace: true });
+      nav("/login", { replace: true, state: { from: "/admin" } });
       return;
     }
     if (role !== "ADMIN") {
@@ -33,6 +40,9 @@ export default function AdminDashboard() {
       case "stats": return <AdminStats />;
       case "orders": return <AdminOrders />;
       case "products": return <AdminProducts />;
+      case "blog": return <AdminBlogClicks />;
+      case "blogposts": return <AdminBlogPosts />;
+      case "pageviews": return <AdminPageViews />;
       default: return <AdminStats />;
     }
   };
