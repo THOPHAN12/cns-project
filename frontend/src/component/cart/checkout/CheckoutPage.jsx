@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import Footer from "../../Footer";
 import Navbar from "../../Navbar";
 import Cookies from "js-cookie";
 import { getLocalCart, CART_UPDATED_EVENT, clearLocalCart } from "../../../utils/cartStorage";
-import { getApiBaseUrl } from "../../../utils/api";
+import { getApiBaseUrl, getApiHeaders, warmUpBackend } from "../../../utils/api";
 import AddressSelector from "./AddressSelector";
 
 const apiUrl = getApiBaseUrl();
@@ -64,7 +65,7 @@ function ShippingForm({ shippingInfo, setShippingInfo }) {
         const fetchUser = async () => {
             try {
                 const res = await fetch(`${apiUrl}/api/user?userId=${encodeURIComponent(userId)}`, {
-                    headers: { "Authorization": `Bearer ${token}` }
+                    headers: getApiHeaders({ "Authorization": `Bearer ${token}` })
                 });
                 if (!res.ok) return;
                 const data = await res.json();
@@ -157,7 +158,9 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
     const [showNotification, setShowNotification] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    
+    const [stockError, setStockError] = useState("");
+    const [stockChecking, setStockChecking] = useState(true);
+
     const [invoiceResult, setInvoiceResult] = useState(null);
 
     useEffect(() => {
@@ -172,7 +175,7 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
             
             try {
                 const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${userId}`, {
-                    headers: { "Authorization": `Bearer ${token}` }
+                    headers: getApiHeaders({ "Authorization": `Bearer ${token}` })
                 });
                 if (cartRes.ok) {
                     const cartData = await cartRes.json();
@@ -186,7 +189,7 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
             if (currentCartId) {
                 try {
                     const res = await fetch(`${apiUrl}/api/cart/${currentCartId}`, {
-                        headers: { "Authorization": `Bearer ${token}` }
+                        headers: getApiHeaders({ "Authorization": `Bearer ${token}` })
                     });
                     if (res.ok) {
                         const data = await res.json();
@@ -211,6 +214,48 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
         window.addEventListener(CART_UPDATED_EVENT, onCartUpdated);
         return () => window.removeEventListener(CART_UPDATED_EVENT, onCartUpdated);
     }, []);
+
+    // Kiểm tra tồn kho khi có cart items (sau khi api + local đã load)
+    useEffect(() => {
+        const items = (() => {
+            const api = (Array.isArray(apiCartItems) ? apiCartItems : []).map(normalizeApiItem);
+            const local = Array.isArray(localCartItems) ? localCartItems : [];
+            return [...api, ...local];
+        })();
+        if (items.length === 0) {
+            setStockChecking(false);
+            setStockError("");
+            return;
+        }
+        let cancelled = false;
+        setStockChecking(true);
+        setStockError("");
+        (async () => {
+            const base = apiUrl || "";
+            const outOfStockNames = [];
+            for (const item of items) {
+                const productId = item.id;
+                if (!productId) continue;
+                try {
+                    const res = await fetch(`${base}/api/products/${encodeURIComponent(productId)}`, { headers: getApiHeaders() });
+                    if (!res.ok) continue;
+                    const product = await res.json();
+                    const stock = typeof product.stockQuantity === "number" ? product.stockQuantity : (Number(product.stockQuantity) || 0);
+                    const qty = Number(item.quantity) || 1;
+                    if (stock <= 0 || qty > stock) {
+                        outOfStockNames.push(product.name || product.productName || item.name || productId);
+                    }
+                } catch (_) {}
+            }
+            if (!cancelled) {
+                setStockChecking(false);
+                if (outOfStockNames.length > 0) {
+                    setStockError("Một số sản phẩm đã hết hàng hoặc không đủ số lượng: " + outOfStockNames.join(", ") + ". Vui lòng cập nhật giỏ hàng.");
+                }
+            }
+        })();
+        return () => { cancelled = true; };
+    }, [apiCartItems, localCartItems]);
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
@@ -244,10 +289,10 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
         try {
             const res = await fetch(`${apiUrl}/api/invoice`, {
                 method: 'POST',
-                headers: {
+                headers: getApiHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${Cookies.get("token")}`
-                },
+                }),
                 body: JSON.stringify(payload)
             });
 
@@ -313,19 +358,19 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
                 <span className="text-lg font-bold text-red-800">{formatCurrency(total)}</span>
             </div>
 
-            {errorMessage && (
+            {(stockError || errorMessage) && (
                 <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200">
-                    {errorMessage}
+                    {stockError || errorMessage}
                 </div>
             )}
 
             <button 
                 onClick={() => setShowModal(true)}
-                disabled={isProcessing || cartItems.length === 0}
+                disabled={isProcessing || cartItems.length === 0 || !!stockError || stockChecking}
                 className={`w-full font-semibold py-3 px-4 rounded-md transition duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-800 
-                ${isProcessing || cartItems.length === 0 ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-red-800 text-white hover:bg-red-900'}`}
+                ${(isProcessing || cartItems.length === 0 || !!stockError || stockChecking) ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-red-800 text-white hover:bg-red-900'}`}
             >
-                {isProcessing ? "Đang xử lý..." : "Đặt hàng"}
+                {stockChecking ? "Đang kiểm tra tồn kho..." : isProcessing ? "Đang xử lý..." : stockError ? "Không thể đặt hàng" : "Đặt hàng"}
             </button>
 
             {showModal && (
@@ -360,6 +405,7 @@ function OrderSummary({ shippingInfo, paymentMethod, onCloseSuccess }) {
 // 4. Component Chính (Export Default)
 // ==========================================
 export default function CheckoutPage() {
+    const navigate = useNavigate();
     const [shippingInfo, setShippingInfo] = useState({
         customerFullName: "",
         email: "",
@@ -373,6 +419,14 @@ export default function CheckoutPage() {
         clearLocalCart();
         window.location.href = "/";
     };
+
+    useEffect(() => {
+        warmUpBackend();
+        const token = Cookies.get("token");
+        if (!token) {
+            navigate("/login", { replace: true, state: { from: "/checkout" } });
+        }
+    }, [navigate]);
 
     return (
         <div className="min-h-screen flex flex-col">

@@ -4,7 +4,7 @@ import Footer from "../Footer";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { dispatchCartUpdated, addToLocalCart } from "../../utils/cartStorage";
-import { getApiBaseUrl } from "../../utils/api";
+import { getApiBaseUrl, getApiHeaders } from "../../utils/api";
 
 const apiUrl = getApiBaseUrl();
 // ==========================================
@@ -116,7 +116,10 @@ const ProductInfo = ({
     const sizes = (productData.sizes && productData.sizes.length > 0)
         ? productData.sizes
         : ["S", "M", "L"];
-    const stock = productData.stockQuantity || 0;
+    const stock = typeof productData.stockQuantity === "number"
+        ? productData.stockQuantity
+        : (Number(productData.stockQuantity) || 0);
+    const outOfStock = stock <= 0;
 
     return (
         <div className="flex-1 max-w-xl">
@@ -150,7 +153,13 @@ const ProductInfo = ({
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="w-4 h-4 rounded-full bg-[#f3eae5] border border-[#bdbdbd] inline-block"></span>
-                    <span className="text-[#7c6f63] text-xs">Chỉ còn <span className="text-[#d7263d] font-semibold">{stock}</span> sản phẩm trong kho!</span>
+                    {outOfStock ? (
+                        <span className="text-[#d7263d] text-xs font-semibold">Hết hàng</span>
+                    ) : (
+                        <span className="text-[#7c6f63] text-xs">
+                            Chỉ còn <span className="text-[#d7263d] font-semibold">{stock}</span> sản phẩm trong kho!
+                        </span>
+                    )}
                 </div>
             </div>
 
@@ -159,13 +168,15 @@ const ProductInfo = ({
                 <h2 className="text-base font-medium mb-2">Số Lượng</h2>
                 <div className="flex flex-row items-center gap-2">
                     <button
-                        className="w-8 h-8 border border-[#bdbdbd] rounded flex items-center justify-center text-lg font-bold text-[#7c6f63] bg-white hover:bg-[#f3eae5]"
+                        className="w-8 h-8 border border-[#bdbdbd] rounded flex items-center justify-center text-lg font-bold text-[#7c6f63] bg-white hover:bg-[#f3eae5] disabled:opacity-50 disabled:cursor-not-allowed"
                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                        disabled={outOfStock}
                     >-</button>
-                    <span className="w-8 text-center text-lg font-medium">{quantity}</span>
+                    <span className="w-8 text-center text-lg font-medium">{outOfStock ? 0 : quantity}</span>
                     <button
-                        className="w-8 h-8 border border-[#bdbdbd] rounded flex items-center justify-center text-lg font-bold text-[#7c6f63] bg-white hover:bg-[#f3eae5]"
+                        className="w-8 h-8 border border-[#bdbdbd] rounded flex items-center justify-center text-lg font-bold text-[#7c6f63] bg-white hover:bg-[#f3eae5] disabled:opacity-50 disabled:cursor-not-allowed"
                         onClick={() => setQuantity(q => Math.min(stock, q + 1))}
+                        disabled={outOfStock}
                     >+</button>
                 </div>
             </div>
@@ -175,9 +186,9 @@ const ProductInfo = ({
                 <button 
                     className="flex-1 py-3 hover:scale-120 transition hover:cursor-pointer bg-[#f3eae5] border border-[#e5d8ce] text-[#7c6f63] font-medium rounded hover:bg-[#e5d8ce] disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={onAddToCart}
-                    disabled={isAddingToCart}
+                    disabled={isAddingToCart || outOfStock}
                 >
-                    {isAddingToCart ? "Đang thêm..." : "Thêm Vào Giỏ Hàng"}
+                    {outOfStock ? "Hết hàng" : (isAddingToCart ? "Đang thêm..." : "Thêm Vào Giỏ Hàng")}
                 </button>
                 <button 
                     className="flex-1 py-3 bg-[#f3eae5] border border-[#e5d8ce] text-[#7c6f63] font-medium rounded hover:bg-[#e5d8ce] transition hover:cursor-pointer"
@@ -190,9 +201,9 @@ const ProductInfo = ({
                 type="button"
                 className="w-full py-3 bg-[#3a2415] text-white font-semibold rounded text-lg hover:bg-[#5a3a1a] transition disabled:opacity-60 disabled:cursor-not-allowed"
                 onClick={onBuyNow}
-                disabled={isAddingToCart}
+                disabled={isAddingToCart || outOfStock}
             >
-                {isAddingToCart ? "Đang thêm..." : "Mua Ngay"}
+                {outOfStock ? "Hết hàng" : (isAddingToCart ? "Đang thêm..." : "Mua Ngay")}
             </button>
         </div>
     );
@@ -226,32 +237,37 @@ export default function ProductDetail() {
                 ...p,
                 price: typeof p.price === "number" ? p.price : Number(p.price) || 0,
                 sizes: p.sizes && p.sizes.length > 0 ? p.sizes : ["S", "M", "L"],
-                stockQuantity: p.stockQuantity ?? 100,
+                // tôn trọng tồn kho từ backend; nếu null/undefined thì coi như 0
+                stockQuantity: typeof p.stockQuantity === "number" ? p.stockQuantity : (Number(p.stockQuantity) || 0),
             });
             const sizesList = (p.sizes && p.sizes.length > 0) ? p.sizes : ["S", "M", "L"];
             setSelectedSize(sizesList[0]);
-            setIsLoading(false);
-            // Vẫn gọi seed nền để backend có sản phẩm khi thêm giỏ
-            if (apiUrl) fetch(`${apiUrl}/api/seed/products`).catch(() => {});
-            return;
+            // Vẫn cho hiển thị tạm thời, nhưng sẽ fetch lại từ backend để đồng bộ tồn kho
         }
 
         const fetchProduct = async () => {
             try {
                 // Gọi seed trước để đảm bảo sản phẩm có trong DB khi thêm giỏ
                 if (apiUrl) {
-                    await fetch(`${apiUrl}/api/seed/products`).catch(() => {});
+                    await fetch(`${apiUrl}/api/seed/products`, { headers: getApiHeaders() }).catch(() => {});
                 }
-                const response = await fetch(`${apiUrl}/api/products/${id}`);
+                const response = await fetch(`${apiUrl}/api/products/${id}`, { headers: getApiHeaders() });
                 if (!response.ok) {
                     setProductData(null);
                     setIsLoading(false);
                     return;
                 }
                 const data = await response.json();
-                console.log(data);
-                setProductData(data);
-                const sizesList = (data.sizes && data.sizes.length > 0) ? data.sizes : ["S", "M", "L"];
+                const normalized = {
+                    ...data,
+                    price: typeof data.price === "number" ? data.price : Number(data.price) || 0,
+                    sizes: data.sizes && data.sizes.length > 0 ? data.sizes : ["S", "M", "L"],
+                    stockQuantity: typeof data.stockQuantity === "number"
+                        ? data.stockQuantity
+                        : (Number(data.stockQuantity) || 0),
+                };
+                setProductData(normalized);
+                const sizesList = normalized.sizes;
                 setSelectedSize(sizesList[0]);
             } catch (error) {
                 console.log(error);
@@ -266,7 +282,7 @@ export default function ProductDetail() {
     // Gọi seed ngay khi mở trang (chạy sớm, không đợi) để tăng cơ hội có sản phẩm trước khi user bấm thêm giỏ
     useEffect(() => {
         if (!apiUrl) return;
-        fetch(`${apiUrl}/api/seed/products`).catch(() => {});
+        fetch(`${apiUrl}/api/seed/products`, { headers: getApiHeaders() }).catch(() => {});
     }, [apiUrl]);
 
     // Hàm hiển thị Toast thông báo chung
@@ -331,7 +347,7 @@ export default function ProductDetail() {
 
         try {
             const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${encodeURIComponent(userId)}`, {
-                headers: { "Authorization": `Bearer ${token}` }
+                headers: getApiHeaders({ "Authorization": `Bearer ${token}` })
             });
             if (!cartRes.ok) {
                 if (cartRes.status === 401) {
@@ -369,10 +385,10 @@ export default function ProductDetail() {
         try {
             const response = await fetch(`${apiUrl}/api/products/${id}`, {
                 method: "PUT",
-                headers: {
+                headers: getApiHeaders({
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
-                },
+                }),
                 body: JSON.stringify({
                     cartId: currentCartId,
                     quantity: Number(quantity),
@@ -414,7 +430,7 @@ export default function ProductDetail() {
             } else if (status === 404 || status === 406) {
                 // Sản phẩm hoặc giỏ chưa sẵn sàng: gọi seed rồi thử thêm giỏ lại 1 lần
                 try {
-                    const seedRes = await fetch(`${apiUrl}/api/seed/products`);
+                    const seedRes = await fetch(`${apiUrl}/api/seed/products`, { headers: getApiHeaders() });
                     let seedData = null;
                     try {
                         seedData = await seedRes.json();
@@ -423,10 +439,10 @@ export default function ProductDetail() {
                     // Thử thêm giỏ lại sau khi seed (dù added = 0 vẫn thử, vì có thể lỗi do cart)
                     const retryRes = await fetch(`${apiUrl}/api/products/${id}`, {
                         method: "PUT",
-                        headers: {
+                        headers: getApiHeaders({
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${token}`,
-                        },
+                        }),
                         body: JSON.stringify({
                             cartId: currentCartId,
                             quantity: Number(quantity),
@@ -496,10 +512,10 @@ export default function ProductDetail() {
         try {
             const response = await fetch(`${apiUrl}/api/wishlist/product/${id}`, {
                 method: "PUT",
-                headers: {
+                headers: getApiHeaders({
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
-                },
+                }),
                 body: JSON.stringify(userId)
             });
 

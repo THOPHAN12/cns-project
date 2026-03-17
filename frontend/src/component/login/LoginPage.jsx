@@ -1,48 +1,69 @@
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
-import logoImg from "../../assets/logo transparent.png";
+import logoImg from "../../assets/cns_logo.png";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { getAuthLoginUrl } from "../../utils/api";
+import { getAuthLoginUrl, getApiHeaders, warmUpBackend } from "../../utils/api";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showWarning, setShowWarning] = useState(false);
     const [failureNotification, showFailureNotification] = useState(false);
+    const [connectionError, setConnectionError] = useState(false);
     const nav = useNavigate();
 
     useEffect(() => {
         if (Cookies.get("token")) nav("/profile");
+        else warmUpBackend();
     }, [nav]);
 
     const login = async () => {
         if (username === "" || password === "") {
             setShowWarning(true);
+            setConnectionError(false);
             return;
         }
-        const res = await fetch(getAuthLoginUrl(), {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "username": username,
-                "password": password
-            })
-        })
+        setConnectionError(false);
+        setShowWarning(false);
+        showFailureNotification(false);
+        try {
+            const url = getAuthLoginUrl();
+            const ctrl = new AbortController();
+            const t = setTimeout(() => ctrl.abort(), 120000);
+            const res = await fetch(url, {
+                method: "POST",
+                headers: getApiHeaders({ "Content-Type": "application/json" }),
+                body: JSON.stringify({ username: username.trim(), password: password }),
+                credentials: "omit",
+                signal: ctrl.signal,
+            });
+            clearTimeout(t);
 
-        if (!res.ok) {
-            console.log("Status code", res.status)
-            setShowWarning(false);
-            showFailureNotification(true);
-            return;
+            const contentType = res.headers.get("content-type") || "";
+            const text = await res.text();
+            if (!res.ok) {
+                setShowWarning(false);
+                showFailureNotification(true);
+                return;
+            }
+            if (!contentType.includes("application/json") || !text.trim()) {
+                setConnectionError(true);
+                return;
+            }
+            let data;
+            try { data = JSON.parse(text); } catch {
+                setConnectionError(true);
+                return;
+            }
+            Cookies.set("token", data.token, { expires: 1, path: "/" });
+            Cookies.set("id", data.userId, { expires: 1, path: "/" });
+            Cookies.set("role", data.role || "USER", { expires: 1, path: "/" });
+            nav(data.role === "ADMIN" ? "/admin" : "/profile");
+        } catch (err) {
+            console.error("Login error:", err);
+            setConnectionError(true);
         }
-        const data = await res.json();
-        Cookies.set("token", data.token, { expires: 1/24 });
-        Cookies.set("id", data.userId, { expires: 1/24 });
-        if (data.role) Cookies.set("role", data.role, { expires: 1/24 });
-        nav(data.role === "ADMIN" ? "/admin" : "/profile");
     }
 
     return (<>
@@ -91,6 +112,12 @@ export default function LoginPage() {
                     <p>* Vui lòng điền đầy đủ thông tin trước khi đăng nhập</p>
                 </div>)}
 
+                {connectionError && (
+                    <div className="text-base text-red-400 relative bottom-4 left-1 space-y-2">
+                        <p>* Không kết nối được máy chủ. Kiểm tra: Backend + Ngrok đang chạy; VITE_API_BASE_URL đã cấu hình trong Vercel.</p>
+                        <button type="button" onClick={() => { setConnectionError(false); warmUpBackend(); }} className="text-sm px-3 py-1.5 bg-[#463325] text-white rounded hover:bg-[#2e2118] transition">Thử lại</button>
+                    </div>
+                )}
                 {failureNotification && (<div className="text-base text-red-400 relative bottom-4 left-1">
                     <p>* Thông tin tài khoản hoặc mật khẩu không chính xác</p>
                 </div>)}

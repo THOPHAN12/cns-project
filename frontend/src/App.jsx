@@ -1,5 +1,7 @@
-import './App.css'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import "./App.css";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { trackPageView } from "./utils/api";
 import Homepage from './component/homepage/Homepage'
 import ProductPage from './component/product_page/ProductPage'
 import ProductDetail from './component/product_page/ProductDetail'
@@ -16,11 +18,23 @@ import CheckoutPage from './component/cart/checkout/CheckoutPage'
 import ChativeChat from './component/chat/ChativeChat'
 import BlogPage from './component/blog/BlogPage'
 import BlogPostDetail from './component/blog/BlogPostDetail'
-import AdminDashboard from './component/admin/AdminDashboard'
+import AdminDashboard from "./component/admin/AdminDashboard";
+
+function PageViewTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname + (location.search || "");
+    trackPageView(path);
+  }, [location.pathname, location.search]);
+
+  return null;
+}
 
 function App() {
   return (
     <BrowserRouter>
+      <PageViewTracker />
       <ChativeChat />
       <Routes>
         <Route path='/' element={<Homepage />}/>

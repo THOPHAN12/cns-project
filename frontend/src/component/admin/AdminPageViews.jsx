@@ -51,34 +51,48 @@ export default function AdminPageViews() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const FETCH_TIMEOUT_MS = 15000;
+    const MAX_DISPLAY_RECORDS = 2000;
+
+    const fetchWithTimeout = (url, opts = {}) => {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+      return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(t));
+    };
+
     const fetchData = async () => {
       setError(null);
       try {
         const apiUrl = getApiBaseUrl();
         const base = apiUrl || "";
+        const headers = getApiHeaders();
         const [viewsRes, totalRes] = await Promise.all([
-          fetch(`${base}/api/analytics/pageviews`, { headers: getApiHeaders() }),
-          fetch(`${base}/api/analytics/pageviews/total`, { headers: getApiHeaders() }),
+          fetchWithTimeout(`${base}/api/analytics/pageviews`, { headers }),
+          fetchWithTimeout(`${base}/api/analytics/pageviews/total`, { headers }),
         ]);
         let totalVal = 0;
         if (totalRes.ok) {
           const ct = totalRes.headers.get("content-type") || "";
           const data = ct.includes("application/json") ? await totalRes.json() : {};
-          totalVal = data.total ?? 0;
+          totalVal = Number(data.total) || 0;
         }
         if (viewsRes.ok) {
           const ct = viewsRes.headers.get("content-type") || "";
           const data = ct.includes("application/json") ? await viewsRes.json() : [];
           const list = Array.isArray(data) ? data : [];
-          const expanded = expandAggregatedRecords(list);
+          const expanded = expandAggregatedRecords(list).slice(0, MAX_DISPLAY_RECORDS);
           setViews(expanded);
-          setTotal(expanded.length > 0 ? expanded.length : totalVal);
+          setTotal(totalVal > 0 ? totalVal : (expanded.length > 0 ? expanded.length : 0));
         } else {
           setTotal(totalVal);
         }
       } catch (e) {
-        console.error(e);
-        setError("Không kết nối được API.");
+        if (e?.name === "AbortError") {
+          setError("Tải quá lâu. Kiểm tra kết nối hoặc thử lại.");
+        } else {
+          console.error(e);
+          setError("Không kết nối được API.");
+        }
       } finally {
         setLoading(false);
       }
@@ -100,6 +114,8 @@ export default function AdminPageViews() {
   }
 
   const records = Array.isArray(views) ? views : [];
+  const maxDisplay = 2000;
+  const isTruncated = total > maxDisplay && records.length >= maxDisplay;
 
   return (
     <div>
@@ -112,6 +128,9 @@ export default function AdminPageViews() {
         <p className="text-[#A59588]">Chưa có dữ liệu truy cập.</p>
       ) : (
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
+          {isTruncated && (
+            <p className="text-sm text-[#A59588] mb-2">Hiển thị tối đa {maxDisplay} bản ghi gần nhất.</p>
+          )}
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#e8e4df] text-left text-[#5C4A3D]">

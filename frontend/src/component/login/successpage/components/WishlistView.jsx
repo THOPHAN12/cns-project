@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import { getApiBaseUrl } from "../../../../utils/api";
+import { getApiBaseUrl, getApiHeaders } from "../../../../utils/api";
 
 const WishlistView = () => {
   const apiUrl = getApiBaseUrl();
@@ -23,7 +23,7 @@ const WishlistView = () => {
         let currentCartId = null;
         try {
             const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${userId}`, {
-                headers: { "Authorization" : `Bearer ${Cookies.get("token")}` }
+                headers: getApiHeaders({ "Authorization": `Bearer ${Cookies.get("token")}` })
             });
             if (cartRes.ok) {
                 const cartData = await cartRes.json();
@@ -40,10 +40,10 @@ const WishlistView = () => {
         try {
             const response = await fetch(`${apiUrl}/api/products/${productId}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type" : "application/json",
-                    "Authorization" : `Bearer ${Cookies.get("token")}`  
-                },
+                headers: getApiHeaders({
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${Cookies.get("token")}`
+                }),
                 body: JSON.stringify({
                     "cartId": currentCartId,
                     "quantity": quantity,
@@ -71,18 +71,22 @@ const WishlistView = () => {
     try {
       const response = await fetch(`${apiUrl}/api/wishlist?userId=${userId}`, {
         method: 'GET',
-        headers: {
-          "Authorization": `Bearer ${Cookies.get("token")}`
-        }
+        headers: getApiHeaders({ "Authorization": `Bearer ${Cookies.get("token")}` })
       });
 
       if (!response.ok) throw new Error('Lỗi khi tải danh sách yêu thích');
 
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        setError("Không thể kết nối đến server.");
+        setWishlist([]);
+        return;
+      }
       const data = await response.json();
-      console.log(data);
-      setWishlist(data);
+      setWishlist(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Không thể kết nối đến server.");
+      setWishlist([]);
     } finally {
       setLoading(false);
     }
@@ -97,12 +101,11 @@ const WishlistView = () => {
     try {
       const response = await fetch(`${apiUrl}/api/wishlist/product/${productId}`, {
         method: 'DELETE',
-        headers: {
+        headers: getApiHeaders({
           'Content-Type': 'application/json',
           "Authorization": `Bearer ${Cookies.get("token")}`
-        },
-        // Gửi userId trực tiếp dưới dạng chuỗi JSON
-        body: JSON.stringify(userId) 
+        }),
+        body: JSON.stringify(userId)
       });
 
       if (!response.ok) throw new Error('Không thể xóa sản phẩm');

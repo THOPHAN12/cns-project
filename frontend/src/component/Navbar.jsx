@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../assets/logo transparent.png';
+import logo from '../assets/cns_logo.png';
 import { IoSearch } from 'react-icons/io5';
 import { CgProfile } from 'react-icons/cg';
 import { BsBasket3 } from "react-icons/bs";
@@ -8,8 +8,18 @@ import LogoutModal from './LogoutModal';
 import ProfileDropdown from './ProfileDropdown';
 import NavbarMenu from './NavbarMenu';
 import { getLocalCartCount, CART_UPDATED_EVENT } from '../utils/cartStorage';
-import { getApiBaseUrl } from '../utils/api';
+import { getApiBaseUrl, getApiHeaders } from '../utils/api';
 import Cookies from 'js-cookie';
+
+/** Bỏ dấu tiếng Việt để tìm kiếm không dấu. */
+function removeDiacritics(str) {
+    if (!str) return "";
+    return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D");
+}
 
 /** Lấy tổng số lượng sản phẩm trong giỏ từ API (khi đã đăng nhập). Trả về 0 nếu lỗi hoặc chưa đăng nhập. */
 async function fetchApiCartCount() {
@@ -19,14 +29,14 @@ async function fetchApiCartCount() {
     const apiUrl = getApiBaseUrl();
     try {
         const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${encodeURIComponent(userId)}`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: getApiHeaders({ Authorization: `Bearer ${token}` }),
         });
         if (!cartRes.ok) return 0;
         const cartData = await cartRes.json();
         const cartId = cartData?.cartId ?? cartData?.cart_id;
         if (!cartId) return 0;
         const res = await fetch(`${apiUrl}/api/cart/${cartId}`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: getApiHeaders({ Authorization: `Bearer ${token}` }),
         });
         if (!res.ok) return 0;
         const data = await res.json();
@@ -39,6 +49,10 @@ async function fetchApiCartCount() {
 
 export default function Navbar() {
     const [searchToggle, setSearchToggle] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
+    const [searchLoading, setSearchLoading] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [cartCount, setCartCount] = useState(0);
@@ -59,6 +73,7 @@ export default function Navbar() {
         return () => window.removeEventListener(CART_UPDATED_EVENT, update);
     }, []);
     const profileRef = useRef(null);
+    const searchBoxRef = useRef(null);
     const navigator = useNavigate();
     const menu = [
         {route: "/about-us", content: "Về chúng tôi"},
@@ -85,6 +100,52 @@ export default function Navbar() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [showProfileDropdown]);
+
+    // Gợi ý sản phẩm theo từ khóa trên thanh tìm kiếm
+    useEffect(() => {
+        if (!searchQuery.trim()) {
+            setSearchResults([]);
+            return;
+        }
+        const handler = setTimeout(async () => {
+            try {
+                setSearchLoading(true);
+                let products = allProducts;
+                if (!products.length) {
+                    const apiUrl = getApiBaseUrl();
+                    const url = apiUrl ? `${apiUrl}/api/products` : "/api/products";
+                    const res = await fetch(url, { headers: getApiHeaders() });
+                    if (!res.ok) {
+                        setSearchResults([]);
+                        setSearchLoading(false);
+                        return;
+                    }
+                    const ct = res.headers.get("content-type") || "";
+                    if (!ct.includes("application/json")) {
+                        setSearchResults([]);
+                        setSearchLoading(false);
+                        return;
+                    }
+                    const data = await res.json();
+                    products = Array.isArray(data) ? data : [];
+                    setAllProducts(products);
+                }
+                const q = removeDiacritics(searchQuery).toLowerCase();
+                const suggestions = products
+                    .filter(p => {
+                        const name = removeDiacritics(p.productName || p.name || "").toLowerCase();
+                        return name.includes(q);
+                    })
+                    .slice(0, 6);
+                setSearchResults(suggestions);
+            } catch {
+                setSearchResults([]);
+            } finally {
+                setSearchLoading(false);
+            }
+        }, 200);
+        return () => clearTimeout(handler);
+    }, [searchQuery, allProducts]);
 
     const clearAllCookies = () => {
         const cookies = document.cookie.split(';');
@@ -115,15 +176,82 @@ export default function Navbar() {
                     <Link to={"/"}><img src={logo} alt="Logo" className='overflow-hidden w-27.5 object-fit hover:scale-130 transition'/></Link>
                     <NavbarMenu menu={menu} />
                 </div>
-                <div className='flex flex-row jusitfy-between gap-5 items-center relative right-10'>
-                    <input 
-                        className={`
-                            transition-all duration-500 ease-in-out outline-none
-                            ${searchToggle ? 'w-48 opacity-100 border-b-2 p-2' : 'w-0 opacity-0 border-none p-0'}
-                        `}
-                        placeholder="Tìm kiếm sản phẩm..."
-                    />
-                    <button onClick={() => setSearchToggle(!searchToggle)}>
+                <div ref={searchBoxRef} className='flex flex-row jusitfy-between gap-5 items-center relative right-10'>
+                    <div className="relative">
+                        <input 
+                            className={`
+                                transition-all duration-500 ease-in-out outline-none bg-transparent
+                                ${searchToggle ? 'w-64 opacity-100 border-b-2 p-2' : 'w-0 opacity-0 border-none p-0'}
+                            `}
+                            placeholder="Tìm kiếm sản phẩm..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onFocus={() => setSearchToggle(true)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && searchResults[0]) {
+                                    navigator(`/product-detail/${searchResults[0].id}`);
+                                    setSearchQuery("");
+                                    setSearchResults([]);
+                                    setSearchToggle(false);
+                                }
+                            }}
+                        />
+                        {searchToggle && searchQuery && (
+                            <div className="absolute left-0 mt-1 w-72 bg-white border border-gray-200 rounded-md shadow-lg z-40 max-h-80 overflow-y-auto">
+                                {searchLoading && (
+                                    <div className="px-3 py-2 text-sm text-gray-500">
+                                        Đang tìm kiếm...
+                                    </div>
+                                )}
+                                {!searchLoading && searchResults.map((p) => (
+                                    <button
+                                        key={p.id}
+                                        type="button"
+                                        className="w-full text-left px-3 py-2 flex items-center gap-2 hover:bg-gray-50"
+                                        onClick={() => {
+                                            navigator(`/product-detail/${p.id}`);
+                                            setSearchQuery("");
+                                            setSearchResults([]);
+                                            setSearchToggle(false);
+                                        }}
+                                    >
+                                        {p.imageSrc && (
+                                            <img
+                                                src={p.imageSrc.startsWith("http") ? p.imageSrc : encodeURI(p.imageSrc)}
+                                                alt={p.productName}
+                                                className="w-8 h-8 rounded object-cover flex-shrink-0"
+                                                onError={(e) => { e.target.src = "https://via.placeholder.com/32?text=SP"; }}
+                                            />
+                                        )}
+                                        <div className="flex flex-col">
+                                            <span className="text-sm text-gray-900 line-clamp-1">{p.productName}</span>
+                                            {typeof p.price === "number" && (
+                                                <span className="text-xs text-gray-500">
+                                                    {p.price.toLocaleString("vi-VN")} đ
+                                                </span>
+                                            )}
+                                        </div>
+                                    </button>
+                                ))}
+                                {!searchLoading && searchResults.length === 0 && (
+                                    <div className="px-3 py-2 text-sm text-gray-500">
+                                        Không tìm thấy sản phẩm phù hợp.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const next = !searchToggle;
+                            setSearchToggle(next);
+                            if (!next) {
+                                setSearchQuery("");
+                                setSearchResults([]);
+                            }
+                        }}
+                    >
                         <IoSearch size={30} className='opacity-50 cursor-pointer hover:opacity-100 transition-opacity'/>
                     </button>
                     <div className='relative top-0.5' ref={profileRef}>

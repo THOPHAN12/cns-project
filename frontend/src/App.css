@@ -12,6 +12,13 @@ body {
   filter: contrast(1.04) saturate(1.03);
 }
 
+/* Blog typography: center images by default (match older posts) */
+.prose img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Homepage hero */
 #homepage-body {
   background-color: #000;

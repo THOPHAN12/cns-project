@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "../Navbar";
-import { useState } from "react";
-import { getAuthRegisterUrl } from "../../utils/api";
+import { useState, useEffect } from "react";
+import { getAuthRegisterUrl, getApiHeaders, warmUpBackend } from "../../utils/api";
 
 export default function RegisterPage() {
     const [fullName, setFullName] = useState("");
@@ -21,6 +21,8 @@ export default function RegisterPage() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => { warmUpBackend(); }, []);
 
     const registerUser = async () => {
         const f = (fullName || "").trim();
@@ -53,7 +55,7 @@ export default function RegisterPage() {
             const timeout = setTimeout(() => ctrl.abort(), 90000); // 90s cho backend Render cold start
             const res = await fetch(getAuthRegisterUrl(), {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: getApiHeaders({ "Content-Type": "application/json" }),
                 credentials: "omit",
                 signal: ctrl.signal,
                 body: JSON.stringify({

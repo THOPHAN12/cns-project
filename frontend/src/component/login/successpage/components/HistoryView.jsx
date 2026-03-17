@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { getApiBaseUrl } from "../../../../utils/api";
-
-const apiUrl = getApiBaseUrl();
+import { getApiBaseUrl, getApiHeaders } from "../../../../utils/api";
 const formatCurrency = (amount) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
 
@@ -99,10 +97,11 @@ export default function HistoryView() {
             return;
         }
 
+        const apiUrl = getApiBaseUrl();
         const fetchHistory = async () => {
             try {
                 const res = await fetch(`${apiUrl}/api/invoice/user/${encodeURIComponent(userId)}`, {
-                    headers: { Authorization: `Bearer ${token}` },
+                    headers: getApiHeaders({ Authorization: `Bearer ${token}` }),
                 });
                 if (!res.ok) {
                     if (res.status === 401) {
@@ -110,6 +109,12 @@ export default function HistoryView() {
                     } else {
                         setError("Không thể tải lịch sử mua hàng.");
                     }
+                    setInvoices([]);
+                    return;
+                }
+                const contentType = res.headers.get("content-type") || "";
+                if (!contentType.includes("application/json")) {
+                    setError("Không thể kết nối đến server.");
                     setInvoices([]);
                     return;
                 }

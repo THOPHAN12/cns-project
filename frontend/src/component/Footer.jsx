@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { getApiBaseUrl, getApiHeaders } from '../utils/api';
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -9,11 +8,10 @@ const Footer = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const sendEmailTo = async (email) => {
-    const res = await fetch(`${apiUrl}/api/support-email`, {
+    const apiUrl = getApiBaseUrl();
+    const res = await fetch(`${apiUrl || ''}/api/support-email`, {
       method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getApiHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(email)
     })
     if (!res.ok) {
@@ -39,8 +37,7 @@ const Footer = () => {
             <div className='w-full'>
               <h2 className="text-4xl uppercase tracking-wide w-full font-normal mb-6">CNS</h2>
               <p className="text-lg leading-7 opacity-90">
-                Thời trang tối giản cho lối sống hiện đại.<br />
-                Thiết kế sạch, vừa vặn với cơ thể thật và được tạo nên từ sự chỉn chu của đội ngũ CNS.
+                CNS Shop – local brand thời trang clean girl với các thiết kế tối giản, quần áo basic nữ thanh lịch, dễ phối, dễ dàng xây dựng phong cách hiện đại.
               </p>
             </div>
 

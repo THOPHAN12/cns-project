@@ -7,7 +7,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { getLocalCart, removeFromLocalCart, updateLocalCartQuantity, CART_UPDATED_EVENT } from '../../utils/cartStorage';
 
-import { getApiBaseUrl } from '../../utils/api';
+import { getApiBaseUrl, getApiHeaders } from '../../utils/api';
 
 /** Chuẩn hóa item từ API sang format CartItem (giữ sizes để gửi khi tăng/giảm) */
 const normalizeApiItem = (item) => ({
@@ -142,9 +142,14 @@ export default function CartPage() {
             let currentCartId = null;
             try {
                 const cartRes = await fetch(`${apiUrl}/api/user/cart?userId=${userId}`, {
-                    headers: { "Authorization": `Bearer ${token}` }
+                    headers: getApiHeaders({ "Authorization": `Bearer ${token}` })
                 });
                 if (!cartRes.ok) {
+                    setLocalCartItems(getLocalCart());
+                    return;
+                }
+                const ct = cartRes.headers.get("content-type") || "";
+                if (!ct.includes("application/json")) {
                     setLocalCartItems(getLocalCart());
                     return;
                 }
@@ -158,9 +163,14 @@ export default function CartPage() {
 
             try {
                 const res = await fetch(`${apiUrl}/api/cart/${currentCartId}`, {
-                    headers: { "Authorization": `Bearer ${token}` }
+                    headers: getApiHeaders({ "Authorization": `Bearer ${token}` })
                 });
                 if (!res.ok) {
+                    setLocalCartItems(getLocalCart());
+                    return;
+                }
+                const ct = res.headers.get("content-type") || "";
+                if (!ct.includes("application/json")) {
                     setLocalCartItems(getLocalCart());
                     return;
                 }
@@ -196,10 +206,10 @@ export default function CartPage() {
             const size = (item.sizes && item.sizes.length > 0) ? item.sizes[0] : "M";
             await fetch(`${apiUrl}/api/products/${id}`, {
                 method: "PUT",
-                headers: {
+                headers: getApiHeaders({
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${Cookies.get("token")}`
-                },
+                }),
                 body: JSON.stringify({ cartId, quantity: 1, size })
             });
         } catch (e) {
@@ -223,10 +233,10 @@ export default function CartPage() {
         try {
             await fetch(`${apiUrl}/api/products/${id}`, {
                 method: "DELETE",
-                headers: {
+                headers: getApiHeaders({
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${Cookies.get("token")}`
-                },
+                }),
                 body: JSON.stringify({ cartId, quantity: 1 })
             });
         } catch (e) {
@@ -247,10 +257,10 @@ export default function CartPage() {
         try {
             await fetch(`${apiUrl}/api/products/${id}`, {
                 method: "DELETE",
-                headers: {
+                headers: getApiHeaders({
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${Cookies.get("token")}`
-                },
+                }),
                 body: JSON.stringify({ cartId, quantity: qty })
             });
         } catch (e) {
@@ -336,9 +346,20 @@ export default function CartPage() {
                                     </div>
                                 </div> */}
 
-                                <Link to={"/checkout"} className="w-full bg-black text-white font-bold py-4 px-6 mt-6 hover:bg-gray-800 transition-colors uppercase text-sm tracking-widest rounded-sm">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const token = Cookies.get("token");
+                                        if (!token) {
+                                            navigate("/login", { state: { from: "/checkout" } });
+                                        } else {
+                                            navigate("/checkout");
+                                        }
+                                    }}
+                                    className="w-full bg-black text-white font-bold py-4 px-6 mt-6 hover:bg-gray-800 transition-colors uppercase text-sm tracking-widest rounded-sm"
+                                >
                                     THANH TOÁN
-                                </Link>
+                                </button>
                             </div>
                         </div>
                     </>
