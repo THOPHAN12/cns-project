@@ -9,8 +9,8 @@ export function getApiBaseUrl() {
     const raw = import.meta.env.VITE_API_BASE_URL;
     const custom = raw && String(raw).trim();
     if (custom) return custom.replace(/\/$/, "");
-    const isProd = import.meta.env.PROD;
-    if (isProd) return "";
+    // Production: dùng relative URL để Vercel rewrite /api, /auth tới Render
+    if (import.meta.env.PROD) return "";
     return "http://localhost:8080";
 }
 
